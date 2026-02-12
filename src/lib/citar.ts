@@ -8,7 +8,7 @@ const DESCRIPCION = "Herramienta didáctica de inflación y política monetaria"
 
 function getUrlBase(): string {
   if (typeof window !== "undefined" && window.location?.origin) return window.location.origin;
-  return "https://econosfera.example.com"; // Fallback si se usa en SSR
+  return "https://econosfera.vercel.app"; // Fallback si se usa en SSR
 }
 
 const ANIO = new Date().getFullYear();

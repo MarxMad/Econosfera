@@ -134,6 +134,8 @@ npm start
 
 ## Despliegue
 
+**Sitio en vivo:** [https://econosfera.vercel.app/](https://econosfera.vercel.app/)
+
 El proyecto está listo para [Vercel](https://vercel.com):
 
 1. Conecta el repositorio desde Vercel (Import).
@@ -173,7 +175,7 @@ Opcional: variable de entorno `NEXT_PUBLIC_SITE_URL` (ej. `https://tudominio.com
 
 ## Citar y más
 
-- **Citar la herramienta**: En el pie de la web, “Cómo citar esta herramienta” con formatos APA, Chicago y BibTeX (y botón copiar).
+- **Citar la herramienta**: En el pie de la web, “Cómo citar esta herramienta” con formatos APA, Chicago y BibTeX (y botón copiar). URL de referencia: [https://econosfera.vercel.app/](https://econosfera.vercel.app/).
 - **Publicidad (AdSense)**: El sitio puede mostrar anuncios; configuración vía variables de entorno (ver `.env.example`). Sin configurar se muestran placeholders.
 - **Aviso**: Herramienta de apoyo al análisis. No sustituye el criterio profesional ni las proyecciones oficiales del banco central.
 
