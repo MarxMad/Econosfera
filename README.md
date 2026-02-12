@@ -1,64 +1,187 @@
-# Simulador de Inflación y Política Monetaria
+<p align="center">
+  <img src="./public/logos.svg" alt="Econosfera" width="160" />
+</p>
 
-Herramienta web para estimar efectos inflacionarios y analizar la postura de política monetaria (expansiva / neutral / restrictiva). Pensada para uso en equipo.
+<h1 align="center">Econosfera</h1>
+<p align="center">
+  <strong>Herramienta didáctica</strong> de inflación y política monetaria, macroeconomía y microeconomía.
+</p>
+<p align="center">
+  Simuladores interactivos, referencias académicas y prácticas para estudiantes y docentes.
+</p>
 
-## Qué hace
+---
 
-- **Variables**: inflación general, inflación subyacente, tasa de política, meta de inflación, brecha de producto, crecimiento del PIB y tipo de política.
-- **Resultados**: tasa real ex post y ex ante, brechas de inflación vs meta, tasa de Taylor de referencia y desviación respecto a la tasa actual.
-- **Gráficos**: comparación de inflación vs meta y de tasas de interés.
+## Contenido
+
+- [Qué es Econosfera](#qué-es-econosfera)
+- [Flujo de la aplicación](#flujo-de-la-aplicación)
+- [Módulos y funcionalidades](#módulos-y-funcionalidades)
+- [Cómo usar](#cómo-usar)
+- [Despliegue](#despliegue)
+- [Tecnologías](#tecnologías)
+- [Estructura del proyecto](#estructura-del-proyecto)
+- [Citar y más](#citar-y-más)
+
+---
+
+## Qué es Econosfera
+
+Econosfera es una **aplicación web** pensada para clases de economía: permite simular escenarios de **inflación y política monetaria**, **macroeconomía** (multiplicador keynesiano) y **microeconomía** (oferta y demanda, elasticidad). Incluye datos de referencia por país (México, EE.UU., Europa), fuentes oficiales (Banxico, INEGI), referencias académicas, glosario, fórmulas, preguntas de práctica y opciones para **exportar a PDF** y **compartir enlace** con el escenario cargado.
+
+Los conceptos y definiciones se basan en fuentes como Banxico, CEMLA, El Trimestre Económico e Investigación Económica (UNAM).
+
+---
+
+## Flujo de la aplicación
+
+```mermaid
+flowchart LR
+  subgraph Entrada
+    A[Usuario] --> B[Elige módulo]
+    B --> C[Inflación / Macro / Micro]
+    C --> D[Ajusta variables]
+  end
+  subgraph Cálculo
+    D --> E[Resultados en tiempo real]
+    E --> F[Gráficos]
+  end
+  subgraph Salida
+    F --> G[Exportar PDF]
+    F --> H[Compartir enlace]
+    E --> I[Comparar escenarios A vs B]
+  end
+  A --> J[Glosario / Fórmulas]
+  A --> K[Preguntas de práctica]
+  K --> L[Resultado y sesiones por tema]
+```
+
+**Flujo por módulo (Inflación):**
+
+```mermaid
+sequenceDiagram
+  participant U as Usuario
+  participant P as Panel variables
+  participant C as Cálculos
+  participant R as Resultados
+  participant G as Gráficos
+
+  U->>P: Ajusta inflación, tasa, meta, brecha…
+  P->>C: Variables actualizadas
+  C->>C: Regla de Taylor, tasas reales
+  C->>R: Resultados (ex post, ex ante, Taylor)
+  C->>G: Datos para gráficos
+  R->>U: Muestra interpretación
+  G->>U: Inflación vs meta / Tasas
+  U->>U: Opcional: Comparar A vs B, Exportar PDF, Compartir URL
+```
+
+---
+
+## Módulos y funcionalidades
+
+| Módulo | Contenido |
+|--------|------------|
+| **Inflación** | Variables (inflación, tasa de política, meta, brecha de producto, tipo de política). Resultados: tasa real ex post/ex ante, brechas, tasa de Taylor, desviación. Gráficos. Comparador de escenarios A vs B. Exportar PDF y enlace con parámetros. Fuentes Banxico/INEGI y referencias académicas. |
+| **Macroeconomía** | Simulador del multiplicador keynesiano (PMC, gasto público, impuestos). Conceptos y fórmulas. Referencias y preguntas de práctica. |
+| **Microeconomía** | Oferta y demanda (lineal), equilibrio, elasticidad, excedentes. Simulador interactivo. Referencias y preguntas de práctica. |
+| **Glosario** | Definiciones de términos económicos con base en fuentes citadas. |
+| **Fórmulas** | Fórmulas por área (inflación, macro, micro) con notación clara. |
+
+**Extras:**
+
+- **Preguntas de práctica**: 10 preguntas por tema (inflación, macro, micro); al finalizar se muestra el resultado y se pueden completar sesiones por tema.
+- **Comparar escenarios**: Dos conjuntos de supuestos (A y B) con resultados y gráfico comparativo.
+- **Exportar / compartir**: PDF con resumen del escenario; URL con parámetros para abrir el simulador con valores ya cargados.
+- **Cómo citar**: En el pie de página, citas en formato APA, Chicago y BibTeX.
+- **Datos por país**: México, EE.UU., Europa y “Principales” para cargar variables de referencia.
+- **Referencias académicas**: Listas por módulo (≥15 por área) con UNAM (bidi, eTESIUNAM) y autores/instituciones mexicanas.
+
+---
 
 ## Cómo usar
 
-1. Instalar dependencias: `npm install`
-2. Arrancar en desarrollo: `npm run dev`
-3. Abrir [http://localhost:3000](http://localhost:3000)
-
-Para compilar para producción: `npm run build` y luego `npm start`.
-
-### Si ves errores "Cannot find module './174.js'" o "middleware-manifest.json"
-
-La carpeta `.next` puede quedar desincronizada. Haz un **reinicio limpio**:
+### Desarrollo
 
 ```bash
-npm run fresh
+npm install
 npm run dev
 ```
 
-`npm run fresh` borra `.next` y la caché, y vuelve a compilar. Luego `npm run dev` arranca con un build coherente.
+Abre [http://localhost:3000](http://localhost:3000). Si falta el build, `npm run dev` ejecuta antes un build automático.
 
-## Despliegue en Vercel
+### Producción
 
-El proyecto está listo para desplegar en [Vercel](https://vercel.com):
+```bash
+npm run build
+npm start
+```
 
-1. Sube el repositorio a GitHub (o conéctalo desde Vercel).
-2. En Vercel, **Import** el proyecto; detectará Next.js y usará `npm run build` por defecto.
-3. Despliega. No hace falta `vercel.json` para una app Next.js estándar.
+### Scripts útiles
 
-Opcional: si usas un **dominio propio**, define en Vercel la variable de entorno `NEXT_PUBLIC_SITE_URL` (ej. `https://tudominio.com`) para que los enlaces de Open Graph y las citas usen esa URL. Si no la defines, Vercel usa automáticamente `VERCEL_URL` (tu app en `*.vercel.app`).
+| Comando | Descripción |
+|---------|-------------|
+| `npm run dev` | Servidor de desarrollo (con predev que asegura el build) |
+| `npm run build` | Compilación para producción |
+| `npm run start` | Sirve la app compilada |
+| `npm run clean` | Borra `.next` y `node_modules/.cache` |
+| `npm run fresh` | `clean` + `build` (reinicio limpio) |
+| `npm run lint` | Linter |
+
+**Si ves errores** tipo `Cannot find module './174.js'` o `middleware-manifest.json`: ejecuta `npm run fresh` y luego `npm run dev`.
+
+---
+
+## Despliegue
+
+El proyecto está listo para [Vercel](https://vercel.com):
+
+1. Conecta el repositorio desde Vercel (Import).
+2. Vercel detecta Next.js y usa `npm run build` por defecto.
+3. Despliega.
+
+Opcional: variable de entorno `NEXT_PUBLIC_SITE_URL` (ej. `https://tudominio.com`) para Open Graph y citas. Si no la defines, se usa `VERCEL_URL`.
+
+---
 
 ## Tecnologías
 
-- Next.js 14 (App Router)
-- TypeScript
-- Tailwind CSS
-- Recharts
+- **Next.js 14** (App Router)
+- **TypeScript**
+- **Tailwind CSS**
+- **Recharts** (gráficos)
+- **jsPDF** (exportar PDF)
 
-## Publicidad (Google AdSense)
+---
 
-El sitio está preparado para mostrar anuncios en dos posiciones: un **banner horizontal** debajo de la navegación y un **bloque lateral** (rectángulo) en la sección de inflación en pantallas grandes.
+## Estructura del proyecto
 
-- Sin configurar: se ven **placeholders** grises para que el diseño ya reserve el espacio.
-- Para activar anuncios reales:
-  1. Regístrate en [Google AdSense](https://www.google.com/adsense/) y solicita la aprobación para tu dominio.
-  2. Crea en AdSense las unidades de anuncio que quieras (p. ej. display responsive y rectángulo 300×250) y anota el **ID del anunciante** (`ca-pub-...`) y los **ID de cada slot**.
-  3. Crea un archivo `.env.local` en la raíz del proyecto (puedes basarte en `.env.example`) y define:
-     - `NEXT_PUBLIC_ADS_ENABLED=true`
-     - `NEXT_PUBLIC_ADSENSE_CLIENT=ca-pub-XXXXXXXXXXXXXXXX` (tu ID de editor).
-  4. En el código, asigna a cada `<AdSlot>` el `slotId` correspondiente (en `src/app/page.tsx` y, si añades más, en los componentes donde uses `<AdSlot />`).
+```
+├── public/           # Logo, favicon, assets estáticos
+├── src/
+│   ├── app/          # Rutas (page, layout, aviso-privacidad, terminos)
+│   ├── components/   # UI: simuladores, gráficos, glosario, exportar, etc.
+│   └── lib/          # Lógica: cálculos, tipos, preguntas, fuentes, países
+├── scripts/
+│   └── ensure-build.js   # Asegura build antes de dev (middleware-manifest)
+├── next.config.js
+├── tailwind.config.ts
+└── package.json
+```
 
-No incluyas claves ni IDs sensibles en el repositorio; usa solo variables de entorno.
+---
 
-## Nota
+## Citar y más
 
-Herramienta de apoyo al análisis. No sustituye el criterio profesional ni las proyecciones oficiales del banco central.
+- **Citar la herramienta**: En el pie de la web, “Cómo citar esta herramienta” con formatos APA, Chicago y BibTeX (y botón copiar).
+- **Publicidad (AdSense)**: El sitio puede mostrar anuncios; configuración vía variables de entorno (ver `.env.example`). Sin configurar se muestran placeholders.
+- **Aviso**: Herramienta de apoyo al análisis. No sustituye el criterio profesional ni las proyecciones oficiales del banco central.
+
+---
+
+<p align="center">
+  <img src="./public/logos.svg" alt="Econosfera" width="80" />
+</p>
+<p align="center">
+  <sub>Econosfera · Herramienta didáctica</sub>
+</p>

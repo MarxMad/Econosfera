@@ -49,7 +49,7 @@ function HomeContent() {
           <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div className="flex items-start gap-4 sm:gap-5">
               <img
-                src="/Logo.svg"
+                src="/logos.svg"
                 alt="Econosfera"
                 className="h-20 sm:h-24 md:h-28 w-auto flex-shrink-0"
                 width={112}
