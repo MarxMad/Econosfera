@@ -32,6 +32,17 @@ export default function Footer() {
           Herramienta de apoyo al análisis. No sustituye el criterio profesional ni las proyecciones oficiales.
         </p>
         <CitarHerramienta />
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 text-center">
+          Creada por{" "}
+          <a
+            href="https://github.com/MarxMad"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-2 hover:underline"
+          >
+            MarxMad
+          </a>
+        </p>
       </div>
     </footer>
   );
