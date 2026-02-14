@@ -44,7 +44,7 @@ export default function SimuladorApp() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
+    <div className="bg-slate-100 dark:bg-slate-950">
       <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
           <Link
