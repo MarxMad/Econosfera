@@ -5,7 +5,7 @@
 export interface TerminoGlosario {
   termino: string;
   definicion: string;
-  modulo: "inflacion" | "macro" | "micro" | "general";
+  modulo: "inflacion" | "macro" | "micro" | "finanzas" | "general";
   formula?: string;
   ejemplo?: string;
 }
@@ -203,6 +203,47 @@ export const TERMINOS: TerminoGlosario[] = [
     definicion: "Cuando |ε| = 1. El cambio porcentual en precio y cantidad son iguales.",
     modulo: "micro",
   },
+  // Finanzas: bancos, instrumentos, deuda y bursátil
+  {
+    termino: "Banco comercial",
+    definicion: "Institución que capta depósitos del público y otorga créditos; intermediación financiera y servicios de pagos.",
+    modulo: "finanzas",
+  },
+  {
+    termino: "Instrumento financiero",
+    definicion: "Contrato que da origen a un activo financiero para una parte y un pasivo u patrimonio para otra (deuda, acciones, derivados).",
+    modulo: "finanzas",
+  },
+  {
+    termino: "Instrumento de deuda",
+    definicion: "Valor que representa un crédito: el emisor se compromete a pagar principal e intereses (cupones). Ej.: Cetes, bonos, pagarés.",
+    modulo: "finanzas",
+  },
+  {
+    termino: "Título de deuda",
+    definicion: "Valor representativo de un crédito frente al emisor (gobierno o empresa). Se negocia en mercados primarios y secundarios.",
+    modulo: "finanzas",
+  },
+  {
+    termino: "Cetes",
+    definicion: "Certificados de la Tesorería de la Federación (México). Instrumento de deuda gubernamental a corto plazo, tasa descontada, sin cupones.",
+    modulo: "finanzas",
+  },
+  {
+    termino: "Mercado bursátil",
+    definicion: "Mercado organizado donde se emiten y negocian acciones, títulos de deuda y otros valores (mercado primario y secundario).",
+    modulo: "finanzas",
+  },
+  {
+    termino: "Renta fija",
+    definicion: "Instrumentos cuyos flujos son predecibles (cupones y/o principal). Incluye bonos, Cetes y pagarés.",
+    modulo: "finanzas",
+  },
+  {
+    termino: "Renta variable",
+    definicion: "Instrumentos cuyo rendimiento depende de resultados (dividendos, plusvalía). Principalmente acciones.",
+    modulo: "finanzas",
+  },
 ];
 
 export function buscarTerminos(query: string): TerminoGlosario[] {
@@ -216,6 +257,6 @@ export function buscarTerminos(query: string): TerminoGlosario[] {
   );
 }
 
-export function getTerminosPorModulo(modulo: "inflacion" | "macro" | "micro" | "general"): TerminoGlosario[] {
+export function getTerminosPorModulo(modulo: "inflacion" | "macro" | "micro" | "finanzas" | "general"): TerminoGlosario[] {
   return TERMINOS.filter((t) => t.modulo === modulo);
 }

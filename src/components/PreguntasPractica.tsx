@@ -5,11 +5,12 @@ import { Target, Trophy, RefreshCw, BookOpen } from "lucide-react";
 import { getSesionPreguntas, type Pregunta } from "@/lib/preguntas";
 import type { ModuloSimulador } from "./NavSimuladores";
 
-const MODULOS_CON_PRACTICA: Array<"inflacion" | "macro" | "micro"> = ["inflacion", "macro", "micro"];
-const NOMBRES_MODULO: Record<"inflacion" | "macro" | "micro", string> = {
+const MODULOS_CON_PRACTICA: Array<"inflacion" | "macro" | "micro" | "finanzas"> = ["inflacion", "macro", "micro", "finanzas"];
+const NOMBRES_MODULO: Record<"inflacion" | "macro" | "micro" | "finanzas", string> = {
   inflacion: "Inflación y política monetaria",
   macro: "Macroeconomía",
   micro: "Microeconomía",
+  finanzas: "Finanzas",
 };
 
 interface PreguntasPracticaProps {
@@ -31,7 +32,7 @@ export default function PreguntasPractica({ modulo, onIrAModulo }: PreguntasPrac
 
   // Sesión de preguntas solo en el cliente (getSesionPreguntas usa Math.random, evita hydration mismatch)
   useEffect(() => {
-    if (modulo === "inflacion" || modulo === "macro" || modulo === "micro") {
+    if (modulo === "inflacion" || modulo === "macro" || modulo === "micro" || modulo === "finanzas") {
       setPreguntas(getSesionPreguntas(modulo, CANTIDAD_POR_SESION));
     } else {
       setPreguntas([]);
@@ -114,7 +115,7 @@ export default function PreguntasPractica({ modulo, onIrAModulo }: PreguntasPrac
             </p>
             <p className="text-lg text-slate-600 dark:text-slate-400 mt-1">{porcentaje}% de aciertos</p>
             <p className="text-sm text-slate-500 dark:text-slate-500 mt-2">
-              Tema: {NOMBRES_MODULO[modulo as "inflacion" | "macro" | "micro"] ?? "Práctica"}
+              Tema: {NOMBRES_MODULO[modulo as "inflacion" | "macro" | "micro" | "finanzas"] ?? "Práctica"}
             </p>
           </div>
           {onIrAModulo && (

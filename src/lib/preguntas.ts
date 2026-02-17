@@ -7,7 +7,7 @@ export interface Pregunta {
   opciones?: string[];
   respuestaCorrecta: string | number;
   explicacion: string;
-  modulo: "inflacion" | "macro" | "micro";
+  modulo: "inflacion" | "macro" | "micro" | "finanzas";
 }
 
 export const PREGUNTAS: Pregunta[] = [
@@ -380,13 +380,98 @@ export const PREGUNTAS: Pregunta[] = [
     explicacion: "Un aumento de c (por ejemplo costos) desplaza la oferta hacia la izquierda (arriba), lo que eleva el precio y reduce la cantidad de equilibrio.",
     modulo: "micro",
   },
+  // Finanzas
+  {
+    id: "fin-1",
+    pregunta: "Los Cetes son un ejemplo de:",
+    tipo: "multiple",
+    opciones: [
+      "Instrumento de renta variable",
+      "Instrumento de deuda gubernamental a corto plazo",
+      "Acción de la Bolsa Mexicana de Valores",
+      "Derivado financiero",
+    ],
+    respuestaCorrecta: "Instrumento de deuda gubernamental a corto plazo",
+    explicacion: "Los Cetes (Certificados de la Tesorería) son valores de deuda emitidos por el gobierno federal mexicano, a plazos cortos (28 días a 1 año), con tasa descontada.",
+    modulo: "finanzas",
+  },
+  {
+    id: "fin-2",
+    pregunta: "El mercado donde se negocian por primera vez los valores (emisión) se denomina:",
+    tipo: "multiple",
+    opciones: [
+      "Mercado secundario",
+      "Mercado primario",
+      "Mercado de derivados",
+      "Mercado interbancario",
+    ],
+    respuestaCorrecta: "Mercado primario",
+    explicacion: "En el mercado primario el emisor coloca los valores por primera vez; en el secundario los inversionistas compran y venden entre sí (por ejemplo en la bolsa).",
+    modulo: "finanzas",
+  },
+  {
+    id: "fin-3",
+    pregunta: "¿Qué tipo de instrumento tiene flujos de pago predecibles (cupones y/o principal)?",
+    tipo: "multiple",
+    opciones: [
+      "Renta variable",
+      "Renta fija",
+      "Solo acciones",
+      "Solo derivados",
+    ],
+    respuestaCorrecta: "Renta fija",
+    explicacion: "Los instrumentos de renta fija (bonos, Cetes, pagarés) tienen flujos definidos; la renta variable (acciones) depende de dividendos y plusvalía.",
+    modulo: "finanzas",
+  },
+  {
+    id: "fin-4",
+    pregunta: "La intermediación entre ahorradores y demandantes de crédito la realizan principalmente:",
+    tipo: "multiple",
+    opciones: [
+      "Solo el banco central",
+      "Los bancos comerciales y las instituciones financieras",
+      "Exclusivamente la bolsa de valores",
+      "Solo el gobierno",
+    ],
+    respuestaCorrecta: "Los bancos comerciales y las instituciones financieras",
+    explicacion: "Los bancos captan depósitos y otorgan créditos; junto con otros intermediarios canalizan el ahorro hacia la inversión y el consumo.",
+    modulo: "finanzas",
+  },
+  {
+    id: "fin-5",
+    pregunta: "En México, la supervisión de bancos y casas de bolsa corresponde principalmente a:",
+    tipo: "multiple",
+    opciones: [
+      "Solo Banco de México",
+      "CNBV (Comisión Nacional Bancaria y de Valores)",
+      "Solo la BMV",
+      "Condusef",
+    ],
+    respuestaCorrecta: "CNBV (Comisión Nacional Bancaria y de Valores)",
+    explicacion: "La CNBV regula y supervisa a bancos, casas de bolsa, sofipos y otros intermediarios. Banxico se enfoca en política monetaria y estabilidad del sistema de pagos.",
+    modulo: "finanzas",
+  },
+  {
+    id: "fin-6",
+    pregunta: "Un título de deuda corporativo que paga cupones periódicos se conoce típicamente como:",
+    tipo: "multiple",
+    opciones: [
+      "Acción preferente",
+      "Bono u obligación",
+      "Cete",
+      "ETF",
+    ],
+    respuestaCorrecta: "Bono u obligación",
+    explicacion: "Los bonos y obligaciones son instrumentos de deuda que pagan cupones (intereses) y devuelven el principal al vencimiento. Las acciones representan capital, no deuda.",
+    modulo: "finanzas",
+  },
 ];
 
-export function getPreguntasPorModulo(modulo: "inflacion" | "macro" | "micro"): Pregunta[] {
+export function getPreguntasPorModulo(modulo: "inflacion" | "macro" | "micro" | "finanzas"): Pregunta[] {
   return PREGUNTAS.filter((p) => p.modulo === modulo);
 }
 
-export function getPreguntaAleatoria(modulo: "inflacion" | "macro" | "micro"): Pregunta | null {
+export function getPreguntaAleatoria(modulo: "inflacion" | "macro" | "micro" | "finanzas"): Pregunta | null {
   const preguntas = getPreguntasPorModulo(modulo);
   if (preguntas.length === 0) return null;
   return preguntas[Math.floor(Math.random() * preguntas.length)];
@@ -402,7 +487,7 @@ function shuffle<T>(arr: T[]): T[] {
   return out;
 }
 
-export function getSesionPreguntas(modulo: "inflacion" | "macro" | "micro", cantidad = 10): Pregunta[] {
+export function getSesionPreguntas(modulo: "inflacion" | "macro" | "micro" | "finanzas", cantidad = 10): Pregunta[] {
   const todas = getPreguntasPorModulo(modulo);
   return shuffle(todas).slice(0, Math.min(cantidad, todas.length));
 }

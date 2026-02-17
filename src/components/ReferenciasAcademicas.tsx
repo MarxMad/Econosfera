@@ -1,17 +1,18 @@
 "use client";
 
-import { BookMarked, BarChart3, TrendingUp, Scale } from "lucide-react";
+import { BookMarked, BarChart3, TrendingUp, Scale, Landmark } from "lucide-react";
 import {
   FUENTES_POR_MODULO,
   FUENTES_INFLACION,
   FUENTES_MACRO,
   FUENTES_MICRO,
+  FUENTES_FINANZAS,
   type FuenteAcademica,
 } from "@/lib/fuentesAcademicas";
 
-type ModuloFuentes = "inflacion" | "macro" | "micro" | "todos";
+type ModuloFuentes = "inflacion" | "macro" | "micro" | "finanzas" | "todos";
 
-const TITULOS_MODULO: Record<"inflacion" | "macro" | "micro", { titulo: string; icono: React.ComponentType<{ className?: string }> }> = {
+const TITULOS_MODULO: Record<"inflacion" | "macro" | "micro" | "finanzas", { titulo: string; icono: React.ComponentType<{ className?: string }> }> = {
   inflacion: {
     titulo: "Política monetaria e inflación",
     icono: BarChart3,
@@ -23,6 +24,10 @@ const TITULOS_MODULO: Record<"inflacion" | "macro" | "micro", { titulo: string; 
   micro: {
     titulo: "Microeconomía (oferta, demanda, elasticidad)",
     icono: Scale,
+  },
+  finanzas: {
+    titulo: "Finanzas (bancos, instrumentos, bursátil)",
+    icono: Landmark,
   },
 };
 
@@ -48,7 +53,7 @@ function SeccionModulo({
   modulo,
   fuentes,
 }: {
-  modulo: "inflacion" | "macro" | "micro";
+  modulo: "inflacion" | "macro" | "micro" | "finanzas";
   fuentes: FuenteAcademica[];
 }) {
   const { titulo, icono: Icon } = TITULOS_MODULO[modulo];
@@ -99,6 +104,7 @@ export default function ReferenciasAcademicas({ modulo }: ReferenciasAcademicasP
             <SeccionModulo modulo="inflacion" fuentes={FUENTES_INFLACION} />
             <SeccionModulo modulo="macro" fuentes={FUENTES_MACRO} />
             <SeccionModulo modulo="micro" fuentes={FUENTES_MICRO} />
+            <SeccionModulo modulo="finanzas" fuentes={FUENTES_FINANZAS} />
           </div>
         ) : (
           <ul className="space-y-2">

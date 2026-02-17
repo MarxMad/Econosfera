@@ -27,6 +27,7 @@ export default function Glosario({ moduloActivo, onIrAModulo }: GlosarioProps) {
     { id: "inflacion", label: "Inflación" },
     { id: "macro", label: "Macro" },
     { id: "micro", label: "Micro" },
+    { id: "finanzas", label: "Finanzas" },
     { id: "general", label: "General" },
   ];
 
@@ -80,7 +81,7 @@ export default function Glosario({ moduloActivo, onIrAModulo }: GlosarioProps) {
                   <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">{termino.termino}</h3>
                   <div className="flex items-center gap-2">
                     <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                      {termino.modulo === "inflacion" ? "Inflación" : termino.modulo === "macro" ? "Macro" : termino.modulo === "micro" ? "Micro" : "General"}
+                      {termino.modulo === "inflacion" ? "Inflación" : termino.modulo === "macro" ? "Macro" : termino.modulo === "micro" ? "Micro" : termino.modulo === "finanzas" ? "Finanzas" : "General"}
                     </span>
                     {onIrAModulo && termino.modulo !== "general" && termino.modulo !== moduloActivo && (
                       <button

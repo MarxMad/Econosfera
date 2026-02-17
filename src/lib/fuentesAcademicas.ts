@@ -472,8 +472,85 @@ export const FUENTES_MICRO: FuenteAcademica[] = [
   },
 ];
 
+/** Fuentes sobre bancos, instrumentos financieros, deuda y mercado bursátil */
+export const FUENTES_FINANZAS: FuenteAcademica[] = [
+  {
+    titulo: "Sistema financiero mexicano",
+    url: "https://www.gob.mx/cnbv",
+    institucion: "CNBV",
+    descripcion: "Comisión Nacional Bancaria y de Valores: regulación y supervisión de bancos y casas de bolsa.",
+  },
+  {
+    titulo: "Mercado de valores (BMV)",
+    url: "https://www.bmv.com.mx",
+    institucion: "Bolsa Mexicana de Valores",
+    descripcion: "Bolsa Mexicana de Valores: listado de emisores, índices (IPC), instrumentos de deuda y capital.",
+  },
+  {
+    titulo: "Cetes y subastas",
+    url: "https://www.banxico.org.mx/monetario/subastas-cetes.html",
+    institucion: "Banco de México",
+    descripcion: "Subastas de Cetes y otros valores gubernamentales; tasas y resultados.",
+  },
+  {
+    titulo: "Indicadores del mercado de dinero",
+    url: "https://www.banxico.org.mx/SieInternet/consultarDirectorioInternetAction.do?accion=consultarCuadro&idCuadro=CE109&locale=es",
+    institucion: "Banco de México",
+    descripcion: "Tasas de interés de mercado de dinero (Cetes, interbancaria, etc.).",
+  },
+  {
+    titulo: "Instrumentos de inversión (Banxico)",
+    url: "https://www.banxico.org.mx/sistemafinanciero/instrumentos-inversion.html",
+    institucion: "Banco de México",
+    descripcion: "Descripción de Cetes, Bondes, Udibonos y otros valores gubernamentales.",
+  },
+  {
+    titulo: "Educación financiera (Condusef)",
+    url: "https://www.condusef.gob.mx/",
+    institucion: "Condusef",
+    descripcion: "Comisión Nacional para la Protección de los Usuarios de Servicios Financieros: educación y defensa del usuario.",
+  },
+  {
+    titulo: "Mercados financieros (Investopedia)",
+    url: "https://www.investopedia.com/terms/f/financial-market.asp",
+    institucion: "Investopedia",
+    descripcion: "Conceptos de mercados financieros, instrumentos de deuda y capital.",
+  },
+  {
+    titulo: "Bonds and fixed income",
+    url: "https://www.investopedia.com/terms/b/bond.asp",
+    institucion: "Investopedia",
+    descripcion: "Definición de bonos, cupones, rendimiento y riesgo de tasa.",
+  },
+  {
+    titulo: "Stock market basics (SEC)",
+    url: "https://www.investor.gov/introduction-investing/investing-basics/what-stock",
+    institucion: "SEC (EE.UU.)",
+    descripcion: "Introducción a acciones y mercado de valores (educación al inversionista).",
+  },
+  {
+    titulo: "BID – Sistema financiero y desarrollo",
+    url: "https://www.iadb.org/es/temas/financiamiento-para-el-desarrollo/sistemas-financieros",
+    institucion: "BID",
+    descripcion: "Recursos del BID sobre sistemas financieros y mercados de capital en América Latina.",
+  },
+  {
+    titulo: "CEMLA – Mercados financieros",
+    url: "https://www.cemla.org/actividades/mercados.html",
+    institucion: "CEMLA",
+    descripcion: "CEMLA: investigación y eventos sobre mercados financieros y deuda en la región.",
+  },
+  {
+    titulo: "CNBV – Reporte de inclusión financiera",
+    url: "https://www.gob.mx/cnbv/articulos/reporte-de-inclusion-financiera",
+    institucion: "CNBV",
+    descripcion: "Estadísticas de inclusión financiera, bancos y canalización del ahorro.",
+  },
+];
+
 export const FUENTES_POR_MODULO = {
   inflacion: FUENTES_INFLACION,
   macro: FUENTES_MACRO,
   micro: FUENTES_MICRO,
+  finanzas: FUENTES_FINANZAS,
 } as const;

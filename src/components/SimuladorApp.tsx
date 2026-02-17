@@ -14,6 +14,7 @@ import ReferenciasAcademicas from "@/components/ReferenciasAcademicas";
 import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
 import SimuladorMacro from "@/components/SimuladorMacro";
 import SimuladorMicro from "@/components/SimuladorMicro";
+import Finanzas from "@/components/Finanzas";
 import Glosario from "@/components/Glosario";
 import Formulas from "@/components/Formulas";
 import PreguntasPractica from "@/components/PreguntasPractica";
@@ -138,6 +139,20 @@ export default function SimuladorApp() {
             <div className="mt-6">
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="micro" />
+              </SeccionFuentesColapsable>
+            </div>
+            <div className="mt-6">
+              <PreguntasPractica modulo={modulo} onIrAModulo={setModulo} />
+            </div>
+          </>
+        )}
+
+        {modulo === "finanzas" && (
+          <>
+            <Finanzas onIrAModulo={setModulo} />
+            <div className="mt-6">
+              <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
+                <ReferenciasAcademicas modulo="finanzas" />
               </SeccionFuentesColapsable>
             </div>
             <div className="mt-6">
