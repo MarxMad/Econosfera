@@ -12,12 +12,15 @@ interface ExportarCompartirProps {
   resultados: ResultadosSimulacion;
   /** ID del elemento del gráfico a incluir en el PDF (ej. "grafico-inflacion") */
   idGrafico?: string;
+  /** Datos del análisis de IA si están disponibles */
+  datosAI?: any;
 }
 
 export default function ExportarCompartir({
   variables,
   resultados,
   idGrafico = "grafico-inflacion",
+  datosAI,
 }: ExportarCompartirProps) {
   const [copiado, setCopiado] = useState(false);
   const [exportandoPdf, setExportandoPdf] = useState(false);
@@ -45,7 +48,7 @@ export default function ExportarCompartir({
       } catch {
         // El gráfico puede no estar montado o no existir
       }
-      await exportarEscenarioPdf(variables, resultados, dataUrl);
+      await exportarEscenarioPdf(variables, resultados, dataUrl, datosAI);
     } catch (e) {
       console.error("Error al exportar PDF:", e);
       alert("No se pudo generar el PDF. Intenta de nuevo.");

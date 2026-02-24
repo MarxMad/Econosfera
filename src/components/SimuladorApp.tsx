@@ -14,7 +14,9 @@ import ReferenciasAcademicas from "@/components/ReferenciasAcademicas";
 import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
 import SimuladorMacro from "@/components/SimuladorMacro";
 import SimuladorMicro from "@/components/SimuladorMicro";
+import AnalisisMinuta from "@/components/AnalisisMinuta";
 import Finanzas from "@/components/Finanzas";
+import BlockchainEcon from "@/components/BlockchainEcon";
 import Glosario from "@/components/Glosario";
 import Formulas from "@/components/Formulas";
 import PreguntasPractica from "@/components/PreguntasPractica";
@@ -34,6 +36,7 @@ export default function SimuladorApp() {
   const [variables, setVariables] = useState<VariablesSimulacion>(VARIABLES_INICIALES);
   const resultados = useMemo(() => calcularResultados(variables), [variables]);
   const [mostrarComparador, setMostrarComparador] = useState(false);
+  const [datosAI, setDatosAI] = useState<any>(null);
 
   useEffect(() => {
     const desdeUrl = paramsToVariables(searchParams);
@@ -77,6 +80,9 @@ export default function SimuladorApp() {
                 onCargarDatosReferencia={cargarDatosReferencia}
               />
             </div>
+            <div className="mb-6">
+              <AnalisisMinuta onAnalisisComplete={setDatosAI} />
+            </div>
             <SeccionFuentesColapsable titulo="Fuentes oficiales y referencias para profundizar" defaultAbierto={false}>
               <FuentesOficialesMexico />
               <ReferenciasAcademicas modulo="inflacion" />
@@ -85,7 +91,12 @@ export default function SimuladorApp() {
               <GuiaRapida />
             </div>
             <div className="mb-4 flex flex-wrap items-center justify-end gap-2">
-              <ExportarCompartir variables={variables} resultados={resultados} idGrafico="grafico-inflacion" />
+              <ExportarCompartir
+                variables={variables}
+                resultados={resultados}
+                idGrafico="grafico-inflacion"
+                datosAI={datosAI}
+              />
             </div>
             <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
               <div className="lg:col-span-1">
@@ -158,6 +169,12 @@ export default function SimuladorApp() {
             <div className="mt-6">
               <PreguntasPractica modulo={modulo} onIrAModulo={setModulo} />
             </div>
+          </>
+        )}
+
+        {modulo === "blockchain" && (
+          <>
+            <BlockchainEcon />
           </>
         )}
 

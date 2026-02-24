@@ -1,12 +1,13 @@
 "use client";
 
-export type ModuloSimulador = "inflacion" | "macro" | "micro" | "finanzas" | "glosario" | "formulas";
+export type ModuloSimulador = "inflacion" | "macro" | "micro" | "finanzas" | "blockchain" | "glosario" | "formulas";
 
 const TABS: { id: ModuloSimulador; label: string; short: string }[] = [
   { id: "inflacion", label: "Inflación y política monetaria", short: "Monetaria" },
   { id: "macro", label: "Macroeconomía", short: "Macro" },
   { id: "micro", label: "Microeconomía", short: "Micro" },
   { id: "finanzas", label: "Finanzas", short: "Finanzas" },
+  { id: "blockchain", label: "Economía blockchain", short: "Blockchain" },
   { id: "glosario", label: "Glosario", short: "Glosario" },
   { id: "formulas", label: "Fórmulas", short: "Fórmulas" },
 ];
