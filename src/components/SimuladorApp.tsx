@@ -3,6 +3,8 @@
 import { useMemo, useState, useEffect } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { Save } from "lucide-react";
 import NavSimuladores, { type ModuloSimulador } from "@/components/NavSimuladores";
 import PanelVariables from "@/components/PanelVariables";
 import Resultados from "@/components/Resultados";
@@ -30,6 +32,7 @@ import { paramsToVariables } from "@/lib/escenarioUrl";
 const VARIABLES_INICIALES: VariablesSimulacion = getEconomia("mexico").variablesPorDefecto;
 
 export default function SimuladorApp() {
+  const { data: session } = useSession();
   const searchParams = useSearchParams();
   const [modulo, setModulo] = useState<ModuloSimulador>("inflacion");
   const [pais, setPais] = useState<PaisEconomia>("mexico");
@@ -39,9 +42,35 @@ export default function SimuladorApp() {
   const [datosAI, setDatosAI] = useState<any>(null);
 
   useEffect(() => {
-    const desdeUrl = paramsToVariables(searchParams);
-    if (desdeUrl) setVariables(desdeUrl);
+    const scenarioId = searchParams.get("scenarioId");
+    if (scenarioId) {
+      const fetchScenario = async () => {
+        const { getScenarioById } = await import("@/lib/actions/scenarioActions");
+        const scenario = await getScenarioById(scenarioId);
+        if (scenario) {
+          if (scenario.type === "MACRO") setModulo("macro");
+          else if (scenario.type === "MICRO") setModulo("micro");
+          else if (scenario.type === "FINANZAS") setModulo("finanzas");
+          else {
+            setModulo("inflacion");
+            // If it's an inflation scenario, it has variables and datosAI in scenario.data
+            if (scenario.data) {
+              if (scenario.data.variables) setVariables(scenario.data.variables);
+              if (scenario.data.datosAI) setDatosAI(scenario.data.datosAI);
+            }
+          }
+
+          setLoadedScenario(scenario);
+        }
+      };
+      fetchScenario();
+    } else {
+      const desdeUrl = paramsToVariables(searchParams);
+      if (desdeUrl) setVariables(desdeUrl);
+    }
   }, [searchParams]);
+
+  const [loadedScenario, setLoadedScenario] = useState<any>(null);
 
   const cargarDatosReferencia = () => {
     setVariables(getEconomia(pais).variablesPorDefecto);
@@ -49,23 +78,7 @@ export default function SimuladorApp() {
 
   return (
     <div className="bg-slate-100 dark:bg-slate-950">
-      <header className="border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900/50">
-        <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link
-            href="/"
-            className="flex items-center gap-2 text-slate-700 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
-            <img src="/logos.svg" alt="Econosfera" className="h-9 w-auto" width={36} height={36} />
-            <span className="font-semibold">Econosfera</span>
-          </Link>
-          <Link
-            href="/"
-            className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200"
-          >
-            ← Inicio
-          </Link>
-        </div>
-      </header>
+
       <main className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
         <div className="mb-6">
           <NavSimuladores modulo={modulo} onChange={setModulo} />
@@ -81,7 +94,10 @@ export default function SimuladorApp() {
               />
             </div>
             <div className="mb-6">
-              <AnalisisMinuta onAnalisisComplete={setDatosAI} />
+              <AnalisisMinuta
+                onAnalisisComplete={setDatosAI}
+                initialData={datosAI}
+              />
             </div>
             <SeccionFuentesColapsable titulo="Fuentes oficiales y referencias para profundizar" defaultAbierto={false}>
               <FuentesOficialesMexico />
@@ -97,6 +113,26 @@ export default function SimuladorApp() {
                 idGrafico="grafico-inflacion"
                 datosAI={datosAI}
               />
+              {session && (
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const { saveScenario } = await import("@/lib/actions/scenarioActions");
+                    const resSave = await saveScenario({
+                      type: "INFLACION",
+                      name: `Simulación Inflación ${new Date().toLocaleDateString()}`,
+                      variables: { variables, datosAI },
+                      results: resultados,
+                    });
+                    if (resSave.success) alert("Escenario guardado");
+                    else alert(resSave.error);
+                  }}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-md active:scale-95"
+                >
+                  <Save className="w-4 h-4" />
+                  Guardar
+                </button>
+              )}
             </div>
             <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
               <div className="lg:col-span-1">
@@ -133,7 +169,7 @@ export default function SimuladorApp() {
 
         {modulo === "macro" && (
           <>
-            <SimuladorMacro />
+            <SimuladorMacro initialData={loadedScenario} />
             <div className="mt-6">
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="macro" />
@@ -146,7 +182,7 @@ export default function SimuladorApp() {
         )}
         {modulo === "micro" && (
           <>
-            <SimuladorMicro />
+            <SimuladorMicro initialData={loadedScenario} />
             <div className="mt-6">
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="micro" />
@@ -160,7 +196,7 @@ export default function SimuladorApp() {
 
         {modulo === "finanzas" && (
           <>
-            <Finanzas onIrAModulo={setModulo} />
+            <Finanzas onIrAModulo={setModulo} initialData={loadedScenario} />
             <div className="mt-6">
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="finanzas" />

@@ -1,30 +1,115 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { ahorroPeriodicoVF, ahorroEvolucion } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { FileDown, Save } from "lucide-react";
+import { useSession } from "next-auth/react";
 
-export default function SimuladorAhorro() {
+import Heatmap from "../common/Heatmap";
+
+export default function SimuladorAhorro({ initialData }: { initialData?: any }) {
+  const { data: session } = useSession();
+  const [exportando, setExportando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [aportacion, setAportacion] = useState(2000);
   const [tasaPct, setTasaPct] = useState(10);
   const [anos, setAnos] = useState(10);
 
+  useEffect(() => {
+    if (initialData?.data?.aportacion) setAportacion(initialData.data.aportacion);
+    if (initialData?.data?.tasaPct) setTasaPct(initialData.data.tasaPct);
+    if (initialData?.data?.anos) setAnos(initialData.data.anos);
+  }, [initialData]);
+
   const tasa = tasaPct / 100;
   const anosSeguro = Math.max(0, Math.min(50, anos));
-  const totalMeses = Math.floor(anosSeguro * 12);
   const vf = useMemo(() => ahorroPeriodicoVF(aportacion, tasa, anos), [aportacion, tasa, anos]);
   const datosGrafico = useMemo(() => ahorroEvolucion(aportacion, tasa, anosSeguro), [aportacion, tasa, anosSeguro]);
   const totalAportado = aportacion * 12 * anos;
+
+  const exportarReporte = async () => {
+    setExportando(true);
+    try {
+      const { exportarFinanzasAPdf } = await import("@/lib/exportarFinanzasPdf");
+      const { getGraficoAsDataUrl } = await import("@/lib/exportarGrafico");
+      let chartUrl = null;
+      try { chartUrl = await getGraficoAsDataUrl("grafico-ahorro"); } catch (e) { }
+
+      await exportarFinanzasAPdf({
+        tipo: 'Ahorro',
+        titulo: 'Ahorro e Interés Compuesto',
+        variables: [
+          { label: 'Aportación Mensual', valor: `$${aportacion}` },
+          { label: 'Tasa Anual', valor: `${tasaPct}%` },
+          { label: 'Años', valor: `${anos}` },
+        ],
+        resultados: [
+          { label: 'Monto Acumulado (VF)', valor: `$${vf.toLocaleString("es-MX")}` },
+          { label: 'Total Aportado', valor: `$${totalAportado.toLocaleString("es-MX")}` },
+          { label: 'Interés Ganado', valor: `$${(vf - totalAportado).toLocaleString("es-MX")}` },
+        ],
+        chart: chartUrl
+      });
+    } catch (e) {
+      console.error(e);
+      alert("Error al exportar reporte");
+    } finally {
+      setExportando(false);
+    }
+  };
 
   const vfValido = Number.isFinite(vf) && !Number.isNaN(vf);
 
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg p-5">
-      <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-3">Ahorro mensual e interés compuesto</h3>
-      <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
-        Aportación fija al final de cada mes. VF = A × [((1+r)^n − 1) / r]. Ingresa cualquier valor (sin límites).
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+        <div>
+          <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 italic">Ahorro mensual e interés compuesto</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400">VF = A × [((1+r)^n − 1) / r]</p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={exportarReporte}
+            disabled={exportando}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50"
+          >
+            <FileDown className="w-3.5 h-3.5" />
+            {exportando ? "Generando..." : "Reporte"}
+          </button>
+          {session && (
+            <button
+              type="button"
+              onClick={async () => {
+                setGuardando(true);
+                try {
+                  const { saveScenario } = await import("@/lib/actions/scenarioActions");
+                  const resSave = await saveScenario({
+                    type: "FINANZAS",
+                    subType: "AHORRO",
+                    name: `Ahorro ${new Date().toLocaleDateString()}`,
+                    variables: { aportacion, tasaPct, anos },
+                    results: { vf },
+                  });
+                  if (resSave.success) alert("Escenario guardado");
+                  else alert(resSave.error);
+                } catch (e) {
+                  alert("Error al guardar");
+                } finally {
+                  setGuardando(false);
+                }
+              }}
+              disabled={guardando}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-md active:scale-95 disabled:opacity-50"
+            >
+              <Save className="w-3.5 h-3.5" />
+              {guardando ? "Guardando..." : "Guardar"}
+            </button>
+          )}
+        </div>
+      </div>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <InputLibre label="Aportación mensual $" value={aportacion} onChange={setAportacion} step="0.01" />
@@ -50,18 +135,36 @@ export default function SimuladorAhorro() {
         </div>
       </div>
       {datosGrafico.length > 0 && (
-        <div className="mt-4 h-52">
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={datosGrafico} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-600" />
-              <XAxis dataKey="periodo" name="Mes" tick={{ fontSize: 10 }} tickFormatter={(v) => (v % 12 === 0 ? `${v / 12}a` : "")} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => (v >= 1000 ? `$${v / 1000}k` : `$${v}`)} />
-              <Tooltip formatter={(val: number) => [`$${Number(val).toLocaleString("es-MX", { maximumFractionDigits: 0 })}`, "Acumulado"]} labelFormatter={(l) => `Mes ${l}`} />
-              <Line type="monotone" dataKey="acumulado" stroke="#6366f1" strokeWidth={2} dot={false} name="Acumulado" />
-            </LineChart>
-          </ResponsiveContainer>
+        <div className="space-y-6">
+          <div id="grafico-ahorro" className="h-52">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={datosGrafico} margin={{ top: 8, right: 8, left: 8, bottom: 8 }}>
+                <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-600" />
+                <XAxis dataKey="periodo" name="Mes" tick={{ fontSize: 10 }} tickFormatter={(v) => (v % 12 === 0 ? `${v / 12}a` : "")} />
+                <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => (v >= 1000 ? `$${v / 1000}k` : `$${v}`)} />
+                <Tooltip formatter={(val: number) => [`$${Number(val).toLocaleString("es-MX", { maximumFractionDigits: 0 })}`, "Acumulado"]} labelFormatter={(l) => `Mes ${l}`} />
+                <Line type="monotone" dataKey="acumulado" stroke="#6366f1" strokeWidth={2} dot={false} name="Acumulado" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="pt-2">
+            <Heatmap
+              title="Matriz de Crecimiento (VF)"
+              subtitle="Impacto de la tasa y el tiempo en tu ahorro acumulado"
+              xAxisLabel="Años"
+              yAxisLabel="Tasa %"
+              xValues={[5, 10, 15, 20]}
+              yValues={[5, 8, 10, 12, 15]}
+              data={[5, 8, 10, 12, 15].map(r =>
+                [5, 10, 15, 20].map(y => ahorroPeriodicoVF(aportacion, r / 100, y))
+              )}
+              formatter={(val) => `$${Math.round(val / 1000)}k`}
+            />
+          </div>
         </div>
       )}
     </div>
   );
 }
+

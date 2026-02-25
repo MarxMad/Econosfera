@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Upload, FileText, ChevronRight, TrendingUp, AlertTriangle,
   CheckCircle2, Info, FileDown, LayoutDashboard, ListFilter,
@@ -26,12 +26,21 @@ interface AnalisisReal {
 
 interface AnalisisMinutaProps {
   onAnalisisComplete?: (datos: AnalisisReal | null) => void;
+  initialData?: any;
 }
 
-export default function AnalisisMinuta({ onAnalisisComplete }: AnalisisMinutaProps) {
+export default function AnalisisMinuta({ onAnalisisComplete, initialData }: AnalisisMinutaProps) {
   const [analizando, setAnalizando] = useState(false);
   const [minutaAnalizada, setMinutaAnalizada] = useState<string | null>(null);
   const [datosAnalizados, setDatosAnalizados] = useState<AnalisisReal | null>(null);
+
+  useEffect(() => {
+    if (initialData) {
+      setDatosAnalizados(initialData);
+      setMinutaAnalizada("Escenario Guardado");
+      if (onAnalisisComplete) onAnalisisComplete(initialData);
+    }
+  }, [initialData]);
   const [tabActiva, setTabActiva] = useState<TabAnálisis>("resumen");
   const [exportando, setExportando] = useState(false);
   const [error, setError] = useState<string | null>(null);

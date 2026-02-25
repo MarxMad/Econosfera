@@ -51,10 +51,11 @@ function SeccionFinanzas({ id, titulo, icono: Icono, children, defaultAbierto = 
 
 interface FinanzasProps {
   onIrAModulo?: (modulo: ModuloSimulador) => void;
+  initialData?: any;
 }
 
-export default function Finanzas({ onIrAModulo }: FinanzasProps) {
-  const [mostrarSimuladores, setMostrarSimuladores] = useState(true);
+export default function Finanzas({ onIrAModulo, initialData }: FinanzasProps) {
+  const [mostrarSimuladores, setMostrarSimuladores] = useState(!!initialData);
 
   return (
     <div className="space-y-6">
@@ -104,10 +105,10 @@ export default function Finanzas({ onIrAModulo }: FinanzasProps) {
                 <Map className="w-4 h-4" aria-hidden />
                 Calculadoras
               </div>
-              <SimuladorVPVF />
-              <SimuladorBono />
-              <SimuladorCetes />
-              <SimuladorAhorro />
+              <SimuladorVPVF initialData={initialData?.subType === "VPVF" ? initialData : undefined} />
+              <SimuladorBono initialData={initialData?.subType === "BONO" ? initialData : undefined} />
+              <SimuladorCetes initialData={initialData?.subType === "CETES" ? initialData : undefined} />
+              <SimuladorAhorro initialData={initialData?.subType === "AHORRO" ? initialData : undefined} />
             </div>
           </div>
         )}

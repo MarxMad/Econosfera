@@ -104,56 +104,80 @@ function Slider({
   );
 }
 
-export default function SimuladorMicro() {
+import { useSession } from "next-auth/react";
+
+export default function SimuladorMicro({ initialData }: { initialData?: any }) {
+  const { data: session } = useSession();
   const [mercado, setMercado] = useState<VariablesMercado>(INICIAL_MERCADO);
+  const [baselineMercado, setBaselineMercado] = useState<VariablesMercado>(INICIAL_MERCADO);
   const [elasticidad, setElasticidad] = useState<VariablesElasticidad>(INICIAL_ELAST);
+
+  useEffect(() => {
+    if (initialData?.data?.mercado) setMercado(initialData.data.mercado);
+    if (initialData?.data?.elasticidad) setElasticidad(initialData.data.elasticidad);
+  }, [initialData]);
   const [exportando, setExportando] = useState(false);
 
-  const exportarGrafico = async (id: string, nombre: string) => {
+  const resMercado = useMemo(() => calcularMercado(mercado), [mercado]);
+  const resMercadoBase = useMemo(() => calcularMercado(baselineMercado), [baselineMercado]);
+  const resElast = useMemo(() => calcularElasticidadArco(elasticidad), [elasticidad]);
+
+  const shiftDemanda = mercado.demandaIntercepto !== baselineMercado.demandaIntercepto || mercado.demandaPendiente !== baselineMercado.demandaPendiente;
+  const shiftOferta = mercado.ofertaIntercepto !== baselineMercado.ofertaIntercepto || mercado.ofertaPendiente !== baselineMercado.ofertaPendiente;
+
+  const exportarReporte = async () => {
     setExportando(true);
     try {
-      await exportarGraficoComoPNG(id, nombre);
+      const { exportarMicroAPdf } = await import("@/lib/exportarMicroPdf");
+      const { getGraficoAsDataUrl } = await import("@/lib/exportarGrafico");
+      let chartMercado = null;
+      try {
+        chartMercado = await getGraficoAsDataUrl("grafico-oferta-demanda");
+      } catch (e) { }
+
+      await exportarMicroAPdf({
+        mercado: { v: mercado, res: resMercado, chart: chartMercado },
+        elasticidad: { v: elasticidad, res: resElast }
+      });
     } catch (error) {
-      console.error("Error al exportar gráfico:", error);
-      alert("No se pudo exportar el gráfico. Intenta de nuevo.");
+      console.error("Error al exportar reporte:", error);
+      alert("No se pudo exportar el reporte profesional. Intenta de nuevo.");
     } finally {
       setExportando(false);
     }
   };
 
-  const resMercado = useMemo(() => calcularMercado(mercado), [mercado]);
-  const resElast = useMemo(() => calcularElasticidadArco(elasticidad), [elasticidad]);
-
   const datosCurvas = useMemo(() => {
     if (!resMercado) return [];
-    const a = mercado.demandaIntercepto;
-    const b = mercado.demandaPendiente;
-    const c = mercado.ofertaIntercepto;
-    const d = mercado.ofertaPendiente;
-    const qDemandaCero = a / b;
-    const qMax = Math.max(60, resMercado.cantidadEquilibrio * 2, qDemandaCero * 0.95);
+
+    const qMax = Math.max(60, resMercado.cantidadEquilibrio * 2, (mercado.demandaIntercepto / mercado.demandaPendiente) * 0.95);
     const step = qMax / 80;
     const arr = [];
     const qEquilibrio = resMercado.cantidadEquilibrio;
     const pEquilibrio = resMercado.precioEquilibrio;
-    
+
     for (let q = 0; q <= qMax + step; q += step) {
-      const pd = Math.max(0, a - b * q);
-      const ps = c + d * q;
-      // Para el área del excedente del consumidor: desde q=0 hasta q=Q*, desde P* hasta la demanda
-      const excedenteConsumidor = q <= qEquilibrio ? Math.max(0, pd - pEquilibrio) : 0;
-      // Para el área del excedente del productor: desde q=0 hasta q=Q*, desde la oferta hasta P*
-      const excedenteProductor = q <= qEquilibrio ? Math.max(0, pEquilibrio - ps) : 0;
-      arr.push({ 
-        q: Math.round(q * 100) / 100, 
-        pd, 
+      const pd = Math.max(0, mercado.demandaIntercepto - mercado.demandaPendiente * q);
+      const ps = mercado.ofertaIntercepto + mercado.ofertaPendiente * q;
+
+      const pdBase = Math.max(0, baselineMercado.demandaIntercepto - baselineMercado.demandaPendiente * q);
+      const psBase = baselineMercado.ofertaIntercepto + baselineMercado.ofertaPendiente * q;
+
+      const ec = q <= qEquilibrio ? Math.max(0, pd - pEquilibrio) : 0;
+      const ep = q <= qEquilibrio ? Math.max(0, pEquilibrio - ps) : 0;
+
+      arr.push({
+        q: Math.round(q * 100) / 100,
+        pd,
         ps,
-        ec: excedenteConsumidor,
-        ep: excedenteProductor,
+        pdBase,
+        psBase,
+        ec,
+        ep,
       });
     }
     return arr;
-  }, [mercado, resMercado]);
+  }, [mercado, resMercado, baselineMercado]);
 
   const dominioQ = useMemo(() => {
     if (!resMercado) return [0, 60];
@@ -217,16 +241,46 @@ export default function SimuladorMicro() {
         {/* Gráfico primero para que se vea el efecto al mover */}
         {resMercado && datosCurvas.length > 0 && (
           <div className="mb-6">
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Gráfico: precio (eje Y) vs cantidad (eje X)</p>
-              <button
-                type="button"
-                onClick={() => exportarGrafico("grafico-oferta-demanda", "oferta-demanda.png")}
-                disabled={exportando}
-                className="px-2 py-1 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 rounded hover:bg-blue-100 dark:hover:bg-blue-900/30 disabled:opacity-50 transition-colors"
-              >
-                {exportando ? "..." : <><Download className="w-3.5 h-3.5 inline mr-1" /> Exportar</>}
-              </button>
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Gráfico: precio vs cantidad</p>
+                <button
+                  type="button"
+                  onClick={() => setBaselineMercado(mercado)}
+                  className="text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
+                >
+                  Fijar Escenario Base
+                </button>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={exportarReporte}
+                  disabled={exportando}
+                  className="px-4 py-2 text-sm font-bold text-white bg-slate-900 dark:bg-slate-700 rounded-xl hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50"
+                >
+                  {exportando ? "Generando..." : <><Download className="w-4 h-4 inline mr-2" /> Exportar</>}
+                </button>
+                {session && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      const { saveScenario } = await import("@/lib/actions/scenarioActions");
+                      const resSave = await saveScenario({
+                        type: "MICRO",
+                        name: `Simulación Micro ${new Date().toLocaleDateString()}`,
+                        variables: { mercado, elasticidad },
+                        results: { resMercado, resElast },
+                      });
+                      if (resSave.success) alert("Escenario guardado");
+                      else alert(resSave.error);
+                    }}
+                    className="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition-all shadow-md active:scale-95"
+                  >
+                    Guardar
+                  </button>
+                )}
+              </div>
             </div>
             <div id="grafico-oferta-demanda" className="h-80 rounded-xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-600 p-2">
               <ResponsiveContainer width="100%" height="100%">
@@ -248,52 +302,43 @@ export default function SimuladorMicro() {
                     label={{ value: "Precio (P)", angle: -90, position: "insideLeft", fontSize: 12 }}
                   />
                   <Tooltip
-                    formatter={(val: number, name: string) => [val.toFixed(2), name === "pd" ? "Demanda" : "Oferta"]}
+                    formatter={(val: number, name: string) => [val.toFixed(2), name.includes("Base") ? `${name} (Base)` : name]}
                     labelFormatter={(q) => `Q = ${Number(q).toFixed(2)}`}
                   />
-                  <ReferenceLine
-                    x={resMercado.cantidadEquilibrio}
-                    stroke="#0ea5e9"
-                    strokeDasharray="4 4"
-                    strokeWidth={2}
-                  />
-                  <ReferenceLine
-                    y={resMercado.precioEquilibrio}
-                    stroke="#0ea5e9"
-                    strokeDasharray="4 4"
-                    strokeWidth={2}
-                  />
-                  {/* Excedente del consumidor: área bajo demanda y sobre P* */}
-                  <Area
-                    type="monotone"
-                    dataKey="ec"
-                    stackId="1"
-                    stroke="none"
-                    fill="#3b82f6"
-                    fillOpacity={0.2}
-                    name="Excedente consumidor"
-                  />
-                  {/* Excedente del productor: área sobre oferta y bajo P* */}
-                  <Area
-                    type="monotone"
-                    dataKey="ep"
-                    stackId="2"
-                    stroke="none"
-                    fill="#16a34a"
-                    fillOpacity={0.2}
-                    name="Excedente productor"
-                  />
+
+                  {/* Equilibrio Actual */}
+                  <ReferenceLine x={resMercado.cantidadEquilibrio} stroke="#0ea5e9" strokeDasharray="4 4" strokeWidth={2} label={{ value: 'Actual', position: 'top', fontSize: 10, fill: '#0ea5e9' }} />
+                  <ReferenceLine y={resMercado.precioEquilibrio} stroke="#0ea5e9" strokeDasharray="4 4" strokeWidth={2} />
+
+                  {/* Líneas Base si hay cambio */}
+                  {(shiftDemanda || shiftOferta) && resMercadoBase && (
+                    <>
+                      <ReferenceLine x={resMercadoBase.cantidadEquilibrio} stroke="#94a3b8" strokeDasharray="2 2" label={{ value: 'Base', position: 'top', fontSize: 10, fill: '#94a3b8' }} />
+                      <Line type="monotone" dataKey="pdBase" stroke="#2563eb" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Demanda (Base)" opacity={0.3} />
+                      <Line type="monotone" dataKey="psBase" stroke="#16a34a" strokeWidth={1} strokeDasharray="5 5" dot={false} name="Oferta (Base)" opacity={0.3} />
+                    </>
+                  )}
+
+                  {/* Excedentes */}
+                  <Area type="monotone" dataKey="ec" stackId="1" stroke="none" fill="#3b82f6" fillOpacity={0.2} name="Excedente consumidor" />
+                  <Area type="monotone" dataKey="ep" stackId="2" stroke="none" fill="#16a34a" fillOpacity={0.2} name="Excedente productor" />
+
                   <Line type="monotone" dataKey="pd" stroke="#2563eb" strokeWidth={2.5} dot={false} name="Demanda" />
                   <Line type="monotone" dataKey="ps" stroke="#16a34a" strokeWidth={2.5} dot={false} name="Oferta" />
                   <Legend />
                 </LineChart>
               </ResponsiveContainer>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              Las líneas punteadas marcan el equilibrio: P* = {resMercado.precioEquilibrio.toFixed(2)}, Q* = {resMercado.cantidadEquilibrio.toFixed(2)}.
-              <br />
-              <span className="text-blue-600 dark:text-blue-400">Área azul</span> = Excedente del consumidor. <span className="text-emerald-600 dark:text-emerald-400">Área verde</span> = Excedente del productor.
-            </p>
+            <div className="flex flex-wrap gap-4 mt-2">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
+                P* = {resMercado.precioEquilibrio.toFixed(2)}, Q* = {resMercado.cantidadEquilibrio.toFixed(2)}.
+              </p>
+              {(shiftDemanda || shiftOferta) && resMercadoBase && (
+                <p className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                  Desplazamiento: ΔP = {(resMercado.precioEquilibrio - resMercadoBase.precioEquilibrio).toFixed(2)} | ΔQ = {(resMercado.cantidadEquilibrio - resMercadoBase.cantidadEquilibrio).toFixed(2)}
+                </p>
+              )}
+            </div>
           </div>
         )}
 

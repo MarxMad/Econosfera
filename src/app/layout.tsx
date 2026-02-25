@@ -94,6 +94,9 @@ const jsonLd = {
   },
 };
 
+import { Providers } from "@/components/Providers";
+import Navbar from "@/components/Navbar";
+
 export default function RootLayout({
   children,
 }: {
@@ -115,9 +118,14 @@ export default function RootLayout({
             async
           />
         )}
-        <div className="flex-1 flex flex-col">
-          {children}
-          <Footer />
+        <div className="flex-1 flex flex-col bg-slate-50 dark:bg-slate-950">
+          <Providers>
+            <Navbar />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </Providers>
         </div>
         <CookieConsent />
       </body>

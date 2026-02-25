@@ -1,20 +1,89 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { precioBono } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { FileDown, Save } from "lucide-react";
+import { useSession } from "next-auth/react";
 
-export default function SimuladorBono() {
+export default function SimuladorBono({ initialData }: { initialData?: any }) {
+  const { data: session } = useSession();
+  const [exportando, setExportando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [nominal, setNominal] = useState(100);
-  const [cuponPct, setCuponPct] = useState(6);
-  const [ytmPct, setYtmPct] = useState(7);
-  const [anos, setAnos] = useState(5);
+  const [cuponPct, setCuponPct] = useState(10);
+  const [ytmPct, setYtmPct] = useState(12);
+  const [anios, setAnios] = useState(10);
+
+  useEffect(() => {
+    if (initialData?.data?.nominal) setNominal(initialData.data.nominal);
+    if (initialData?.data?.cuponPct) setCuponPct(initialData.data.cuponPct);
+    if (initialData?.data?.ytmPct) setYtmPct(initialData.data.ytmPct);
+    if (initialData?.data?.anios) setAnios(initialData.data.anios);
+  }, [initialData]);
 
   const { precio, flujos } = useMemo(() => {
-    const n = Math.max(0, Math.floor(anos));
+    const n = Math.max(0, Math.floor(anios));
     if (n === 0) return { precio: nominal, flujos: [] };
     return precioBono(nominal, cuponPct / 100, ytmPct / 100, n);
-  }, [nominal, cuponPct, ytmPct, anos]);
+  }, [nominal, cuponPct, ytmPct, anios]);
+
+  const exportarReporte = async () => {
+    setExportando(true);
+    try {
+      const { exportarFinanzasAPdf } = await import("@/lib/exportarFinanzasPdf");
+
+      await exportarFinanzasAPdf({
+        tipo: 'Bono',
+        titulo: 'Valuación de Bonos',
+        variables: [
+          { label: 'Valor Nominal', valor: `$${nominal}` },
+          { label: 'Tasa Cupón', valor: `${cuponPct}%` },
+          { label: 'YTM (Rendimiento)', valor: `${ytmPct}%` },
+          { label: 'Años al Vencimiento', valor: `${anios}` },
+        ],
+        resultados: [
+          { label: 'Precio Teórico', valor: `$${precio.toFixed(2)}` },
+          { label: 'Cupón Anual', valor: `$${(nominal * cuponPct / 100).toFixed(2)}` },
+        ],
+        extra: {
+          label: 'Flujos de Caja y Valor Presente',
+          columns: ['Año', 'Cupón', 'Principal', 'VP'],
+          data: flujos.map(f => ({
+            periodo: f.periodo,
+            cupon: `$${f.cupon.toFixed(2)}`,
+            principal: f.principal > 0 ? `$${f.principal.toFixed(2)}` : '—',
+            vp: `$${f.vp.toFixed(2)}`
+          }))
+        }
+      });
+    } catch (e) {
+      console.error(e);
+      alert("Error al exportar reporte");
+    } finally {
+      setExportando(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setGuardando(true);
+    try {
+      const { saveScenario } = await import("@/lib/actions/scenarioActions");
+      const resSave = await saveScenario({
+        type: "FINANZAS",
+        subType: "BONO",
+        name: `Bono ${new Date().toLocaleDateString()}`,
+        variables: { nominal, cuponPct, ytmPct, anios },
+        results: { precio },
+      });
+      if (resSave.success) alert("Escenario guardado");
+      else alert(resSave.error);
+    } catch (e) {
+      alert("Error al guardar");
+    } finally {
+      setGuardando(false);
+    }
+  };
 
   const sobrePar = precio > nominal;
   const bajoPar = precio < nominal;
@@ -22,16 +91,40 @@ export default function SimuladorBono() {
 
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg p-5">
-      <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-3">Precio de un bono (valoración)</h3>
-      <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
-        Precio = suma del valor presente de los cupones + VP del principal. Ingresa cualquier valor (sin límites).
-      </p>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+        <div>
+          <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 italic">Precio de un bono (valoración)</h3>
+          <p className="text-xs text-slate-600 dark:text-slate-400">Precio = VP cupones + VP principal</p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={exportarReporte}
+            disabled={exportando}
+            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50"
+          >
+            <FileDown className="w-3.5 h-3.5" />
+            {exportando ? "Generando..." : "Reporte"}
+          </button>
+          {session && (
+            <button
+              type="button"
+              onClick={handleSave}
+              disabled={guardando}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-md active:scale-95 disabled:opacity-50"
+            >
+              <Save className="w-3.5 h-3.5" />
+              {guardando ? "Guardando..." : "Guardar"}
+            </button>
+          )}
+        </div>
+      </div>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <InputLibre label="Valor nominal $" value={nominal} onChange={setNominal} step="0.01" />
           <InputLibre label="Tasa cupón %" value={cuponPct} onChange={setCuponPct} suffix="%" step="0.01" />
           <InputLibre label="YTM (rendimiento) %" value={ytmPct} onChange={setYtmPct} suffix="%" step="0.01" />
-          <InputLibre label="Años al vencimiento" value={anos} onChange={setAnos} step="0.1" />
+          <InputLibre label="Años al vencimiento" value={anios} onChange={setAnios} step="0.1" />
         </div>
         <div className="space-y-3">
           <div className={`rounded-xl border p-4 ${sobrePar ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30" : bajoPar ? "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30" : "border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50"}`}>
@@ -40,13 +133,7 @@ export default function SimuladorBono() {
               {precioValido ? `$${precio.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` : "—"}
             </p>
             <p className="text-xs mt-1 text-slate-500 dark:text-slate-400">
-              {precioValido && (sobrePar ? "Sobre la par (cupón &gt; YTM)" : bajoPar ? "Bajo la par (cupón &lt; YTM)" : "A la par (cupón = YTM)")}
-            </p>
-          </div>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 p-3">
-            <p className="text-xs font-semibold text-slate-500 dark:text-slate-400">Cupón anual</p>
-            <p className="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">
-              ${(nominal * (cuponPct / 100)).toLocaleString("es-MX", { minimumFractionDigits: 2 })}
+              {precioValido && (sobrePar ? "Sobre la par" : bajoPar ? "Bajo la par" : "A la par")}
             </p>
           </div>
         </div>
