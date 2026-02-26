@@ -7,6 +7,8 @@ export async function registerUser(formData: FormData) {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
     const name = formData.get("name") as string;
+    const lastName = formData.get("lastName") as string;
+    const institution = formData.get("institution") as string;
 
     if (!email || !password) {
         return { error: "Email y contraseña son requeridos" };
@@ -28,6 +30,8 @@ export async function registerUser(formData: FormData) {
                 email,
                 password: hashedPassword,
                 name,
+                lastName: lastName || null,
+                institution: institution || null,
                 credits: 10, // Créditos iniciales gratis
             },
         });

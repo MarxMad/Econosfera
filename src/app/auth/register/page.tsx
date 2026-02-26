@@ -3,24 +3,37 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { User, Mail, Lock, ArrowRight, CheckCircle2 } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap } from "lucide-react";
 import { registerUser } from "@/lib/actions/authActions";
 
 export default function RegisterPage() {
-    const [formData, setFormData] = useState({ name: "", email: "", password: "" });
+    const [formData, setFormData] = useState({ name: "", lastName: "", email: "", institution: "", password: "", confirmPassword: "" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const router = useRouter();
+
+    const passwordsMatch = formData.password === formData.confirmPassword;
+    const showPasswordError = formData.confirmPassword.length > 0 && !passwordsMatch;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (!passwordsMatch) {
+            setError("Las contraseñas no coinciden");
+            return;
+        }
+
         setLoading(true);
         setError("");
 
         const data = new FormData();
         data.append("name", formData.name);
+        data.append("lastName", formData.lastName);
         data.append("email", formData.email);
+        data.append("institution", formData.institution);
         data.append("password", formData.password);
 
         const res = await registerUser(data);
@@ -62,18 +75,33 @@ export default function RegisterPage() {
                     )}
 
                     <div className="space-y-4">
-                        <div>
-                            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Nombre</label>
-                            <div className="relative">
-                                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                                <input
-                                    type="text"
-                                    required
-                                    value={formData.name}
-                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
-                                    placeholder="Tu nombre"
-                                />
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Nombre</label>
+                                <div className="relative">
+                                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        placeholder="Tu nombre"
+                                    />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Apellidos</label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        required
+                                        value={formData.lastName}
+                                        onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                        placeholder="Tus apellidos"
+                                    />
+                                </div>
                             </div>
                         </div>
 
@@ -93,17 +121,63 @@ export default function RegisterPage() {
                         </div>
 
                         <div>
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Institución Educativa</label>
+                            <div className="relative">
+                                <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <input
+                                    type="text"
+                                    value={formData.institution}
+                                    onChange={(e) => setFormData({ ...formData, institution: e.target.value })}
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    placeholder="Ej. UNAM, ITAM..."
+                                />
+                            </div>
+                        </div>
+
+                        <div>
                             <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Contraseña</label>
                             <div className="relative">
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     required
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    className="w-full pl-10 pr-12 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                     placeholder="Mínimo 8 caracteres"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div className="flex justify-between items-end mb-1">
+                                <label className="text-xs font-bold uppercase tracking-wider text-slate-500 block">Confirmar Contraseña</label>
+                                {showPasswordError && <span className="text-xs font-bold text-red-500">Las contraseñas no coinciden</span>}
+                            </div>
+                            <div className="relative">
+                                <Lock className={`absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 ${showPasswordError ? 'text-red-400' : 'text-slate-400'}`} />
+                                <input
+                                    type={showConfirmPassword ? "text" : "password"}
+                                    required
+                                    value={formData.confirmPassword}
+                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                    className={`w-full pl-10 pr-12 py-3 rounded-xl border bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 outline-none transition-all ${showPasswordError ? 'border-red-400 focus:ring-red-500' : 'border-slate-200 dark:border-slate-700 focus:ring-blue-500'}`}
+                                    placeholder="Vuelve a escribir la contraseña"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                                >
+                                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
                             </div>
                         </div>
                     </div>
