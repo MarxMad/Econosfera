@@ -244,6 +244,50 @@ export const TERMINOS: TerminoGlosario[] = [
     definicion: "Instrumentos cuyo rendimiento depende de resultados (dividendos, plusvalía). Principalmente acciones.",
     modulo: "finanzas",
   },
+  {
+    termino: "UPA / EPS (Utilidad por Acción)",
+    definicion: "Beneficio neto que corresponde a cada acción en circulación. Se calcula dividiendo la utilidad neta entre el número de acciones.",
+    modulo: "finanzas",
+    formula: "EPS = Utilidad Neta / Acciones en Circulación"
+  },
+  {
+    termino: "P/E Ratio (Price-to-Earnings)",
+    definicion: "Múltiplo que indica cuántas veces el mercado está pagando la utilidad generada por una acción. Mide la valoración de mercado.",
+    modulo: "finanzas",
+    formula: "P/E = Precio por Acción / EPS"
+  },
+  {
+    termino: "ROE (Return on Equity)",
+    definicion: "Rentabilidad financiera. Porcentaje de ganancia neta generada en relación con el capital aportado por los accionistas.",
+    modulo: "finanzas",
+    formula: "ROE = (Utilidad Neta / Capital Contable) * 100"
+  },
+  // Blockchain y Criptomonedas
+  {
+    termino: "Blockchain (Cadena de bloques)",
+    definicion: "Libro mayor descentralizado y distribuido que registra transacciones en múltiples computadoras para evitar modificaciones retroactivas.",
+    modulo: "general",
+  },
+  {
+    termino: "Halving",
+    definicion: "Evento programado en algunas redes (como Bitcoin) que reduce a la mitad la recompensa por bloque minado, disminuyendo el ritmo de emisión de nuevas monedas.",
+    modulo: "general",
+  },
+  {
+    termino: "Proof of Work (PoW)",
+    definicion: "Algoritmo de consenso donde los mineros resuelven acertijos criptográficos complejos para validar transacciones y crear nuevos bloques (ej. Bitcoin).",
+    modulo: "general",
+  },
+  {
+    termino: "Proof of Stake (PoS)",
+    definicion: "Algoritmo de consenso donde los validadores son elegidos en función de la cantidad de tokens que han bloqueado como garantía (ej. Ethereum).",
+    modulo: "general",
+  },
+  {
+    termino: "DeFi (Finanzas Descentralizadas)",
+    definicion: "Ecosistema de aplicaciones financieras (préstamos, intercambios) desarrolladas sobre blockchain mediante contratos inteligentes, operando sin intermediarios tradicionales.",
+    modulo: "general",
+  }
 ];
 
 export function buscarTerminos(query: string): TerminoGlosario[] {

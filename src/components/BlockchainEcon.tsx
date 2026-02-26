@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Link2, Coins, Cpu, Wallet } from "lucide-react";
+import { Link2, Coins, Cpu, Wallet, BookOpen } from "lucide-react";
 import { emisionConHalving, anosPorHalving, datosGraficoHalving } from "@/lib/blockchain";
 import { InputLibre } from "./simuladores-finanzas/InputLibre";
 
@@ -151,35 +151,29 @@ export default function BlockchainEcon() {
         )}
       </div>
 
-      <SeccionBlockchain id="blockchain-intro" titulo="Qué es la economía blockchain" icono={Link2} defaultAbierto={true}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            La <strong>economía blockchain</strong> analiza incentivos, oferta monetaria y comportamiento de actores en redes descentralizadas. Las cadenas de bloques usan <strong>consenso</strong> (Proof of Work, Proof of Stake) para validar transacciones sin un intermediario central. La <strong>emisión</strong> de nuevos unidades (p. ej. por minería) y su programación en el tiempo (halving, tope fijo) afectan la oferta y las expectativas de valor.
-          </p>
-        </div>
-      </SeccionBlockchain>
+      <SeccionBlockchain id="conceptos" titulo="Conceptos y Teoría Blockchain" icono={BookOpen} defaultAbierto={false}>
+        <div className="pt-4 space-y-8 text-sm text-slate-700 dark:text-slate-300">
 
-      <SeccionBlockchain id="mineria-consenso" titulo="Minería y consenso" icono={Cpu}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            En <strong>Proof of Work (PoW)</strong>, los mineros compiten resolviendo problemas criptográficos; quien resuelve primero propone el siguiente bloque y recibe una <strong>recompensa</strong> (nuevas unidades + comisiones). En <strong>Proof of Stake (PoS)</strong>, validadores bloquean garantía (stake) y reciben recompensas por proponer/validar bloques. La seguridad de la red depende de que sea más rentable actuar honestamente que atacar.
-          </p>
-        </div>
-      </SeccionBlockchain>
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Link2 className="w-5 h-5 text-violet-500" /> Intro a Economía Blockchain</h3>
+            <p>La <strong>economía blockchain</strong> analiza incentivos, oferta monetaria y comportamiento de actores en redes descentralizadas. Las cadenas de bloques usan <strong>consenso</strong> (Proof of Work, Proof of Stake) para validar transacciones sin un intermediario central. La <strong>emisión</strong> de nuevos unidades (p. ej. por minería) y su programación en el tiempo (halving, tope fijo) afectan la oferta y las expectativas de valor.</p>
+          </div>
 
-      <SeccionBlockchain id="tokens-oferta" titulo="Tokens y oferta monetaria" icono={Coins}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            Los <strong>tokens</strong> pueden ser la moneda nativa de la cadena (p. ej. BTC, ETH) o activos emitidos sobre ella. La <strong>oferta</strong> puede ser fija (tope máximo), con emisión decreciente (halving) o con reglas de emisión definidas por gobernanza. La combinación oferta/demanda y expectativas influye en el precio y en el uso como medio de pago o reserva de valor.
-          </p>
-        </div>
-      </SeccionBlockchain>
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Cpu className="w-5 h-5 text-blue-500" /> Minería y Consenso</h3>
+            <p>En <strong>Proof of Work (PoW)</strong>, los mineros compiten resolviendo problemas criptográficos; quien resuelve primero propone el siguiente bloque y recibe una recompensa. En <strong>Proof of Stake (PoS)</strong>, validadores bloquean garantía (stake) y reciben recompensas por proponer/validar bloques.</p>
+          </div>
 
-      <SeccionBlockchain id="defi" titulo="Finanzas descentralizadas (DeFi)" icono={Wallet}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            <strong>DeFi</strong> agrupa aplicaciones (préstamos, intercambios, derivados) construidas sobre blockchain, sin intermediarios tradicionales. Los protocolos suelen emitir <strong>tokens de gobernanza</strong> que reparten derechos y a veces parte de los ingresos. La economía de estos tokens y los riesgos (smart contracts, liquidez, regulación) son objeto de estudio en economía blockchain.
-          </p>
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Coins className="w-5 h-5 text-emerald-500" /> Tokens y Oferta Monetaria</h3>
+            <p>Los <strong>tokens</strong> pueden ser la moneda nativa de la cadena (p. ej. BTC, ETH) o activos emitidos sobre ella. La <strong>oferta</strong> puede ser fija (tope máximo), con emisión decreciente (halving) o con reglas de emisión definidas por gobernanza.</p>
+          </div>
+
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Wallet className="w-5 h-5 text-indigo-500" /> Finanzas descentralizadas (DeFi)</h3>
+            <p><strong>DeFi</strong> agrupa aplicaciones (préstamos, intercambios, derivados) construidas sobre blockchain, sin intermediarios tradicionales. Muchos protocolos emiten <strong>tokens de gobernanza</strong> que reparten derechos y a veces parte de los ingresos.</p>
+          </div>
+
         </div>
       </SeccionBlockchain>
     </div>

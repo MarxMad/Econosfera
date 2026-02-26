@@ -10,7 +10,6 @@ import PanelVariables from "@/components/PanelVariables";
 import Resultados from "@/components/Resultados";
 import GraficoSimulacion from "@/components/GraficoSimulacion";
 import GuiaRapida from "@/components/GuiaRapida";
-import ConceptosYFuentes from "@/components/ConceptosYFuentes";
 import FuentesOficialesMexico from "@/components/FuentesOficialesMexico";
 import ReferenciasAcademicas from "@/components/ReferenciasAcademicas";
 import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
@@ -21,7 +20,6 @@ import Finanzas from "@/components/Finanzas";
 import BlockchainEcon from "@/components/BlockchainEcon";
 import Glosario from "@/components/Glosario";
 import Formulas from "@/components/Formulas";
-import PreguntasPractica from "@/components/PreguntasPractica";
 import ComparadorEscenarios from "@/components/ComparadorEscenarios";
 import ExportarCompartir from "@/components/ExportarCompartir";
 import type { VariablesSimulacion } from "@/lib/types";
@@ -53,10 +51,10 @@ export default function SimuladorApp() {
           else if (scenario.type === "FINANZAS") setModulo("finanzas");
           else {
             setModulo("inflacion");
-            // If it's an inflation scenario, it has variables and datosAI in scenario.data
             if (scenario.data) {
-              if (scenario.data.variables) setVariables(scenario.data.variables);
-              if (scenario.data.datosAI) setDatosAI(scenario.data.datosAI);
+              const data = scenario.data as any;
+              if (data.variables) setVariables(data.variables);
+              if (data.datosAI) setDatosAI(data.datosAI);
             }
           }
 
@@ -87,22 +85,11 @@ export default function SimuladorApp() {
         {modulo === "inflacion" && (
           <>
             <div className="mb-6">
-              <ConceptosYFuentes
-                pais={pais}
-                onPaisChange={setPais}
-                onCargarDatosReferencia={cargarDatosReferencia}
-              />
-            </div>
-            <div className="mb-6">
               <AnalisisMinuta
                 onAnalisisComplete={setDatosAI}
                 initialData={datosAI}
               />
             </div>
-            <SeccionFuentesColapsable titulo="Fuentes oficiales y referencias para profundizar" defaultAbierto={false}>
-              <FuentesOficialesMexico />
-              <ReferenciasAcademicas modulo="inflacion" />
-            </SeccionFuentesColapsable>
             <div className="mb-6">
               <GuiaRapida />
             </div>
@@ -162,7 +149,10 @@ export default function SimuladorApp() {
               )}
             </div>
             <div className="mt-6">
-              <PreguntasPractica modulo={modulo} onIrAModulo={setModulo} />
+              <SeccionFuentesColapsable titulo="Fuentes oficiales y referencias para profundizar" defaultAbierto={false}>
+                <FuentesOficialesMexico />
+                <ReferenciasAcademicas modulo="inflacion" />
+              </SeccionFuentesColapsable>
             </div>
           </>
         )}
@@ -175,9 +165,6 @@ export default function SimuladorApp() {
                 <ReferenciasAcademicas modulo="macro" />
               </SeccionFuentesColapsable>
             </div>
-            <div className="mt-6">
-              <PreguntasPractica modulo={modulo} onIrAModulo={setModulo} />
-            </div>
           </>
         )}
         {modulo === "micro" && (
@@ -187,9 +174,6 @@ export default function SimuladorApp() {
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="micro" />
               </SeccionFuentesColapsable>
-            </div>
-            <div className="mt-6">
-              <PreguntasPractica modulo={modulo} onIrAModulo={setModulo} />
             </div>
           </>
         )}
@@ -201,9 +185,6 @@ export default function SimuladorApp() {
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="finanzas" />
               </SeccionFuentesColapsable>
-            </div>
-            <div className="mt-6">
-              <PreguntasPractica modulo={modulo} onIrAModulo={setModulo} />
             </div>
           </>
         )}

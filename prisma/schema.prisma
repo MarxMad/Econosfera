@@ -51,13 +51,99 @@ model User {
   password      String?
   institution   String?
   credits       Int       @default(10)
+  totalScore    Int       @default(0)
+  currentStreak Int       @default(0)
   accounts      Account[]
   sessions      Session[]
   scenarios     Scenario[]
+  quizAttempts  QuizAttempt[]
+  userBadges    UserBadge[]
+  exportsCount  Int       @default(0)
+  plan          String    @default("FREE") // 'FREE', 'PRO', 'RESEARCHER'
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }
 
+model Quiz {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  difficulty  String     // 'BASIC', 'INTERMEDIATE', 'ADVANCED'
+  module      String     // e.g. 'MACRO', 'MICRO', 'FINANZAS'
+  xpReward    Int        @default(10)
+  questions   Question[]
+  attempts    QuizAttempt[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Question {
+  id          String   @id @default(cuid())
+  quizId      String
+  quiz        Quiz     @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  text        String
+  explanation String?  // Explanation shown after answering
+  options     Option[]
+  answers     QuizAnswer[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Option {
+  id         String   @id @default(cuid())
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  text       String
+  isCorrect  Boolean  @default(false)
+  answers    QuizAnswer[]
+}
+
+model QuizAttempt {
+  id        String       @id @default(cuid())
+  userId    String
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  quizId    String
+  quiz      Quiz         @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  score     Int          @default(0)
+  completed Boolean      @default(false)
+  answers   QuizAnswer[]
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+}
+
+model QuizAnswer {
+  id        String      @id @default(cuid())
+  attemptId String
+  attempt   QuizAttempt @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  questionId String
+  question  Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  optionId  String
+  option    Option      @relation(fields: [optionId], references: [id], onDelete: Cascade)
+  isCorrect Boolean
+  createdAt DateTime    @default(now())
+}
+
+model Badge {
+  id          String      @id @default(cuid())
+  name        String      @unique
+  description String
+  imageUrl    String?
+  criteria    String      // e.g. 'COMPLETE_ROOKIE', 'MACRO_MASTER'
+  users       UserBadge[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model UserBadge {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeId   String
+  badge     Badge    @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+  earnedAt  DateTime @default(now())
+
+  @@unique([userId, badgeId])
+}
 model Scenario {
   id        String   @id @default(cuid())
   userId    String
@@ -77,4 +163,13 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model ExportLog {
+  id        String   @id @default(cuid())
+  userId    String?  // Si está logueado
+  visitorId String?  // Id de sesión local o IP simulada si es anónimo
+  type      String   // 'PDF', 'LINK', 'PRINT'
+  module    String   // 'VALUACION', 'VPVF', etc.
+  createdAt DateTime @default(now())
 }

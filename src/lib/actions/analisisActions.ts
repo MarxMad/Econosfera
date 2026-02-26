@@ -1,11 +1,39 @@
 "use server";
 
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+
 export async function analizarMinutaBanxico(formData: FormData) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    throw new Error("Debes iniciar sesión para realizar análisis de IA.");
+  }
+
+  // Verificar créditos
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { credits: true }
+  });
+
+  if (!user || user.credits <= 0) {
+    throw new Error("No tienes créditos de IA suficientes. Por favor, adquiere más créditos.");
+  }
+
   const apiKey = process.env.OPENAI_API_KEY;
 
   if (!apiKey) {
     throw new Error("OPENAI_API_KEY no configurada en el servidor.");
   }
+
+  // Descontar crédito antes de la llamada (o después, pero el usuario quiere control de vaciado)
+  // Lo haremos antes para evitar carreras o si falla algo, pero podríamos hacerlo después si queremos ser "justos".
+  // El usuario dice "que no nos vayan a vaciar", mejor descontar antes o marcar como pendiente.
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { credits: { decrement: 1 } }
+  });
 
   const file = formData.get("file") as File;
   if (!file) {

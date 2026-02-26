@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import MiniSimulator from "@/components/home/MiniSimulator";
+import MiniValuacion from "@/components/home/MiniValuacion";
 import MiniSimulatorSeguros from "@/components/home/MiniSimulatorSeguros";
 import AuthModal from "@/components/home/AuthModal";
 
@@ -39,11 +40,11 @@ export default function Home() {
             </div>
 
             <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white mb-6 leading-[1.1]">
-              Decisiones económicas <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">con precisión.</span>
+              Domina la <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">Ciencia Económica</span> con IA.
             </h1>
 
             <p className="text-slate-300 text-lg md:text-xl mb-10 max-w-xl leading-relaxed">
-              Plataforma diseñada para estudiantes de <span className="text-white font-bold">Economía, Actuaría y Administración</span>. Analiza minutas con IA, modela escenarios macro y calcula primas financieras en un solo lugar.
+              La terminal de análisis definitivo para <span className="text-white font-bold">Economistas y Actuarios</span>. Modela equilibrios de mercado, analiza minutas de Banxico con IA y proyecta valuaciones bursátiles en segundos.
             </p>
 
             <ul className="space-y-4 text-slate-300 mb-10 font-medium">
@@ -78,8 +79,9 @@ export default function Home() {
 
           <div className="w-full max-w-md mx-auto lg:ml-auto relative mt-12 lg:mt-0 lg:scale-[1.05] transform origin-right">
             <div className="absolute inset-0 bg-blue-500/20 blur-3xl rounded-full" />
-            <div className="relative space-y-6 max-h-[75vh] overflow-y-auto no-scrollbar pb-10">
+            <div className="relative space-y-6 max-h-[85vh] overflow-y-auto no-scrollbar pb-10 pr-2">
               <MiniSimulator />
+              <MiniValuacion />
               <MiniSimulatorSeguros />
             </div>
           </div>
@@ -137,6 +139,42 @@ export default function Home() {
               <div className="absolute top-4 right-4 bg-purple-500/10 text-purple-500 text-xs font-bold px-2 py-1 rounded-full border border-purple-500/20">
                 Próximamente
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Parallax / Featured Section */}
+      <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+        {/* Parallax Background Effect */}
+        <div
+          className="absolute inset-0 z-0 bg-fixed bg-cover bg-center transition-transform hover:scale-110 duration-[3000ms]"
+          style={{
+            backgroundImage: "linear-gradient(rgba(15, 23, 42, 0.7), rgba(15, 23, 42, 0.7)), url('https://images.unsplash.com/photo-1611974717482-97217830ce12?q=80&w=2670&auto=format&fit=crop')"
+          }}
+        />
+
+        <div className="relative z-10 text-center px-4 max-w-4xl">
+          <h2 className="text-4xl md:text-6xl font-black text-white mb-6 uppercase tracking-tighter">
+            Domina los <span className="text-blue-400">Datos Financieros</span>
+          </h2>
+          <p className="text-xl md:text-2xl text-slate-300 font-medium mb-10">
+            Únete a la nueva generación de economistas que usan Inteligencia Artificial para modelar el futuro.
+          </p>
+          <div className="flex flex-wrap justify-center gap-6">
+            <div className="flex flex-col items-center">
+              <span className="text-4xl font-black text-white">+5k</span>
+              <span className="text-sm text-slate-400 font-bold uppercase tracking-widest">Simulaciones</span>
+            </div>
+            <div className="h-12 w-[1px] bg-slate-700 hidden sm:block" />
+            <div className="flex flex-col items-center">
+              <span className="text-4xl font-black text-white">+20</span>
+              <span className="text-sm text-slate-400 font-bold uppercase tracking-widest">Modelos</span>
+            </div>
+            <div className="h-12 w-[1px] bg-slate-700 hidden sm:block" />
+            <div className="flex flex-col items-center">
+              <span className="text-4xl font-black text-white">100%</span>
+              <span className="text-sm text-slate-400 font-bold uppercase tracking-widest">Digital</span>
             </div>
           </div>
         </div>

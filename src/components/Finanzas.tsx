@@ -10,7 +10,11 @@ import {
   SimuladorAhorro,
   FlujoSistemaFinanciero,
   MapaInstrumentos,
+  MapaEstructuraCapital,
+  SimuladorValuacion,
+  SimuladorDCF
 } from "./simuladores-finanzas";
+import { BookOpen } from "lucide-react";
 
 interface SeccionFinanzasProps {
   id: string;
@@ -84,7 +88,7 @@ export default function Finanzas({ onIrAModulo, initialData }: FinanzasProps) {
         >
           <span className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-100">
             <Calculator className="w-5 h-5 text-emerald-600 dark:text-emerald-400" aria-hidden />
-            Simuladores y mapas conceptuales
+            Calculadoras y Simuladores Financieros
           </span>
           <span className="text-slate-500 dark:text-slate-400 text-sm">
             {mostrarSimuladores ? "Ocultar" : "Ver más"}
@@ -92,14 +96,6 @@ export default function Finanzas({ onIrAModulo, initialData }: FinanzasProps) {
         </button>
         {mostrarSimuladores && (
           <div className="px-5 pb-5 pt-0 border-t border-slate-200 dark:border-slate-700 space-y-6">
-            <div className="grid gap-4 pt-4">
-              <div className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-400">
-                <GitBranch className="w-4 h-4" aria-hidden />
-                Flujos y mapas
-              </div>
-              <FlujoSistemaFinanciero />
-              <MapaInstrumentos />
-            </div>
             <div className="grid gap-4">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-400">
                 <Map className="w-4 h-4" aria-hidden />
@@ -109,107 +105,65 @@ export default function Finanzas({ onIrAModulo, initialData }: FinanzasProps) {
               <SimuladorBono initialData={initialData?.subType === "BONO" ? initialData : undefined} />
               <SimuladorCetes initialData={initialData?.subType === "CETES" ? initialData : undefined} />
               <SimuladorAhorro initialData={initialData?.subType === "AHORRO" ? initialData : undefined} />
+              <div className="flex items-center gap-2 text-sm font-semibold text-slate-600 dark:text-slate-400">
+                <BarChart2 className="w-4 h-4" aria-hidden />
+                Valuación y Ratios
+              </div>
+              <SimuladorValuacion initialData={initialData?.subType === "VALUACION" ? initialData : undefined} />
+              <SimuladorDCF />
             </div>
           </div>
         )}
       </div>
 
-      <SeccionFinanzas id="clasificacion-mercados" titulo="Características y clasificación de los mercados financieros" icono={BarChart2}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            Los mercados financieros se clasifican según el <strong>plazo</strong>, el <strong>tipo de renta</strong> y el <strong>momento de la operación</strong>.
-          </p>
-          <ul className="list-disc pl-5 space-y-2">
-            <li><strong>Por tiempo:</strong> <strong>Mercados de corto plazo</strong> (menor a un año): dinero, cetes, pagarés. <strong>Mercados de largo plazo</strong> (más de un año): bonos, obligaciones, acciones.</li>
-            <li><strong>Por renta:</strong> <strong>Renta fija</strong> (flujos predecibles: cupones y principal) y <strong>Renta variable</strong> (dividendos y plusvalía, ej. acciones).</li>
-            <li><strong>Mercado primario y secundario:</strong> En el <strong>primario</strong> el emisor coloca los valores por primera vez (IPO, colocación de bonos). En el <strong>secundario</strong> los inversionistas compran y venden entre sí (bolsa), dando liquidez.</li>
-          </ul>
-        </div>
-      </SeccionFinanzas>
+      <SeccionFinanzas id="conceptos" titulo="Conceptos y Estructura del Mercado" icono={BookOpen} defaultAbierto={false}>
+        <div className="pt-4 space-y-8 text-sm text-slate-700 dark:text-slate-300">
 
-      <SeccionFinanzas id="estructura-mercados" titulo="Estructura de los mercados financieros" icono={Layers}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            La estructura distingue mercados <strong>bursátiles</strong> (organizados, en bolsa) y <strong>extrabursátiles</strong> (OTC, fuera de bolsa).
-          </p>
-          <div className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 p-4 space-y-3">
-            <p className="font-semibold text-slate-800 dark:text-slate-100">Bursátiles</p>
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Building2 className="w-5 h-5 text-blue-500" /> Bancos e intermediación financiera</h3>
+            <p>Los <strong>bancos</strong> son instituciones que captan recursos del público (depósitos) y los canalizan hacia el crédito y la inversión. Intermedian entre ahorradores y demandantes de financiamiento. En México, la regulación y supervisión corresponde a la CNBV y el Banco de México.</p>
             <ul className="list-disc pl-5 space-y-1">
-              <li><strong>Mercado de valores:</strong> Acciones, bonos y otros valores listados en bolsa (BMV, etc.).</li>
-              <li><strong>Mercado de derivados:</strong> Futuros y opciones sobre índices, tasas o subyacentes, negociados en bolsa.</li>
-            </ul>
-            <p className="font-semibold text-slate-800 dark:text-slate-100 pt-2">Extrabursátiles (OTC)</p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li><strong>Monedas y metales:</strong> Divisas, metales preciosos; spot y derivados OTC.</li>
-              <li><strong>Derivados OTC:</strong> <strong>Forwards</strong> (contratos a plazo), <strong>swaps</strong> (intercambio de flujos, ej. tasas o divisas), <strong>warrants</strong> (opciones emitidas por instituciones).</li>
+              <li><strong>Banca comercial:</strong> Depósitos, créditos al consumo, hipotecas, tarjetas.</li>
+              <li><strong>Banca de desarrollo:</strong> Financiamiento a sectores prioritarios (Bancomext, Nafin, etc.).</li>
+              <li><strong>Banco central:</strong> Emisión de moneda, tasa de interés de referencia, prestamista de última instancia.</li>
             </ul>
           </div>
-        </div>
-      </SeccionFinanzas>
 
-      <SeccionFinanzas id="bancos" titulo="Bancos e intermediación financiera" icono={Building2} defaultAbierto={true}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            Los <strong>bancos</strong> son instituciones que captan recursos del público (depósitos) y los canalizan hacia el crédito y la inversión. Intermedian entre ahorradores y demandantes de financiamiento. En México, la regulación y supervisión corresponde a la CNBV y el Banco de México (política monetaria y sistema de pagos).
-          </p>
-          <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Banca comercial:</strong> Depósitos, créditos al consumo, hipotecas, tarjetas.</li>
-            <li><strong>Banca de desarrollo:</strong> Financiamiento a sectores prioritarios (Bancomext, Nafin, etc.).</li>
-            <li><strong>Banco central:</strong> Emisión de moneda, tasa de interés de referencia, prestamista de última instancia.</li>
-          </ul>
-        </div>
-      </SeccionFinanzas>
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Wallet className="w-5 h-5 text-emerald-500" /> Instrumentos financieros</h3>
+            <p>Son contratos o activos que representan un derecho a flujos de efectivo. Se clasifican en <strong>instrumentos de deuda</strong> (préstamos, bonos, cetes) e <strong>instrumentos de capital</strong> (acciones).</p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li><strong>Renta fija:</strong> Pagos conocidos (cupones, principal). Ej.: bonos, cetes, pagarés.</li>
+              <li><strong>Renta variable:</strong> Rendimiento ligado a resultados (dividendos, plusvalía). Ej.: acciones.</li>
+            </ul>
+          </div>
 
-      <SeccionFinanzas id="instrumentos-financieros" titulo="Instrumentos financieros" icono={Wallet}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            Son contratos o activos que representan un derecho a flujos de efectivo (renta fija, variable o mixta). Se clasifican en <strong>instrumentos de deuda</strong> (préstamos, bonos, cetes) y <strong>instrumentos de capital</strong> (acciones). También existen <strong>derivados</strong> (futuros, opciones, swaps) cuyo valor depende de un subyacente.
-          </p>
-          <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Renta fija:</strong> Pagos conocidos (cupones, principal). Ej.: bonos, cetes, pagarés.</li>
-            <li><strong>Renta variable:</strong> Rendimiento ligado a resultados (dividendos, plusvalía). Ej.: acciones.</li>
-            <li><strong>Instrumentos híbridos:</strong> Características de deuda y capital (acciones preferentes, obligaciones convertibles).</li>
-          </ul>
-        </div>
-      </SeccionFinanzas>
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Layers className="w-5 h-5 text-indigo-500" /> Estructura y clasificación de los mercados financieros</h3>
+            <p>Los mercados financieros se clasifican según el <strong>plazo</strong>, el <strong>tipo de renta</strong> y la <strong>estructura (bursátiles/extrabursátiles)</strong>.</p>
+            <div className="rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 p-4 space-y-3">
+              <p className="font-semibold text-slate-800 dark:text-slate-100">Por plazo y renta:</p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li><strong>Corto plazo:</strong> mercado de dinero (cetes, pagarés).</li>
+                <li><strong>Largo plazo y variable:</strong> mercado de capitales (bonos largos, acciones).</li>
+              </ul>
+              <p className="font-semibold text-slate-800 dark:text-slate-100 pt-2">Bursátiles y Extrabursátiles:</p>
+              <ul className="list-disc pl-5 space-y-1">
+                <li><strong>Bursátiles (BMV, NYSE):</strong> Mercados organizados para la negociación listada con alta regulación.</li>
+                <li><strong>Extrabursátiles (OTC):</strong> Acuerdos a la medida fuera de la bolsa, como swaps o forwards.</li>
+              </ul>
+            </div>
+          </div>
 
-      <SeccionFinanzas id="instrumentos-deuda" titulo="Instrumentos de deuda" icono={FileText}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            Son compromisos de pago: el emisor debe devolver el principal y, en su caso, intereses (cupones). Incluyen valores gubernamentales y corporativos.
-          </p>
-          <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Cetes (México):</strong> Certificados de la Tesorería a plazos (28 días a 1 año). Tasa descontada, sin cupones.</li>
-            <li><strong>Bondes / Udibonos:</strong> Bonos del gobierno federal a mediano y largo plazo; Udibonos indexados a inflación.</li>
-            <li><strong>Pagarés bursátiles:</strong> Emitidos por empresas en el mercado de valores.</li>
-            <li><strong>Obligaciones:</strong> Deuda corporativa con cupones periódicos.</li>
-          </ul>
-        </div>
-      </SeccionFinanzas>
-
-      <SeccionFinanzas id="titulos-deuda" titulo="Títulos de deuda y bursátil" icono={Landmark}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            Los <strong>títulos de deuda</strong> son valores que representan un crédito frente al emisor (gobierno o empresa). Se negocian en mercados primarios (emisión) y secundarios (reventa). La <strong>bolsa de valores</strong> (BMV en México) es el mercado organizado donde se colocan y operan acciones y diversos instrumentos de deuda.
-          </p>
-          <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Mercado de deuda:</strong> Gubernamental (cetes, bondes) y corporativo (pagarés, obligaciones).</li>
-            <li><strong>Mercado de capitales (bursátil):</strong> Acciones (capital) y valores de deuda listados.</li>
-            <li><strong>Índices bursátiles:</strong> IPC (BMV), S&P 500, etc.; miden el rendimiento de una canasta de acciones.</li>
-          </ul>
-        </div>
-      </SeccionFinanzas>
-
-      <SeccionFinanzas id="bursatil" titulo="Mercado bursátil" icono={TrendingUp}>
-        <div className="pt-4 space-y-4 text-sm text-slate-700 dark:text-slate-300">
-          <p>
-            El <strong>mercado bursátil</strong> (o de valores) es el espacio donde se emiten y negocian acciones, títulos de deuda y otros valores. Facilita la canalización del ahorro hacia la inversión y ofrece liquidez mediante la compraventa en el mercado secundario.
-          </p>
-          <ul className="list-disc pl-5 space-y-1">
-            <li><strong>Mercado primario:</strong> Oferta inicial de valores (IPO en acciones; colocación de bonos).</li>
-            <li><strong>Mercado secundario:</strong> Operaciones entre inversionistas (bolsa).</li>
-            <li><strong>BMV (México):</strong> Bolsa Mexicana de Valores; listado de acciones, ETF, fideicomisos y deuda.</li>
-          </ul>
+          <div className="space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Map className="w-5 h-5 text-amber-500" /> Flujos y Mapas Visuales</h3>
+            <p className="mb-4">Esquemas y diagramas interactivos para visualizar la intermediación, los tipos de instrumentos y cómo se estructura el riesgo de inversión.</p>
+            <div className="grid gap-6">
+              <FlujoSistemaFinanciero />
+              <MapaInstrumentos />
+              <MapaEstructuraCapital />
+            </div>
+          </div>
         </div>
       </SeccionFinanzas>
     </div>

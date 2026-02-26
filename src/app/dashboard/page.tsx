@@ -3,37 +3,59 @@
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { getScenarios, deleteScenario } from "@/lib/actions/scenarioActions";
-import { Trash2, ExternalLink, Calculator, TrendingUp, Landmark, Clock, Play } from "lucide-react";
+import { getUserStats } from "@/lib/actions/quizActions";
+import { Trash2, ExternalLink, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Trophy, Flame } from "lucide-react";
 import Link from "next/link";
+
+import { resendVerification } from "@/lib/actions/authActions";
+import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 
 export default function DashboardPage() {
     const { data: session, status } = useSession();
     const [scenarios, setScenarios] = useState<any[]>([]);
+    const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [emailSent, setEmailSent] = useState(false);
+    const [emailLoading, setEmailLoading] = useState(false);
 
     useEffect(() => {
         if (session) {
-            loadScenarios();
+            loadData();
         }
     }, [session]);
 
-    const loadScenarios = async () => {
+    const loadData = async () => {
         setLoading(true);
-        const data = await getScenarios();
+        const [data, s] = await Promise.all([getScenarios(), getUserStats()]);
         setScenarios(data);
+        setStats(s);
         setLoading(false);
+    };
+
+    const handleResendEmail = async () => {
+        setEmailLoading(true);
+        const res = await resendVerification();
+        if (res.success) {
+            setEmailSent(true);
+            alert("Correo enviado con éxito. Revisa tu bandeja de entrada.");
+        } else {
+            alert(res.error || "Algo salió mal.");
+        }
+        setEmailLoading(false);
     };
 
     const handleDelete = async (id: string) => {
         if (confirm("¿Estás seguro de eliminar este escenario?")) {
             const res = await deleteScenario(id);
-            if (res.success) loadScenarios();
+            if (res.success) loadData();
             else alert(res.error);
         }
     };
 
     if (status === "loading") return <div className="p-10 text-center">Cargando...</div>;
     if (!session) return <div className="p-10 text-center">Debes iniciar sesión.</div>;
+
+    const isVerified = session?.user?.emailVerified || false;
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
@@ -48,10 +70,17 @@ export default function DashboardPage() {
                     {/* Tarjeta de Perfil y Verificación */}
                     <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg relative overflow-hidden">
                         <div className="absolute top-0 right-0 p-4">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500 border border-amber-200 dark:border-amber-800">
-                                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                Pendiente de Verificar
-                            </span>
+                            {isVerified ? (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-500 border border-emerald-200 dark:border-emerald-800">
+                                    <CheckCircle2 className="w-3.5 h-3.5" />
+                                    Verificado
+                                </span>
+                            ) : (
+                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500 border border-amber-200 dark:border-amber-800">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                                    Pendiente
+                                </span>
+                            )}
                         </div>
                         <div className="flex items-center gap-4 mb-6">
                             <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 p-0.5 shadow-md">
@@ -67,54 +96,83 @@ export default function DashboardPage() {
                             </div>
                         </div>
 
-                        <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-100 dark:border-amber-900/50 mb-4">
-                            <h4 className="text-sm font-bold text-amber-900 dark:text-amber-500 mb-1">Verifica tu correo</h4>
-                            <p className="text-xs text-amber-700 dark:text-amber-600/80 mb-3">
-                                Para evitar spam y asegurar tus créditos IA, te enviaremos un enlace de confirmación.
-                            </p>
-                            <button className="w-full py-2 bg-amber-500 hover:bg-amber-600 text-white text-xs font-bold rounded-xl transition-colors shadow-sm">
-                                Enviar correo de verificación
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Tarjeta de Créditos */}
-                    <div className="bg-gradient-to-br from-blue-600 to-blue-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
-                        <div className="absolute -right-4 -top-4 opacity-10">
-                            <TrendingUp className="w-32 h-32" />
-                        </div>
-                        <h3 className="text-sm font-semibold uppercase tracking-wider opacity-80 mb-1 relative z-10">Créditos AI disponibles</h3>
-                        <div className="flex items-end gap-2 mb-4 relative z-10">
-                            <p className="text-5xl font-black">{session.user.credits}</p>
-                            <span className="text-blue-200 mb-1">/ 100</span>
-                        </div>
-                        <div className="h-2 bg-blue-900/50 rounded-full mb-4 overflow-hidden relative z-10">
-                            <div className="h-full bg-emerald-400 rounded-full" style={{ width: `${Math.min((session.user.credits / 100) * 100, 100)}%` }} />
-                        </div>
-                        <button className="w-full py-2.5 bg-white text-blue-700 font-bold rounded-xl hover:bg-blue-50 transition-colors relative z-10 shadow-sm">
-                            Adquirir más créditos
-                        </button>
-                    </div>
-
-                    {/* Resumen de Actividad */}
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
-                        <h3 className="font-bold text-slate-900 dark:text-white mb-4">Métricas de Estudio</h3>
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-lg"><Calculator className="w-4 h-4" /></div>
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Escenarios listos</span>
+                        {!isVerified && (
+                            <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-100 dark:border-amber-900/50 mb-4">
+                                <div className="flex items-start gap-2 mb-1">
+                                    <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
+                                    <h4 className="text-sm font-bold text-amber-900 dark:text-amber-500">Verificación pendiente</h4>
                                 </div>
-                                <span className="font-black text-lg text-slate-900 dark:text-white">{scenarios.length}</span>
+                                <p className="text-xs text-amber-700 dark:text-amber-600/80 mb-3">
+                                    Confirma tu identidad para asegurar tus créditos IA y habilitar exportaciones ilimitadas.
+                                </p>
+                                <button
+                                    onClick={handleResendEmail}
+                                    disabled={emailLoading || emailSent}
+                                    className="w-full py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2"
+                                >
+                                    {emailLoading && <Loader2 className="w-3 h-3 animate-spin" />}
+                                    {emailSent ? "Correo enviado" : "Enviar enlace de verificación"}
+                                </button>
                             </div>
-                            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50">
-                                <div className="flex items-center gap-3">
-                                    <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded-lg"><Landmark className="w-4 h-4" /></div>
-                                    <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Módulos visitados</span>
+                        )}
+                    </div>
+
+                    {/* Tarjeta de Créditos e IA */}
+                    <div className="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+                        <div className="absolute -right-4 -top-4 opacity-10">
+                            <BrainCircuit className="w-32 h-32" />
+                        </div>
+                        <h3 className="text-sm font-semibold uppercase tracking-wider opacity-80 mb-1 relative z-10">IA & Análisis</h3>
+                        <div className="flex items-end gap-2 mb-4 relative z-10">
+                            <p className="text-5xl font-black">{stats?.credits !== undefined ? stats.credits : session.user.credits}</p>
+                            <span className="text-blue-200 mb-1">créditos</span>
+                        </div>
+
+                        <div className="space-y-4 relative z-10">
+                            <div className="p-3 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm">
+                                <div className="flex justify-between text-xs font-bold uppercase mb-2">
+                                    <span>Exportaciones (Free)</span>
+                                    <span>{stats?.exportsCount || 0} / 3</span>
                                 </div>
-                                <span className="font-black text-lg text-slate-900 dark:text-white">
-                                    {new Set(scenarios.map(s => s.type)).size}
-                                </span>
+                                <div className="h-2 bg-blue-950/30 rounded-full overflow-hidden">
+                                    <div
+                                        className={`h-full rounded-full transition-all duration-1000 ${(stats?.exportsCount || 0) >= 3 ? 'bg-rose-400' : 'bg-emerald-400'
+                                            }`}
+                                        style={{ width: `${Math.min(((stats?.exportsCount || 0) / 3) * 100, 100)}%` }}
+                                    />
+                                </div>
+                                <p className="text-[10px] mt-2 opacity-70">Límite mensual para usuarios gratuitos.</p>
+                            </div>
+
+                            <Link href="/pricing" className="block w-full py-3 bg-white text-blue-700 text-center font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm active:scale-[0.98]">
+                                Subir a Pro (Ilimitado)
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Resumen de Actividad Académica */}
+                    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+                        <h3 className="font-bold text-slate-900 dark:text-white mb-4">Progreso Económico</h3>
+                        <div className="space-y-3">
+                            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+                                <span className="text-sm text-slate-500">XP Acumulada</span>
+                                <span className="font-black text-indigo-600 dark:text-indigo-400">{stats?.totalScore || 0} XP</span>
+                            </div>
+                            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
+                                <span className="text-sm text-slate-500">Racha de Estudio</span>
+                                <div className="flex items-center gap-1.5 text-amber-500 font-black">
+                                    <Flame className="w-4 h-4" fill="currentColor" /> {stats?.currentStreak || 0} días
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3 mt-2">
+                                <div className="p-3 bg-blue-50 dark:bg-blue-900/10 rounded-xl border border-blue-100 dark:border-blue-900/30 text-center">
+                                    <p className="text-[10px] text-blue-500 font-bold uppercase tracking-widest mb-1">Escenarios</p>
+                                    <p className="text-xl font-black text-blue-700 dark:text-blue-400">{scenarios.length}</p>
+                                </div>
+                                <div className="p-3 bg-emerald-50 dark:bg-emerald-900/10 rounded-xl border border-emerald-100 dark:border-emerald-900/30 text-center">
+                                    <p className="text-[10px] text-emerald-500 font-bold uppercase tracking-widest mb-1">Badges</p>
+                                    <p className="text-xl font-black text-emerald-700 dark:text-emerald-400">{stats?.userBadges?.length || 0}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -143,12 +201,12 @@ export default function DashboardPage() {
                             </div>
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-300">Leer Manual</span>
                         </Link>
-                        <div className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/30 border border-slate-200 dark:border-slate-700 opacity-70 cursor-not-allowed">
-                            <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-400 flex items-center justify-center">
-                                <ExternalLink className="w-5 h-5" />
+                        <Link href="/cuestionarios" className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 hover:shadow-md transition-all group">
+                            <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <BrainCircuit className="w-5 h-5" />
                             </div>
-                            <span className="text-xs font-bold text-slate-500">Exámenes</span>
-                        </div>
+                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">Cuestionarios</span>
+                        </Link>
                     </div>
 
                     <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
@@ -157,7 +215,7 @@ export default function DashboardPage() {
                                 <h2 className="text-2xl font-black text-slate-900 dark:text-white">Mis Escenarios</h2>
                                 <p className="text-sm text-slate-500 mt-1">Recupera tus proyecciones y reportes IA guardados.</p>
                             </div>
-                            <button onClick={loadScenarios} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            <button onClick={loadData} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
                                 Actualizar
                             </button>
                         </div>
@@ -185,8 +243,8 @@ export default function DashboardPage() {
 
                                         {/* Color accent line */}
                                         <div className={`absolute left-0 top-0 bottom-0 w-1 ${s.type === 'MACRO' ? 'bg-blue-500' :
-                                                s.type === 'MICRO' ? 'bg-emerald-500' :
-                                                    'bg-amber-500'
+                                            s.type === 'MICRO' ? 'bg-emerald-500' :
+                                                'bg-amber-500'
                                             }`}
                                         />
 

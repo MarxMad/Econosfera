@@ -49,6 +49,9 @@ export const authOptions: NextAuthOptions = {
                     name: user.name,
                     image: user.image,
                     credits: user.credits,
+                    exportsCount: (user as any).exportsCount,
+                    plan: (user as any).plan,
+                    emailVerified: user.emailVerified,
                 };
             },
         }),
@@ -61,6 +64,9 @@ export const authOptions: NextAuthOptions = {
                 session.user.email = token.email;
                 session.user.image = token.picture;
                 session.user.credits = token.credits;
+                session.user.exportsCount = token.exportsCount;
+                session.user.plan = token.plan;
+                session.user.emailVerified = token.emailVerified as Date | null;
             }
             return session;
         },
@@ -82,6 +88,9 @@ export const authOptions: NextAuthOptions = {
                 email: dbUser.email,
                 picture: dbUser.image,
                 credits: dbUser.credits,
+                exportsCount: (dbUser as any).exportsCount,
+                plan: (dbUser as any).plan,
+                emailVerified: dbUser.emailVerified,
             };
         },
     },
