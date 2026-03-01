@@ -6,17 +6,13 @@ import { getScenarios, deleteScenario } from "@/lib/actions/scenarioActions";
 import { getUserStats } from "@/lib/actions/quizActions";
 import { Trash2, ExternalLink, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Trophy, Flame } from "lucide-react";
 import Link from "next/link";
-
-import { resendVerification } from "@/lib/actions/authActions";
-import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
+import ProfileCard from "@/components/ProfileCard";
 
 export default function DashboardPage() {
     const { data: session, status } = useSession();
     const [scenarios, setScenarios] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
-    const [emailSent, setEmailSent] = useState(false);
-    const [emailLoading, setEmailLoading] = useState(false);
 
     useEffect(() => {
         if (session) {
@@ -32,18 +28,6 @@ export default function DashboardPage() {
         setLoading(false);
     };
 
-    const handleResendEmail = async () => {
-        setEmailLoading(true);
-        const res = await resendVerification();
-        if (res.success) {
-            setEmailSent(true);
-            alert("Correo enviado con éxito. Revisa tu bandeja de entrada.");
-        } else {
-            alert(res.error || "Algo salió mal.");
-        }
-        setEmailLoading(false);
-    };
-
     const handleDelete = async (id: string) => {
         if (confirm("¿Estás seguro de eliminar este escenario?")) {
             const res = await deleteScenario(id);
@@ -55,8 +39,6 @@ export default function DashboardPage() {
     if (status === "loading") return <div className="p-10 text-center">Cargando...</div>;
     if (!session) return <div className="p-10 text-center">Debes iniciar sesión.</div>;
 
-    const isVerified = session?.user?.emailVerified || false;
-
     return (
         <div className="max-w-7xl mx-auto px-4 py-8">
             <header className="mb-8">
@@ -67,55 +49,8 @@ export default function DashboardPage() {
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Left Column: Stats, Profile & Credits */}
                 <div className="space-y-6">
-                    {/* Tarjeta de Perfil y Verificación */}
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-4">
-                            {isVerified ? (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-500 border border-emerald-200 dark:border-emerald-800">
-                                    <CheckCircle2 className="w-3.5 h-3.5" />
-                                    Verificado
-                                </span>
-                            ) : (
-                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500 border border-amber-200 dark:border-amber-800">
-                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
-                                    Pendiente
-                                </span>
-                            )}
-                        </div>
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 p-0.5 shadow-md">
-                                <div className="w-full h-full bg-slate-900 rounded-2xl flex items-center justify-center text-xl font-black text-white">
-                                    {session.user.name?.charAt(0) || session.user.email?.charAt(0) || 'U'}
-                                </div>
-                            </div>
-                            <div>
-                                <h2 className="font-bold text-lg text-slate-900 dark:text-white leading-tight">
-                                    {session.user.name || 'Usuario'}
-                                </h2>
-                                <p className="text-xs text-slate-500 truncate max-w-[150px]">{session.user.email}</p>
-                            </div>
-                        </div>
-
-                        {!isVerified && (
-                            <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-100 dark:border-amber-900/50 mb-4">
-                                <div className="flex items-start gap-2 mb-1">
-                                    <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
-                                    <h4 className="text-sm font-bold text-amber-900 dark:text-amber-500">Verificación pendiente</h4>
-                                </div>
-                                <p className="text-xs text-amber-700 dark:text-amber-600/80 mb-3">
-                                    Confirma tu identidad para asegurar tus créditos IA y habilitar exportaciones ilimitadas.
-                                </p>
-                                <button
-                                    onClick={handleResendEmail}
-                                    disabled={emailLoading || emailSent}
-                                    className="w-full py-2 bg-amber-500 hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed text-white text-xs font-bold rounded-xl transition-colors shadow-sm flex items-center justify-center gap-2"
-                                >
-                                    {emailLoading && <Loader2 className="w-3 h-3 animate-spin" />}
-                                    {emailSent ? "Correo enviado" : "Enviar enlace de verificación"}
-                                </button>
-                            </div>
-                        )}
-                    </div>
+                    {/* Tarjeta de Perfil (foto, datos, verificación) */}
+                    <ProfileCard />
 
                     {/* Tarjeta de Créditos e IA */}
                     <div className="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
@@ -182,30 +117,12 @@ export default function DashboardPage() {
                 <div className="lg:col-span-2 space-y-6">
 
                     {/* Acciones Rápidas */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <Link href="/simulador" className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 hover:shadow-md transition-all group">
-                            <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <TrendingUp className="w-5 h-5" />
+                    <div className="w-full">
+                        <Link href="/cuestionarios" className="flex flex-col items-center justify-center gap-3 w-full min-h-[120px] md:min-h-[140px] p-6 md:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 hover:shadow-lg transition-all group">
+                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                <BrainCircuit className="w-7 h-7 md:w-8 md:h-8" />
                             </div>
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">Nuevo Macro</span>
-                        </Link>
-                        <Link href="/simulador" className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 hover:shadow-md transition-all group">
-                            <div className="w-10 h-10 rounded-full bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <Landmark className="w-5 h-5" />
-                            </div>
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">Nuevo Micro</span>
-                        </Link>
-                        <Link href="/manual" className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:shadow-md transition-all group">
-                            <div className="w-10 h-10 rounded-full bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <Calculator className="w-5 h-5" />
-                            </div>
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">Leer Manual</span>
-                        </Link>
-                        <Link href="/cuestionarios" className="flex flex-col items-center justify-center gap-2 p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 hover:shadow-md transition-all group">
-                            <div className="w-10 h-10 rounded-full bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <BrainCircuit className="w-5 h-5" />
-                            </div>
-                            <span className="text-xs font-bold text-slate-600 dark:text-slate-300">Cuestionarios</span>
+                            <span className="text-sm md:text-base font-bold text-slate-600 dark:text-slate-300">Cuestionarios</span>
                         </Link>
                     </div>
 

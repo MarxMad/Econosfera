@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LineChart, BarChart2, Brain, Scale, Save, Info } from "lucide-react";
+import { LineChart, BarChart2, Brain, Scale, Save, Info, Calculator, Percent, Activity } from "lucide-react";
 import PanelVariables from "@/components/PanelVariables";
 import Resultados from "@/components/Resultados";
 import GraficoSimulacion from "@/components/GraficoSimulacion";
@@ -13,8 +13,9 @@ import FuentesOficialesMexico from "@/components/FuentesOficialesMexico";
 import ReferenciasAcademicas from "@/components/ReferenciasAcademicas";
 import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
 import TaylorSolver from "@/components/TaylorSolver";
+import { SimuladorTasaRealNominal } from "@/components/simuladores-inflacion";
+import { SimuladorPhillips } from "@/components/simuladores-macro";
 import { useSession } from "next-auth/react";
-import { Calculator } from "lucide-react";
 
 export default function Inflacion({
     variables,
@@ -32,7 +33,7 @@ export default function Inflacion({
     initialData?: any;
 }) {
     const { data: session } = useSession();
-    const [activeTab, setActiveTab] = useState<"ai" | "core" | "comparador" | "taylor">("core");
+    const [activeTab, setActiveTab] = useState<"ai" | "core" | "comparador" | "taylor" | "tasaReal" | "phillips">("core");
 
     const handleSave = async () => {
         const { saveScenario } = await import("@/lib/actions/scenarioActions");
@@ -63,6 +64,8 @@ export default function Inflacion({
                     { id: 'ai', label: 'Análisis AI Minutas', icon: Brain },
                     { id: 'comparador', label: 'Comparar Escenarios', icon: Scale },
                     { id: 'taylor', label: 'Matemáticas Taylor', icon: Calculator },
+                    { id: 'tasaReal', label: 'Tasa real vs nominal', icon: Percent },
+                    { id: 'phillips', label: 'Curva de Phillips', icon: Activity },
                 ].map((tab) => (
                     <button
                         key={tab.id}
@@ -138,6 +141,18 @@ export default function Inflacion({
                 {activeTab === 'taylor' && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <TaylorSolver />
+                    </div>
+                )}
+
+                {activeTab === 'tasaReal' && (
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        <SimuladorTasaRealNominal />
+                    </div>
+                )}
+
+                {activeTab === 'phillips' && (
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        <SimuladorPhillips />
                     </div>
                 )}
             </div>

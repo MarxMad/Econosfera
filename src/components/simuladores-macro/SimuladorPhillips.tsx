@@ -1,10 +1,17 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { TrendingUp, Info, HelpCircle, Save, Percent, Activity } from "lucide-react";
+import { TrendingUp, Info, HelpCircle, Save, Percent, Activity, FileDown } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ScatterChart, Scatter, ReferenceLine, Label, Cell } from "recharts";
+import PricingModal from "@/components/PricingModal";
 
 export default function SimuladorPhillips() {
+    const { data: session, update } = useSession();
+    const [showPricing, setShowPricing] = useState(false);
+    const [exportando, setExportando] = useState(false);
+    const [guardando, setGuardando] = useState(false);
+
     // Parámetros
     const [expectedInflation, setExpectedInflation] = useState(3.0);
     const [naturalUnemployment, setNaturalUnemployment] = useState(5.0);
@@ -24,6 +31,48 @@ export default function SimuladorPhillips() {
         }
         return data;
     }, [expectedInflation, naturalUnemployment, beta, supplyShock]);
+
+    const inflacionEquilibrio = expectedInflation + supplyShock;
+    const isLimitReached = (session?.user?.credits ?? 0) < 1;
+
+    const handleReportePdf = async () => {
+        if (isLimitReached) { setShowPricing(true); return; }
+        setExportando(true);
+        try {
+            const { registrarExportacion } = await import("@/lib/actions/exportActions");
+            const { exportarPhillipsPdf } = await import("@/lib/exportarPdf");
+            const { getGraficoAsDataUrl } = await import("@/lib/exportarGrafico");
+            await registrarExportacion("Curva de Phillips", "PDF");
+            let chartUrl: string | null = null;
+            try { chartUrl = await getGraficoAsDataUrl("grafico-phillips"); } catch (_) {}
+            await exportarPhillipsPdf(
+                { expectedInflation: expectedInflation, naturalUnemployment: naturalUnemployment, beta, supplyShock, inflacionEquilibrio },
+                chartUrl
+            );
+            await update();
+        } catch (e: any) {
+            if (String(e?.message || e).includes("créditos")) setShowPricing(true);
+            else alert(e?.message || "Error al exportar");
+        } finally { setExportando(false); }
+    };
+
+    const handleGuardar = async () => {
+        if (isLimitReached) { setShowPricing(true); return; }
+        setGuardando(true);
+        try {
+            const { saveScenario } = await import("@/lib/actions/scenarioActions");
+            const res = await saveScenario({
+                type: "INFLACION",
+                subType: "PHILLIPS",
+                name: `Phillips ${new Date().toLocaleDateString()}`,
+                variables: { expectedInflation, naturalUnemployment, beta, supplyShock },
+                results: { inflacionEquilibrio },
+            });
+            if (res.success) { alert("Escenario guardado"); await update(); }
+            else alert(res.error);
+        } catch (e: any) { alert("Error al guardar"); }
+        finally { setGuardando(false); }
+    };
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
@@ -126,9 +175,31 @@ export default function SimuladorPhillips() {
                                 <h3 className="font-black text-slate-900 dark:text-white text-xl">Mapa de Inflación-Desempleo</h3>
                                 <p className="text-xs text-slate-500 font-medium">Curva de Phillips de Corto Plazo (SRPC)</p>
                             </div>
+                            <div className="flex flex-wrap items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={handleReportePdf}
+                                    disabled={exportando}
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                                >
+                                    <FileDown className="w-4 h-4" />
+                                    {exportando ? "Generando..." : "Reporte PDF"}
+                                </button>
+                                {session && (
+                                    <button
+                                        type="button"
+                                        onClick={handleGuardar}
+                                        disabled={guardando}
+                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-50 transition-colors"
+                                    >
+                                        <Save className="w-4 h-4" />
+                                        {guardando ? "Guardando..." : "Guardar"}
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
-                        <div className="h-[400px] w-full">
+                        <div id="grafico-phillips" className="h-[400px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -198,6 +269,7 @@ export default function SimuladorPhillips() {
                     </div>
                 </div>
             </div>
+            <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
         </div>
     );
 }

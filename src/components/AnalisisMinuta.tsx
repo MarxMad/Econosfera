@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import {
   Upload, FileText, ChevronRight, TrendingUp, AlertTriangle,
   CheckCircle2, Info, FileDown, LayoutDashboard, ListFilter,
-  Share2, ArrowRight, ExternalLink, Activity, AlertCircle
+  Share2, ArrowRight, ExternalLink, Activity, AlertCircle, Lock
 } from "lucide-react";
 import { analizarMinutaBanxico } from "@/lib/actions/analisisActions";
 import { exportarMinutaAPdf } from "@/lib/exportarMinutaPdf";
@@ -35,7 +35,8 @@ export default function AnalisisMinuta({ onAnalisisComplete, initialData }: Anal
   const [analizando, setAnalizando] = useState(false);
   const [minutaAnalizada, setMinutaAnalizada] = useState<string | null>(null);
   const [datosAnalizados, setDatosAnalizados] = useState<AnalisisReal | null>(null);
-  const { update } = useSession();
+  const { data: session, update } = useSession();
+  const isPro = session?.user?.plan === "PRO" || session?.user?.plan === "RESEARCHER";
 
   useEffect(() => {
     if (initialData) {
@@ -93,6 +94,27 @@ export default function AnalisisMinuta({ onAnalisisComplete, initialData }: Anal
 
   return (
     <div className="space-y-6">
+      {!isPro && (
+        <div className="rounded-3xl border border-amber-200 dark:border-amber-900/50 bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-slate-900 p-8 md:p-12 text-center shadow-xl">
+          <div className="inline-flex p-4 rounded-2xl bg-amber-100 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 mb-6">
+            <Lock className="w-12 h-12 text-amber-600 dark:text-amber-400" />
+          </div>
+          <h3 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white mb-2">Análisis de minuta con IA</h3>
+          <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto mb-8">
+            Esta función está disponible solo para suscriptores <strong>Pro</strong> o <strong>Researcher</strong>. Actualiza tu plan para subir minutas reales de Banxico y obtener análisis con inteligencia artificial.
+          </p>
+          <a
+            href="/pricing"
+            className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white font-bold rounded-xl shadow-lg transition-all hover:-translate-y-0.5"
+          >
+            Ver planes y precios
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      )}
+
+      {isPro && (
+      <>
       <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-xl overflow-hidden transition-all duration-300 hover:shadow-2xl hover:shadow-blue-500/10">
         {/* Header Premium */}
         <div className="bg-gradient-to-r from-[#1e293b] via-[#0f172a] to-[#1e3a5f] p-6 text-white relative overflow-hidden">
@@ -376,6 +398,8 @@ export default function AnalisisMinuta({ onAnalisisComplete, initialData }: Anal
             <Upload className="w-4 h-4" /> Analizar otra minuta real
           </button>
         </div>
+      )}
+      </>
       )}
     </div>
   );

@@ -318,3 +318,215 @@ export async function exportarComparadorEscenariosPdf(
   }
   doc.save(`econosfera-comparador-escenarios-${new Date().toISOString().split("T")[0]}.pdf`);
 }
+
+/** PDF para el solucionador de Regla de Taylor (Inflación). */
+export async function exportarTaylorPdf(vars: {
+  mode: string;
+  inflacionActual: number;
+  metaInflacion: number;
+  brechaProducto: number;
+  tasaRealNeutral: number;
+  alpha: number;
+  beta: number;
+  tasaObjetivo: number;
+  resultado: number;
+  resultadoLabel: string;
+}): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("MODELADO DE INFLACIÓN Y TASA DE INTERÉS – REGLA DE TAYLOR", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE TAYLOR", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text("Variables del modelo", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Parámetro", "Valor"]],
+    body: [
+      ["Modo de despeje", vars.mode === "tasa" ? "Tasa óptima (i)" : vars.mode === "meta" ? "Meta π*" : "Brecha y"],
+      ["Inflación actual (π)", `${vars.inflacionActual}%`],
+      ["Meta inflación (π*)", `${vars.metaInflacion}%`],
+      ["Brecha producto (y)", `${vars.brechaProducto}%`],
+      ["Tasa real neutral (r*)", `${vars.tasaRealNeutral}%`],
+      ["Alpha (α)", String(vars.alpha)],
+      ["Beta (β)", String(vars.beta)],
+      ["Tasa objetivo (i)", `${vars.tasaObjetivo}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [37, 99, 235], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+  });
+  currentY = doc.lastAutoTable.finalY + 12;
+
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.text(vars.resultadoLabel, MARGIN, currentY);
+  currentY += 8;
+  doc.setFontSize(24);
+  doc.setTextColor(37, 99, 235);
+  doc.text(`${vars.resultado.toFixed(2)}%`, MARGIN, currentY);
+
+  const totalPages = (doc as any).internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Taylor | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-taylor-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Tasa real vs nominal (Fisher). */
+export async function exportarTasaRealNominalPdf(
+  tasaNominal: number,
+  inflacionEsperada: number,
+  tasaReal: number,
+  graficoDataUrl?: string | null
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("TASA REAL VS NOMINAL – ECUACIÓN DE FISHER", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Fórmula: Tasa real ≈ Tasa nominal − Inflación esperada", MARGIN, currentY);
+  currentY += 12;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["Tasa nominal (i)", `${tasaNominal}%`],
+      ["Inflación esperada (πᵉ)", `${inflacionEsperada}%`],
+      ["Tasa real aproximada (r)", `${tasaReal.toFixed(2)}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [37, 99, 235], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+  });
+  currentY = doc.lastAutoTable.finalY + 12;
+
+  if (graficoDataUrl && currentY < 200) {
+    try {
+      doc.addImage(graficoDataUrl, "PNG", MARGIN, currentY, 180, 55);
+    } catch (e) {
+      console.warn("Gráfico Tasa real/nominal no añadido:", e);
+    }
+  }
+
+  const totalPages = (doc as any).internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Inflación | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-tasa-real-nominal-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Curva de Phillips (inflación–desempleo). */
+export async function exportarPhillipsPdf(vars: {
+  expectedInflation: number;
+  naturalUnemployment: number;
+  beta: number;
+  supplyShock: number;
+  inflacionEquilibrio: number;
+}, graficoDataUrl?: string | null): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("CURVA DE PHILLIPS – INFLACIÓN Y DESEMPLEO", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros del modelo", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Parámetro", "Valor"]],
+    body: [
+      ["Inflación esperada (πᵉ)", `${vars.expectedInflation}%`],
+      ["Desempleo natural (uₙ)", `${vars.naturalUnemployment}%`],
+      ["Rigidez salarios (β)", String(vars.beta)],
+      ["Choque de oferta (v)", `${vars.supplyShock}%`],
+      ["Inflación de equilibrio", `${vars.inflacionEquilibrio.toFixed(1)}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [220, 38, 38], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+  });
+  currentY = doc.lastAutoTable.finalY + 12;
+
+  if (graficoDataUrl && currentY < 200) {
+    try {
+      doc.addImage(graficoDataUrl, "PNG", MARGIN, currentY, 180, 65);
+    } catch (e) {
+      console.warn("Gráfico Phillips no añadido:", e);
+    }
+  }
+
+  const totalPages = (doc as any).internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Phillips | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-phillips-${new Date().toISOString().split("T")[0]}.pdf`);
+}

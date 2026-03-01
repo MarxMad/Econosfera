@@ -47,9 +47,12 @@ model User {
   lastName      String?
   email         String?   @unique
   emailVerified DateTime?
-  image         String?
+  image         String?   @db.Text
   password      String?
   institution   String?
+  phone         String?
+  occupation    String?
+  educationLevel String?  // nivel de estudios: preparatoria, licenciatura, maestria, doctorado
   credits       Int       @default(10)
   totalScore    Int       @default(0)
   currentStreak Int       @default(0)

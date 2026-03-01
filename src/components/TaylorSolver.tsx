@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, BookOpen, Target, Activity, TrendingUp } from "lucide-react";
+import { Calculator, BookOpen, Target, Activity, TrendingUp, FileDown, Save } from "lucide-react";
+import { useSession } from "next-auth/react";
+import PricingModal from "@/components/PricingModal";
 
 export default function TaylorSolver() {
+    const { data: session, update } = useSession();
+    const [showPricing, setShowPricing] = useState(false);
+    const [exportando, setExportando] = useState(false);
+    const [guardando, setGuardando] = useState(false);
     const [mode, setMode] = useState<"tasa" | "meta" | "brecha">("tasa");
 
     // Variables base
@@ -16,6 +22,60 @@ export default function TaylorSolver() {
     const [tasaObjetivo, setTasaObjetivo] = useState(7.0);
 
     const brechaInflacion = inflacionActual - metaInflacion;
+
+    const isLimitReached = (session?.user?.credits ?? 0) < 1;
+
+    const handleReportePdf = async () => {
+        if (isLimitReached) { setShowPricing(true); return; }
+        setExportando(true);
+        try {
+            const { registrarExportacion } = await import("@/lib/actions/exportActions");
+            const { exportarTaylorPdf } = await import("@/lib/exportarPdf");
+            await registrarExportacion("Inflación Taylor", "PDF");
+            const resultado = mode === "tasa" ? calcularTasa() : mode === "meta" ? calcularMeta() : calcularBrecha();
+            const resultadoLabel = mode === "tasa" ? "Tasa de referencia sugerida" : mode === "meta" ? "Meta de inflación implícita" : "Brecha de producto implícita";
+            await exportarTaylorPdf({
+                mode,
+                inflacionActual,
+                metaInflacion,
+                brechaProducto,
+                tasaRealNeutral,
+                alpha,
+                beta,
+                tasaObjetivo,
+                resultado,
+                resultadoLabel,
+            });
+            await update();
+        } catch (e: any) {
+            if (String(e?.message || e).includes("créditos")) setShowPricing(true);
+            else alert(e?.message || "Error al exportar");
+        } finally {
+            setExportando(false);
+        }
+    };
+
+    const handleGuardar = async () => {
+        if (isLimitReached) { setShowPricing(true); return; }
+        setGuardando(true);
+        try {
+            const { saveScenario } = await import("@/lib/actions/scenarioActions");
+            const resultado = mode === "tasa" ? calcularTasa() : mode === "meta" ? calcularMeta() : calcularBrecha();
+            const res = await saveScenario({
+                type: "INFLACION",
+                subType: "TAYLOR",
+                name: `Taylor ${mode} ${new Date().toLocaleDateString()}`,
+                variables: { mode, inflacionActual, metaInflacion, brechaProducto, tasaRealNeutral, alpha, beta, tasaObjetivo },
+                results: { resultado },
+            });
+            if (res.success) { alert("Escenario guardado"); await update(); }
+            else alert(res.error);
+        } catch (e: any) {
+            alert("Error al guardar");
+        } finally {
+            setGuardando(false);
+        }
+    };
 
     // Calcular la Tasa Taylor: i = r* + π + α(π - π*) + β(y - y*)
     const calcularTasa = () => {
@@ -40,6 +100,29 @@ export default function TaylorSolver() {
 
     return (
         <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-end gap-2">
+                <button
+                    type="button"
+                    onClick={handleReportePdf}
+                    disabled={exportando}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 transition-colors"
+                >
+                    <FileDown className="w-4 h-4" />
+                    {exportando ? "Generando..." : "Reporte PDF"}
+                </button>
+                {session && (
+                    <button
+                        type="button"
+                        onClick={handleGuardar}
+                        disabled={guardando}
+                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-50 transition-colors"
+                    >
+                        <Save className="w-4 h-4" />
+                        {guardando ? "Guardando..." : "Guardar"}
+                    </button>
+                )}
+            </div>
+
             <div className="rounded-2xl border border-blue-200 dark:border-blue-900 bg-blue-50/50 dark:bg-blue-900/10 p-6">
                 <h3 className="text-xl font-bold flex items-center gap-2 mb-3 text-blue-800 dark:text-blue-300">
                     <BookOpen className="w-5 h-5" />
@@ -185,6 +268,7 @@ export default function TaylorSolver() {
                     </div>
                 </div>
             </div>
+            <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
         </div>
     );
 }

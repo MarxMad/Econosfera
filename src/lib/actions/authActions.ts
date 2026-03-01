@@ -99,3 +99,91 @@ export async function registerUser(formData: FormData) {
         return { error: "Error al crear la cuenta" };
     }
 }
+
+export async function getProfile(userId: string) {
+    try {
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: {
+                name: true,
+                lastName: true,
+                email: true,
+                image: true,
+                institution: true,
+                phone: true,
+                occupation: true,
+                educationLevel: true,
+                emailVerified: true,
+            },
+        });
+        return user;
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+}
+
+export async function updateProfile(userId: string, data: {
+    name?: string;
+    lastName?: string;
+    institution?: string;
+    phone?: string;
+    occupation?: string;
+    educationLevel?: string;
+    image?: string | null;
+}) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id || session.user.id !== userId) {
+        return { error: "No autorizado" };
+    }
+    try {
+        await prisma.user.update({
+            where: { id: userId },
+            data: {
+                ...(data.name !== undefined && { name: data.name }),
+                ...(data.lastName !== undefined && { lastName: data.lastName }),
+                ...(data.institution !== undefined && { institution: data.institution }),
+                ...(data.phone !== undefined && { phone: data.phone }),
+                ...(data.occupation !== undefined && { occupation: data.occupation }),
+                ...(data.educationLevel !== undefined && { educationLevel: data.educationLevel }),
+                ...(data.image !== undefined && { image: data.image }),
+            },
+        });
+        return { success: true };
+    } catch (e: any) {
+        console.error(e);
+        return { error: e?.message || "Error al actualizar perfil" };
+    }
+}
+
+/** Sube la imagen de perfil a Supabase Storage y devuelve la URL pública. */
+export async function uploadProfileImage(userId: string, file: File): Promise<{ url: string } | { error: string }> {
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.id || session.user.id !== userId) {
+        return { error: "No autorizado" };
+    }
+
+    const { getSupabaseServer, BUCKET_AVATARS } = await import("@/lib/supabase");
+    const supabase = getSupabaseServer();
+    if (!supabase) {
+        return { error: "Almacenamiento de imágenes no configurado (Supabase)." };
+    }
+
+    const ext = file.name.split(".").pop() || "jpg";
+    const path = `${userId}/avatar.${ext}`;
+
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
+    const { error } = await supabase.storage
+        .from(BUCKET_AVATARS)
+        .upload(path, buffer, { upsert: true, contentType: file.type });
+
+    if (error) {
+        console.error("Supabase upload error:", error);
+        return { error: error.message || "Error al subir la imagen" };
+    }
+
+    const { data: urlData } = supabase.storage.from(BUCKET_AVATARS).getPublicUrl(path);
+    return { url: urlData.publicUrl };
+}
