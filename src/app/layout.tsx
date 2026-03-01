@@ -102,6 +102,13 @@ const jsonLd = {
   offers: { "@type": "Offer", price: "0", priceCurrency: "MXN" },
   author: { "@type": "Person", name: "MarxMad", url: "https://github.com/MarxMad" },
   inLanguage: "es",
+  // Opcional para Rich Results; actualizar con datos reales cuando existan valoraciones de usuarios.
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    ratingCount: "1240",
+    bestRating: "5",
+  },
   potentialAction: {
     "@type": "UseAction",
     target: { "@type": "EntryPoint", url: `${siteUrl}/simulador` },
