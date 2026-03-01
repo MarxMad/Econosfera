@@ -8,6 +8,8 @@ import {
 } from "lucide-react";
 import { analizarMinutaBanxico } from "@/lib/actions/analisisActions";
 import { exportarMinutaAPdf } from "@/lib/exportarMinutaPdf";
+import { registrarExportacion } from "@/lib/actions/exportActions";
+import { useSession } from "next-auth/react";
 
 type TabAnálisis = "resumen" | "detalle" | "flujos";
 
@@ -33,6 +35,7 @@ export default function AnalisisMinuta({ onAnalisisComplete, initialData }: Anal
   const [analizando, setAnalizando] = useState(false);
   const [minutaAnalizada, setMinutaAnalizada] = useState<string | null>(null);
   const [datosAnalizados, setDatosAnalizados] = useState<AnalisisReal | null>(null);
+  const { update } = useSession();
 
   useEffect(() => {
     if (initialData) {
@@ -76,12 +79,13 @@ export default function AnalisisMinuta({ onAnalisisComplete, initialData }: Anal
 
     setExportando(true);
     try {
-      // Pequeño delay artificial para feedback visual de procesamiento
+      await registrarExportacion("Analisis Minuta", "PDF");
       await new Promise(resolve => setTimeout(resolve, 800));
       exportarMinutaAPdf(datosAnalizados, minutaAnalizada);
-    } catch (err) {
+      update();
+    } catch (err: any) {
       console.error("Error al exportar PDF:", err);
-      alert("Error al generar el PDF. Por favor intenta de nuevo.");
+      alert(err.message || "Error al generar el PDF. Por favor intenta de nuevo.");
     } finally {
       setExportando(false);
     }
@@ -112,7 +116,7 @@ export default function AnalisisMinuta({ onAnalisisComplete, initialData }: Anal
                 className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-bold transition-all shadow-lg shadow-blue-900/20 active:scale-95 disabled:opacity-50"
               >
                 <FileDown className="w-4 h-4" />
-                {exportando ? "Exportando..." : "Exportar Reporte"}
+                {exportando ? "Generando..." : "Reporte PDF"}
               </button>
             )}
           </div>

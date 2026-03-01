@@ -1,18 +1,25 @@
 "use client";
 
-import { signIn } from "next-auth/react";
-import { useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Lock, Mail, ArrowRight, LogIn, Eye, EyeOff } from "lucide-react";
 
 export default function SignInPage() {
+    const { status } = useSession();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push("/simulador");
+        }
+    }, [status, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,7 +36,7 @@ export default function SignInPage() {
             setError("Email o contraseña incorrectos");
             setLoading(false);
         } else {
-            router.push("/dashboard");
+            router.push("/simulador");
             router.refresh();
         }
     };
@@ -106,7 +113,7 @@ export default function SignInPage() {
                 </div>
 
                 <button
-                    onClick={() => signIn("google")}
+                    onClick={() => signIn("google", { callbackUrl: "/simulador" })}
                     className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-medium text-slate-700 dark:text-slate-300"
                 >
                     <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />

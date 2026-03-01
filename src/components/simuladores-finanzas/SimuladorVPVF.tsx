@@ -7,9 +7,11 @@ import { InputLibre } from "./InputLibre";
 import { FileDown, Save } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Heatmap from "../common/Heatmap";
+import PricingModal from "../PricingModal";
 
 export default function SimuladorVPVF({ initialData }: { initialData?: any }) {
   const { data: session } = useSession();
+  const [showPricing, setShowPricing] = useState(false);
   const [exportando, setExportando] = useState(false);
   const [monto, setMonto] = useState(10000);
   const [tasa, setTasa] = useState(8);
@@ -32,8 +34,15 @@ export default function SimuladorVPVF({ initialData }: { initialData?: any }) {
   const datosGrafico = useMemo(() => evolucionVF(monto, tasaDecimal, aniosSeguro), [monto, tasaDecimal, aniosSeguro]);
 
   const exportarReporte = async () => {
+    if ((session?.user?.credits ?? 0) < 1) {
+      setShowPricing(true);
+      return;
+    }
     setExportando(true);
     try {
+      const { registrarExportacion } = await import("@/lib/actions/exportActions");
+      await registrarExportacion("Finanzas VPVF", "PDF");
+
       const { exportarFinanzasAPdf } = await import("@/lib/exportarFinanzasPdf");
       const { getGraficoAsDataUrl } = await import("@/lib/exportarGrafico");
       let chartUrl = null;
@@ -55,7 +64,8 @@ export default function SimuladorVPVF({ initialData }: { initialData?: any }) {
       });
     } catch (e) {
       console.error(e);
-      alert("Error al exportar reporte");
+      if (String(e).includes("créditos")) setShowPricing(true);
+      else alert("Error al exportar reporte");
     } finally {
       setExportando(false);
     }
@@ -96,7 +106,7 @@ export default function SimuladorVPVF({ initialData }: { initialData?: any }) {
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50"
           >
             <FileDown className="w-3.5 h-3.5" />
-            {exportando ? "Generando..." : "Reporte"}
+            {exportando ? "Generando..." : "Reporte PDF"}
           </button>
           {session && (
             <button
@@ -162,6 +172,7 @@ export default function SimuladorVPVF({ initialData }: { initialData?: any }) {
           </div>
         </div>
       )}
+      <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }

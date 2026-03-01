@@ -16,17 +16,10 @@ export default withAuth(
     }
 );
 
-// Apply to all routes except public, auth routes, and _next/static.
+// Apply to restricted routes only
 export const config = {
     matcher: [
-        /*
-         * Match all request paths except for the ones starting with:
-         * - api/auth (NextAuth endpoints)
-         * - auth/signin (Login page itself)
-         * - _next/static (static files)
-         * - _next/image (image optimization files)
-         * - favicon.ico (favicon file)
-         */
-        "/((?!api/auth|auth/signin|_next/static|_next/image|favicon.ico).*)",
+        "/dashboard/:path*",
+        "/simulador/:path*"
     ],
 };

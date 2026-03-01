@@ -2,23 +2,32 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
-import { Shield, Lock, CreditCard, ChevronLeft } from "lucide-react";
+import { Shield, Lock, CreditCard, ChevronLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { processPayment } from "@/lib/actions/paymentActions";
+import { Suspense } from "react";
 
-export default function CheckoutPage() {
+function CheckoutForm() {
     const searchParams = useSearchParams();
     const plan = searchParams.get("plan");
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
 
-    const handlePayment = (e: React.FormEvent) => {
+    const handlePayment = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simular procesamiento de pago
-        setTimeout(() => {
-            setLoading(false);
+        // Simular tiempo de validación bancaria
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        const res = await processPayment(plan || "student");
+
+        if (res.success) {
             setSuccess(true);
-        }, 2000);
+        } else {
+            alert(res.error || "Algo salió mal procesando tu cuenta.");
+        }
+
+        setLoading(false);
     };
 
     if (success) {
@@ -86,8 +95,9 @@ export default function CheckoutPage() {
                                     </p>
                                 </div>
 
-                                <button disabled={loading} className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-2xl hover:shadow-xl transition-all disabled:opacity-50">
-                                    {loading ? "Procesando..." : `Pagar $${plan === 'student' ? '4.99' : '12.99'}`}
+                                <button disabled={loading} className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-2xl flex items-center justify-center gap-2 hover:shadow-xl transition-all disabled:opacity-50">
+                                    {loading && <Loader2 className="w-5 h-5 animate-spin" />}
+                                    {loading ? "Procesando Servidor..." : `Pagar $${plan === 'student' ? '4.99' : '12.99'}`}
                                 </button>
                             </form>
                         </div>
@@ -121,7 +131,10 @@ export default function CheckoutPage() {
                                         <Shield className="w-3 h-3 text-emerald-500" /> Exportaciones Ilimitadas
                                     </li>
                                     <li className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                                        <Shield className="w-3 h-3 text-emerald-500" /> {plan === 'student' ? '25 Créditos IA' : 'IA Ilimitada'}
+                                        <Shield className="w-3 h-3 text-emerald-500" /> {plan === 'student' ? '50 Créditos IA Mensuales' : '100 Créditos IA Mensuales'}
+                                    </li>
+                                    <li className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
+                                        <Shield className="w-3 h-3 text-emerald-500" /> Modelos Premium (Blockchain + Finanzas)
                                     </li>
                                 </ul>
                             </div>
@@ -130,5 +143,13 @@ export default function CheckoutPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function CheckoutPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-10">Cargando pasarela...</div>}>
+            <CheckoutForm />
+        </Suspense>
     );
 }

@@ -145,7 +145,7 @@ export default function DashboardPage() {
                             </div>
 
                             <Link href="/pricing" className="block w-full py-3 bg-white text-blue-700 text-center font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm active:scale-[0.98]">
-                                Subir a Pro (Ilimitado)
+                                Ver Planes (50 / 100 créditos)
                             </Link>
                         </div>
                     </div>

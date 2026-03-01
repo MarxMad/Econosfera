@@ -188,3 +188,133 @@ export async function exportarEscenarioPdf(
 
   doc.save(datosAi ? "econosfera-analisis-profesional.pdf" : "econosfera-reporte-escenario.pdf");
 }
+
+/** PDF del comparador de escenarios A vs B (inflación / tasa de interés). */
+export async function exportarComparadorEscenariosPdf(
+  variablesA: VariablesSimulacion,
+  resultadosA: ResultadosSimulacion,
+  variablesB: VariablesSimulacion,
+  resultadosB: ResultadosSimulacion,
+  graficoDataUrl?: string | null
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("COMPARADOR DE ESCENARIOS – INFLACIÓN Y TASA DE INTERÉS", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE COMPARATIVO", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(37, 99, 235);
+  doc.text("Escenario A", MARGIN, currentY);
+  currentY += 8;
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(30, 41, 59);
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Variable", "Valor"]],
+    body: [
+      ["Inflación General", `${variablesA.inflacion}%`],
+      ["Inflación Subyacente", `${variablesA.inflacionSubyacente}%`],
+      ["Tasa de Política", `${variablesA.tasaPolitica}%`],
+      ["Meta Inflación", `${variablesA.metaInflacion}%`],
+      ["Brecha Producto", `${variablesA.brechaProducto} pp`],
+      ["Tasa real ex post", `${resultadosA.tasaRealExPost}%`],
+      ["Tasa Taylor", `${resultadosA.tasaTaylor}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [37, 99, 235], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+  });
+  currentY = doc.lastAutoTable.finalY + 12;
+
+  doc.setFontSize(14);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(220, 38, 38);
+  doc.text("Escenario B", MARGIN, currentY);
+  currentY += 8;
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.setTextColor(30, 41, 59);
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Variable", "Valor"]],
+    body: [
+      ["Inflación General", `${variablesB.inflacion}%`],
+      ["Inflación Subyacente", `${variablesB.inflacionSubyacente}%`],
+      ["Tasa de Política", `${variablesB.tasaPolitica}%`],
+      ["Meta Inflación", `${variablesB.metaInflacion}%`],
+      ["Brecha Producto", `${variablesB.brechaProducto} pp`],
+      ["Tasa real ex post", `${resultadosB.tasaRealExPost}%`],
+      ["Tasa Taylor", `${resultadosB.tasaTaylor}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [220, 38, 38], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+  });
+  currentY = doc.lastAutoTable.finalY + 12;
+
+  if (currentY > 200) {
+    doc.addPage();
+    currentY = MARGIN;
+  }
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.setTextColor(30, 41, 59);
+  doc.text("Comparación A vs B (%)", MARGIN, currentY);
+  currentY += 6;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Métrica", "Escenario A", "Escenario B"]],
+    body: [
+      ["Inflación", `${variablesA.inflacion}%`, `${variablesB.inflacion}%`],
+      ["Inflación subyacente", `${variablesA.inflacionSubyacente}%`, `${variablesB.inflacionSubyacente}%`],
+      ["Tasa política", `${variablesA.tasaPolitica}%`, `${variablesB.tasaPolitica}%`],
+      ["Meta inflación", `${variablesA.metaInflacion}%`, `${variablesB.metaInflacion}%`],
+      ["Tasa real ex post", `${resultadosA.tasaRealExPost}%`, `${resultadosB.tasaRealExPost}%`],
+      ["Tasa Taylor", `${resultadosA.tasaTaylor}%`, `${resultadosB.tasaTaylor}%`],
+      ["Brecha producto", `${variablesA.brechaProducto} pp`, `${variablesB.brechaProducto} pp`],
+    ],
+    theme: "grid",
+    headStyles: { fillColor: [15, 23, 42], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+  });
+  currentY = doc.lastAutoTable.finalY + 12;
+
+  // --- Gráfico comparación A vs B ---
+  if (graficoDataUrl && currentY < 200) {
+    try {
+      doc.addImage(graficoDataUrl, "PNG", MARGIN, currentY, 180, 60);
+      currentY += 70;
+    } catch (e) {
+      console.warn("No se pudo añadir la imagen al PDF comparador:", e);
+    }
+  }
+
+  const totalPages = (doc as any).internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Comparador | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-comparador-escenarios-${new Date().toISOString().split("T")[0]}.pdf`);
+}

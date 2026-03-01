@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap } from "lucide-react";
 import { registerUser } from "@/lib/actions/authActions";
 
 export default function RegisterPage() {
+    const { status } = useSession();
     const [formData, setFormData] = useState({ name: "", lastName: "", email: "", institution: "", password: "", confirmPassword: "" });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
@@ -14,6 +16,12 @@ export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const router = useRouter();
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push("/dashboard");
+        }
+    }, [status, router]);
 
     const passwordsMatch = formData.password === formData.confirmPassword;
     const showPasswordError = formData.confirmPassword.length > 0 && !passwordsMatch;

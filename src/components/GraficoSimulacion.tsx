@@ -48,10 +48,12 @@ export default function GraficoSimulacion({ variables, resultados }: GraficoSimu
   const exportarGrafico = async (id: string, nombre: string) => {
     setExportando(true);
     try {
+      const { registrarExportacion } = await import("@/lib/actions/exportActions");
+      await registrarExportacion("Grafico Simulacion", "PNG");
       await exportarGraficoComoPNG(id, nombre);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al exportar gráfico:", error);
-      alert("No se pudo exportar el gráfico. Intenta de nuevo.");
+      alert(error.message || "No se pudo exportar el gráfico. Intenta de nuevo.");
     } finally {
       setExportando(false);
     }

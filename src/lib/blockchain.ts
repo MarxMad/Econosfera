@@ -9,6 +9,8 @@ export interface EraHalving {
   bloquesEnEra: number;
   emisionEra: number;
   supplyAcumulada: number;
+  inflacionAnual: number; // %
+  stockToFlow: number; // Años de producción que se necesitan para alcanzar el stock actual
 }
 
 /**
@@ -19,22 +21,36 @@ export interface EraHalving {
 export function emisionConHalving(
   recompensaInicial: number,
   bloquesPorHalving: number,
-  numHalvings: number
+  numHalvings: number,
+  minutosPorBloque: number = 10
 ): { eras: EraHalving[]; supplyMaxima: number } {
   const eras: EraHalving[] = [];
   let supplyAcumulada = 0;
   const supplyMaxima = 2 * bloquesPorHalving * recompensaInicial;
 
+  const bloquesPorAno = (365.25 * 24 * 60) / minutosPorBloque;
+
   for (let n = 0; n < numHalvings; n++) {
     const recompensa = recompensaInicial / Math.pow(2, n);
     const emisionEra = bloquesPorHalving * recompensa;
     supplyAcumulada += emisionEra;
+
+    // Inflacion Anual = Emisiones Anuales / Supply Total Al Final de la Era (aproximado)
+    const emisionAnual = bloquesPorAno * recompensa;
+    const inflacionAnual = (emisionAnual / supplyAcumulada) * 100;
+
+    // SF = Stock / Flow
+    // Si emisionAnual es muy pequeña, evitamos infinito
+    const stockToFlow = emisionAnual > 0 ? supplyAcumulada / emisionAnual : 0;
+
     eras.push({
       era: n + 1,
       recompensaPorBloque: recompensa,
       bloquesEnEra: bloquesPorHalving,
       emisionEra,
       supplyAcumulada,
+      inflacionAnual,
+      stockToFlow
     });
   }
 
@@ -59,12 +75,14 @@ export function datosGraficoHalving(
   bloquesPorHalving: number,
   minutosPorBloque: number,
   numPuntos: number
-): { etiqueta: string; supply: number; anoAprox?: number }[] {
+): { etiqueta: string; supply: number; anoAprox?: number; inflacionAnual: number; stockToFlow: number }[] {
   const anosPorEra = anosPorHalving(minutosPorBloque, bloquesPorHalving);
-  const { eras } = emisionConHalving(recompensaInicial, bloquesPorHalving, numPuntos);
+  const { eras } = emisionConHalving(recompensaInicial, bloquesPorHalving, numPuntos, minutosPorBloque);
   return eras.map((e, i) => ({
     etiqueta: `Época ${e.era}`,
     supply: e.supplyAcumulada,
     anoAprox: (i + 1) * anosPorEra,
+    inflacionAnual: e.inflacionAnual,
+    stockToFlow: e.stockToFlow
   }));
 }

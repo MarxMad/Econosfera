@@ -1,11 +1,15 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { GitCompare, Copy, ArrowLeftRight } from "lucide-react";
-import type { VariablesSimulacion } from "@/lib/types";
+import { GitCompare, Copy, ArrowLeftRight, FileDown, Save } from "lucide-react";
+import { useSession } from "next-auth/react";
+import type { VariablesSimulacion, ResultadosSimulacion } from "@/lib/types";
 import { calcularResultados } from "@/lib/calculos";
 import Resultados from "@/components/Resultados";
 import PanelVariables from "@/components/PanelVariables";
+import PricingModal from "@/components/PricingModal";
+import { registrarExportacion } from "@/lib/actions/exportActions";
+import { exportarComparadorEscenariosPdf } from "@/lib/exportarPdf";
 import {
   BarChart,
   Bar,
@@ -42,6 +46,12 @@ export default function ComparadorEscenarios({
     return b;
   });
   const [mostrarPanelCompleto, setMostrarPanelCompleto] = useState<"ninguno" | "A" | "B">("ninguno");
+  const [exportandoPdf, setExportandoPdf] = useState(false);
+  const [guardando, setGuardando] = useState(false);
+  const [showPricing, setShowPricing] = useState(false);
+
+  const { data: session, update } = useSession();
+  const isLimitReached = (session?.user?.credits ?? 0) < 1;
 
   const resultadosA = useMemo(() => calcularResultados(variablesA), [variablesA]);
   const resultadosB = useMemo(() => calcularResultados(variablesB), [variablesB]);
@@ -52,6 +62,58 @@ export default function ComparadorEscenarios({
     const tmp = clonarVariables(variablesA);
     setVariablesA(clonarVariables(variablesB));
     setVariablesB(tmp);
+  };
+
+  const handleReportePdf = async () => {
+    if (isLimitReached) {
+      setShowPricing(true);
+      return;
+    }
+    setExportandoPdf(true);
+    try {
+      await registrarExportacion("Comparador Inflación", "PDF");
+      let chartUrl: string | null = null;
+      try {
+        const { getGraficoAsDataUrl } = await import("@/lib/exportarGrafico");
+        chartUrl = await getGraficoAsDataUrl("grafico-comparador");
+      } catch (_) {}
+      await exportarComparadorEscenariosPdf(variablesA, resultadosA, variablesB, resultadosB, chartUrl);
+      await update();
+    } catch (e) {
+      console.error("Error al exportar PDF comparador:", e);
+      alert("No se pudo generar el PDF. Intenta de nuevo.");
+    } finally {
+      setExportandoPdf(false);
+    }
+  };
+
+  const handleGuardar = async () => {
+    if (isLimitReached) {
+      setShowPricing(true);
+      return;
+    }
+    setGuardando(true);
+    try {
+      const { saveScenario } = await import("@/lib/actions/scenarioActions");
+      const res = await saveScenario({
+        type: "INFLACION",
+        subType: "COMPARADOR",
+        name: `Comparador escenarios ${new Date().toLocaleDateString()}`,
+        variables: { variablesA, variablesB },
+        results: { resultadosA, resultadosB },
+      });
+      if (res.success) {
+        alert("Escenario guardado");
+        await update();
+      } else {
+        alert(res.error ?? "Error al guardar");
+      }
+    } catch (e) {
+      console.error("Error al guardar comparador:", e);
+      alert("No se pudo guardar. Intenta de nuevo.");
+    } finally {
+      setGuardando(false);
+    }
   };
 
   const datosComparacion = useMemo(() => {
@@ -75,6 +137,24 @@ export default function ComparadorEscenarios({
             <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Comparar escenarios</h2>
           </div>
           <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="button"
+              onClick={handleReportePdf}
+              disabled={exportandoPdf}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-slate-900 text-white hover:bg-slate-800 disabled:opacity-50 transition-colors"
+            >
+              <FileDown className="w-4 h-4" />
+              {exportandoPdf ? "Generando..." : "Reporte PDF"}
+            </button>
+            <button
+              type="button"
+              onClick={handleGuardar}
+              disabled={guardando}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-50 transition-colors"
+            >
+              <Save className="w-4 h-4" />
+              {guardando ? "Guardando..." : "Guardar"}
+            </button>
             <button
               type="button"
               onClick={copiarActualA}
@@ -176,7 +256,7 @@ export default function ComparadorEscenarios({
 
         <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30 p-4">
           <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Comparación A vs B (%)</p>
-          <div className="h-80">
+          <div id="grafico-comparador" className="h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={datosComparacion} margin={{ top: 8, right: 24, left: 8, bottom: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-600" />
@@ -191,6 +271,7 @@ export default function ComparadorEscenarios({
           </div>
         </div>
       </div>
+      <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }

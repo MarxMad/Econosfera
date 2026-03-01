@@ -5,11 +5,13 @@ import { cetesPrecio, cetesRendimiento } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
 import { FileDown, Save } from "lucide-react";
 import { useSession } from "next-auth/react";
+import PricingModal from "../PricingModal";
 
 const PLAZOS_RAPIDOS = [28, 91, 182, 364];
 
 export default function SimuladorCetes({ initialData }: { initialData?: any }) {
   const { data: session } = useSession();
+  const [showPricing, setShowPricing] = useState(false);
   const [exportando, setExportando] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [nominal, setNominal] = useState(10);
@@ -38,8 +40,15 @@ export default function SimuladorCetes({ initialData }: { initialData?: any }) {
   }, [nominal, tasa, dias]);
 
   const exportarReporte = async () => {
+    if ((session?.user?.credits ?? 0) < 1) {
+      setShowPricing(true);
+      return;
+    }
     setExportando(true);
     try {
+      const { registrarExportacion } = await import("@/lib/actions/exportActions");
+      await registrarExportacion("Finanzas Cetes", "PDF");
+
       const { exportarFinanzasAPdf } = await import("@/lib/exportarFinanzasPdf");
 
       await exportarFinanzasAPdf({
@@ -66,7 +75,8 @@ export default function SimuladorCetes({ initialData }: { initialData?: any }) {
       });
     } catch (e) {
       console.error(e);
-      alert("Error al exportar reporte");
+      if (String(e).includes("créditos")) setShowPricing(true);
+      else alert("Error al exportar reporte");
     } finally {
       setExportando(false);
     }
@@ -109,7 +119,7 @@ export default function SimuladorCetes({ initialData }: { initialData?: any }) {
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50"
           >
             <FileDown className="w-3.5 h-3.5" />
-            {exportando ? "Generando..." : "Reporte"}
+            {exportando ? "Generando..." : "Reporte PDF"}
           </button>
           {session && (
             <button
@@ -171,6 +181,7 @@ export default function SimuladorCetes({ initialData }: { initialData?: any }) {
           </div>
         </div>
       )}
+      <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }

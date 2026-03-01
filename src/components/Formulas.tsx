@@ -24,36 +24,44 @@ export default function Formulas({ moduloActivo, onIrAModulo }: FormulasProps) {
   const modulosMostrar = moduloSeleccionado === "todos" ? FORMULAS : FORMULAS.filter((m) => m.modulo === moduloSeleccionado);
 
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg overflow-hidden">
-      <div className="p-5 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-purple-50 to-pink-50 dark:from-slate-800 dark:to-slate-800">
-        <div className="flex items-center gap-2 mb-4">
-          <Calculator className="w-6 h-6 text-slate-600 dark:text-slate-400" aria-hidden />
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Fórmulas económicas</h2>
+    <div className="space-y-6 animate-in fade-in duration-700">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-slate-900 dark:to-slate-900 p-8 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10 text-purple-500">
+          <Calculator className="w-24 h-24" />
         </div>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { id: "todos" as const, label: "Todas" },
-            { id: "inflacion" as const, label: "Inflación" },
-            { id: "macro" as const, label: "Macro" },
-            { id: "micro" as const, label: "Micro" },
-          ].map((mod) => (
-            <button
-              key={mod.id}
-              type="button"
-              onClick={() => setModuloSeleccionado(mod.id)}
-              className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                moduloSeleccionado === mod.id
-                  ? "bg-purple-600 text-white shadow"
-                  : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
-              }`}
-            >
-              {mod.label}
-            </button>
-          ))}
+        <div className="relative z-10">
+          <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-3 flex items-center gap-3">
+            <Calculator className="text-purple-500 w-8 h-8" />
+            Fórmulas económicas
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm max-w-2xl italic mb-6">
+            Colección de las ecuaciones más importantes utilizadas en economía y finanzas.
+          </p>
         </div>
       </div>
 
-      <div className="p-5 max-h-[600px] overflow-y-auto">
+      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
+        {[
+          { id: "todos" as const, label: "Todas" },
+          { id: "inflacion" as const, label: "Inflación" },
+          { id: "macro" as const, label: "Macro" },
+          { id: "micro" as const, label: "Micro" },
+        ].map((mod) => (
+          <button
+            key={mod.id}
+            type="button"
+            onClick={() => setModuloSeleccionado(mod.id)}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${moduloSeleccionado === mod.id
+                ? "bg-purple-600 text-white shadow"
+                : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
+              }`}
+          >
+            {mod.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl max-h-[600px] overflow-y-auto">
         {modulosMostrar.map((modulo) => (
           <div key={modulo.modulo} className="mb-6 last:mb-0">
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">

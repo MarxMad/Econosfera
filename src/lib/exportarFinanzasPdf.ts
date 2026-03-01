@@ -4,7 +4,7 @@ import autoTable from 'jspdf-autotable';
 const MARGIN = 15;
 
 export type FinanzasExportData = {
-    tipo: 'VPVF' | 'Bono' | 'Cetes' | 'Ahorro';
+    tipo: 'VPVF' | 'Bono' | 'Cetes' | 'Ahorro' | 'DCF' | 'BlackScholes' | 'Amortizacion' | 'VPNTIR' | 'WACC' | 'Forward' | 'BreakEven' | 'Portafolio2';
     titulo: string;
     variables: Array<{ label: string; valor: string }>;
     resultados: Array<{ label: string; valor: string }>;
@@ -111,6 +111,38 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
                 t > 0 ? (t * 0.9).toFixed(2) : '0' // Proxy de duración
             ];
         });
+    } else if (data.tipo === 'DCF') {
+        const wacc = parseFloat(data.variables.find(v => v.label.includes('WACC'))?.valor.replace('%', '') || '0') / 100;
+        const terminal = parseFloat(data.variables.find(v => v.label.includes('Perpetuo'))?.valor.replace('%', '') || '0') / 100;
+        const baseValue = parseFloat(data.resultados.find(v => v.label.includes('INTRÍNSECO'))?.valor.replace('$', '').replace(',', '') || '0');
+
+        sensitivityHead = ['Variación WACC', 'Nuevo WACC', 'Valor Empresa', 'Cambio %'];
+        sensitivityBody = [0.01, 0.005, 0, -0.005, -0.01].map(v => {
+            const newWacc = Math.max(0.01, wacc + v);
+            const impactFactor = (wacc - terminal) / (newWacc - terminal);
+            const newValue = baseValue * impactFactor;
+            return [
+                v === 0 ? 'Base' : `${(v * 100).toFixed(1)}%`,
+                `${(newWacc * 100).toFixed(1)}%`,
+                `$${Math.round(newValue).toLocaleString()}`,
+                `${(((newValue / baseValue) - 1) * 100).toFixed(1)}%`
+            ];
+        });
+    } else if (data.tipo === 'BlackScholes') {
+        const sigma = parseFloat(data.variables.find(v => v.label.includes('Volatilidad'))?.valor.replace('%', '') || '0') / 100;
+        const baseCall = parseFloat(data.resultados.find(v => v.label.includes('CALL'))?.valor.replace('$', '') || '0');
+
+        sensitivityHead = ['Var. Volatilidad', 'Nueva Sigma', 'Precio Call Est.', 'Vega Approx'];
+        sensitivityBody = [-0.1, -0.05, 0, 0.05, 0.1].map(v => {
+            const newSigma = Math.max(0.01, sigma + v);
+            const newValue = baseCall * (newSigma / sigma);
+            return [
+                v === 0 ? 'Base' : `${(v * 100).toFixed(0)}%`,
+                `${(newSigma * 100).toFixed(0)}%`,
+                `$${newValue.toFixed(2)}`,
+                `${(baseCall / sigma / 100).toFixed(2)}`
+            ];
+        });
     }
 
     if (sensitivityBody.length > 0) {
@@ -168,10 +200,11 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(10);
     const glosario = [
-        ['Valor Futuro (VF)', 'Valor de una inversión en una fecha futura basado en una tasa de interés.'],
-        ['YTM (Yield to Maturity)', 'Tasa de rendimiento interna de un bono si se mantiene hasta el vencimiento.'],
-        ['Interés Compuesto', 'Interés calculado sobre el capital inicial y también sobre los intereses acumulados.'],
-        ['Valor Nominal', 'Valor original del instrumento financiero que se paga al vencimiento.'],
+        ['DCF (Discounted Cash Flow)', 'Método de valuación que estima el valor hoy de flujos de caja futuros descontados a una tasa.'],
+        ['WACC', 'Costo promedio ponderado de capital. Es la tasa de descuento para los flujos de la empresa.'],
+        ['Black-Scholes', 'Modelo matemático para valuar primas de opciones financieras europeas.'],
+        ['Griegas (Delta/Vega)', 'Medidas de sensibilidad del precio de una opción ante cambios en el activo o volatilidad.'],
+        ['Valor Terminal', 'Valor estimado de una empresa más allá del periodo de proyección explícito.'],
     ];
 
     autoTable(doc, {

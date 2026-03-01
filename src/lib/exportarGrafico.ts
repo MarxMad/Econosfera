@@ -15,8 +15,14 @@ export async function exportarGraficoComoPNG(
     throw new Error("No se encontró un SVG en el elemento");
   }
 
+  // Clonar para no modificar el DOM original
+  const svgClone = svg.cloneNode(true) as SVGSVGElement;
+  const rect = svg.getBoundingClientRect();
+  svgClone.setAttribute("width", rect.width.toString());
+  svgClone.setAttribute("height", rect.height.toString());
+
   // Obtener el contenido SVG como string
-  const svgData = new XMLSerializer().serializeToString(svg);
+  const svgData = new XMLSerializer().serializeToString(svgClone);
   const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
   const svgUrl = URL.createObjectURL(svgBlob);
 
@@ -31,11 +37,19 @@ export async function exportarGraficoComoPNG(
 
   return new Promise((resolve, reject) => {
     img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
+      const scale = 3; // Factor de escala para alta resolución (3x)
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      // Habilitar antialiasing y calidad
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
+
+      // Dibujar imagen escalada
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
       canvas.toBlob((blob) => {
         if (!blob) {
@@ -52,7 +66,7 @@ export async function exportarGraficoComoPNG(
         URL.revokeObjectURL(url);
         URL.revokeObjectURL(svgUrl);
         resolve();
-      }, "image/png");
+      }, "image/png", 1.0);
     };
 
     img.onerror = () => {
@@ -71,7 +85,12 @@ export function getGraficoAsDataUrl(elementoId: string): Promise<string> {
   const svg = elemento.querySelector("svg");
   if (!svg) return Promise.reject(new Error("No se encontró SVG en el elemento"));
 
-  const svgData = new XMLSerializer().serializeToString(svg);
+  const svgClone = svg.cloneNode(true) as SVGSVGElement;
+  const rect = svg.getBoundingClientRect();
+  svgClone.setAttribute("width", rect.width.toString());
+  svgClone.setAttribute("height", rect.height.toString());
+
+  const svgData = new XMLSerializer().serializeToString(svgClone);
   const svgBlob = new Blob([svgData], { type: "image/svg+xml;charset=utf-8" });
   const svgUrl = URL.createObjectURL(svgBlob);
   const img = new Image();
@@ -84,12 +103,18 @@ export function getGraficoAsDataUrl(elementoId: string): Promise<string> {
 
   return new Promise((resolve, reject) => {
     img.onload = () => {
-      canvas.width = img.width;
-      canvas.height = img.height;
+      const scale = 3; // Alta resolución para el PDF
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+
       ctx.fillStyle = "white";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(img, 0, 0);
-      const dataUrl = canvas.toDataURL("image/png");
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+      const dataUrl = canvas.toDataURL("image/png", 1.0);
       URL.revokeObjectURL(svgUrl);
       resolve(dataUrl);
     };

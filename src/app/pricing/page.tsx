@@ -12,8 +12,8 @@ const tiers = [
         features: [
             "Hasta 3 exportaciones PDF/mes",
             "Modelos macro y micro básicos",
-            "Interpretación de gráficas estándar",
-            "10 Créditos de IA iniciales",
+            "Simulador de Minado básico (Blockchain)",
+            "10 Créditos Creados (1 Análisis IA)",
             "Soporte por comunidad"
         ],
         buttonText: "Actual",
@@ -27,9 +27,9 @@ const tiers = [
         description: "Análisis avanzado para trabajos universitarios y tesis.",
         features: [
             "Exportaciones PDF ilimitadas",
-            "Análisis de minutas Banxico con IA",
-            "Modelos macro avanzados (IS-LM-BP)",
-            "25 Créditos de IA/mes",
+            "Modelos: DCF y Black-Scholes",
+            "Simulador Cripto: Árboles de Merkle",
+            "50 Créditos IA/mes (5 Análisis)",
             "Acceso a la academia (Quizzes)",
             "Soporte prioritario"
         ],
@@ -39,16 +39,16 @@ const tiers = [
         highlight: true,
     },
     {
-        name: "Investigador",
+        name: "Investigador / Full",
         price: "$12.99",
-        description: "Para profesionales que requieren precisión institucional.",
+        description: "Para profesionales que requieren todas las herramientas institucionales.",
         features: [
-            "Todo lo de Estudiante Pro",
-            "IA sin límites de créditos",
-            "API de datos financieros premium",
+            "Simulador Cripto: Hacking Smart Contracts",
+            "Simulador Cripto: Redes P2P y Consenso",
+            "100 Créditos IA/mes (10 Análisis)",
             "Reportes ejecutivos automáticos",
             "Personalización de marca en PDF",
-            "Consultoría 1-on-1"
+            "Consultoría 1-on-1 Trimestral"
         ],
         buttonText: "Contactar Ventas",
         buttonHref: "mailto:pro@econosfera.com",
@@ -76,8 +76,8 @@ export default function PricingPage() {
                     <div
                         key={tier.name}
                         className={`relative flex flex-col p-8 rounded-3xl border transition-all duration-300 ${tier.highlight
-                                ? 'bg-white dark:bg-slate-900 border-blue-500 shadow-2xl shadow-blue-500/10 scale-105 z-10'
-                                : 'bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800'
+                            ? 'bg-white dark:bg-slate-900 border-blue-500 shadow-2xl shadow-blue-500/10 scale-105 z-10'
+                            : 'bg-white/50 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800'
                             }`}
                     >
                         {tier.mostPopular && (
@@ -111,8 +111,8 @@ export default function PricingPage() {
                         <Link
                             href={tier.buttonHref}
                             className={`w-full py-4 text-center font-bold rounded-2xl transition-all active:scale-[0.98] ${tier.highlight
-                                    ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20'
-                                    : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
+                                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/20'
+                                : 'bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300'
                                 }`}
                         >
                             {tier.buttonText}
@@ -131,19 +131,19 @@ export default function PricingPage() {
                     <div className="grid md:grid-cols-2 gap-8 text-left">
                         <div>
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Cómo funcionan los créditos de IA?</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Cada análisis profundo de una minuta (PDF) consume 1 crédito. Los planes Pro incluyen una bolsa mensual que se renueva cada 30 días.</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Cada análisis profundo de una minuta del Banco Central cuesta 10 créditos. El plan Pro te da 50 créditos y el Researcher 100 créditos al mes.</p>
                         </div>
                         <div>
-                            <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Puedo cancelar en cualquier momento?</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Sí, no hay contratos forzosos. Si cancelas, mantendrás tus beneficios Pro hasta el final de tu periodo de facturación.</p>
+                            <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Cuáles simuladores de Blockchain bloquean y en qué plan?</h4>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">El Árbol de Merkle es exclusivo del plan <b>Pro</b>. La simulación de ataques a Smart Contracts y de Nodos P2P requieren del plan <b>Researcher / Full</b>. La minería básica es gratuita.</p>
                         </div>
                         <div>
-                            <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Hay descuentos para instituciones?</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">¡Claro! Ofrecemos licencias por volumen para departamentos de economía y actuaria de universidades. Contáctanos.</p>
+                            <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Los modelos de valuación financiera están en el gratuito?</h4>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">No, las herramientas profesionales de Wall-Street como los modelos de Flujos Descontados (DCF) y valuación de opciones (Black-Scholes) requieren nivel Estudiante Pro o superior.</p>
                         </div>
                         <div>
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Qué pasa si me acabo mis créditos?</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Puedes comprar paquetes de créditos adicionales (5, 10 o 50) desde tu dashboard sin necesidad de cambiar de plan.</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Puedes esperar al inicio de tu mes de ciclo de suscripción donde recuperas los 50 o 100 créditos y volver a analizar documentos IA.</p>
                         </div>
                     </div>
                 </div>

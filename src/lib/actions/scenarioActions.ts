@@ -18,20 +18,36 @@ export async function saveScenario(data: {
         return { error: "Debes iniciar sesión para guardar escenarios" };
     }
 
+    // Verificar créditos
+    const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { credits: true }
+    });
+
+    if (!user || user.credits < 1) {
+        return { error: "No tienes créditos suficientes para guardar el escenario." };
+    }
+
     try {
-        const scenario = await prisma.scenario.create({
-            data: {
-                userId: session.user.id,
-                type: data.type,
-                subType: data.subType,
-                name: data.name,
-                data: data.variables,
-                results: data.results,
-            },
-        });
+        const scenario = await prisma.$transaction([
+            prisma.user.update({
+                where: { id: session.user.id },
+                data: { credits: { decrement: 1 } }
+            }),
+            prisma.scenario.create({
+                data: {
+                    userId: session.user.id,
+                    type: data.type,
+                    subType: data.subType,
+                    name: data.name,
+                    data: data.variables,
+                    results: data.results,
+                },
+            })
+        ]);
 
         revalidatePath("/dashboard");
-        return { success: true, scenario };
+        return { success: true, scenario: scenario[1] };
     } catch (e) {
         console.error(e);
         return { error: "Error al guardar el escenario" };

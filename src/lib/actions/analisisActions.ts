@@ -17,8 +17,8 @@ export async function analizarMinutaBanxico(formData: FormData) {
     select: { credits: true }
   });
 
-  if (!user || user.credits <= 0) {
-    throw new Error("No tienes créditos de IA suficientes. Por favor, adquiere más créditos.");
+  if (!user || user.credits < 10) {
+    throw new Error("No tienes créditos de IA suficientes (se requieren 10). Por favor, adquiere más créditos.");
   }
 
   const apiKey = process.env.OPENAI_API_KEY;
@@ -27,12 +27,10 @@ export async function analizarMinutaBanxico(formData: FormData) {
     throw new Error("OPENAI_API_KEY no configurada en el servidor.");
   }
 
-  // Descontar crédito antes de la llamada (o después, pero el usuario quiere control de vaciado)
-  // Lo haremos antes para evitar carreras o si falla algo, pero podríamos hacerlo después si queremos ser "justos".
-  // El usuario dice "que no nos vayan a vaciar", mejor descontar antes o marcar como pendiente.
+  // Descontar 10 créditos antes de la llamada
   await prisma.user.update({
     where: { id: session.user.id },
-    data: { credits: { decrement: 1 } }
+    data: { credits: { decrement: 10 } }
   });
 
   const file = formData.get("file") as File;
@@ -72,49 +70,42 @@ export async function analizarMinutaBanxico(formData: FormData) {
   }
 
   const prompt = `
-    Analiza la siguiente minuta del Banco de México (Banxico) con un rigor académico, técnico y financiero extremo. Tu objetivo es actuar como un Director de Análisis Económico Senior para una firma de inversión global. No resumas; desmenuza y profundiza.
+    Analiza la siguiente minuta de la decisión de Política Monetaria del Banco de México (Banxico) con rigor analítico, cuantitativo y financiero de grado institucional.
+    Tu objetivo es actuar como un Director de Análisis Económico (Chief Economist) estructurando un reporte crítico para fondos de inversión.
 
-    INSTRUCCIONES CRÍTICAS PARA LA PROFUNDIDAD DEL INFORME:
-    1. ESTRUCTURACIÓN POR SECCIONES: La minuta está dividida en las siguientes secciones clave que DEBES identificar y analizar para una precisión total:
-       - 1. LUGAR, FECHA Y ASISTENTES: Contexto institucional y quórum.
-       - 2. ANÁLISIS Y MOTIVACIÓN DE LOS VOTOS: Esta es la médula espinal del reporte. Debes expandir cada subpunto:
-            * "Entorno Externo": Inflación global, política de la FED, riesgos geopolíticos.
-            * "Actividad Económica en México": Brecha de producto, mercado laboral, consumo e inversión.
-            * "Inflación en México": Desglose detallado de la subyacente (servicios vs mercancías) y no subyacente.
-            * "Entorno Macrofinanciero": Tipo de cambio, curva de rendimientos, flujos de capital.
-       - 3. DECISIÓN DE POLÍTICA MONETARIA: La postura oficial (Restrictiva, Neutral, Expansiva) y la guía futura (Forward Guidance).
-       - 4. VOTACIÓN: Desglose exacto.
-       - 5. OPINIONES/VOTOS DISIDENTES: Análisis exhaustivo de los desacuerdos técnicos.
-    
-    2. PRIORIDAD DE NEGRILLAS: Las partes en **negrita** son mandatos de comunicación del Banco. Úsalas para construir los insights más potentes.
-    3. MAPEO E INDIVIDUALIZACIÓN: Identifica las posturas individuales mencionadas como "algunos miembros", "la mayoría", "un miembro".
-    4. DISIDENCIAS TÉCNICAS: Explica con lujo de detalle POR QUÉ un miembro disiente (ej. si cree que la postura es demasiado restrictiva dado el entorno de crecimiento débil).
-    5. TONO HAWKISH VS DOVISH: Identifica el balance de riesgos y si el tono general se inclina hacia la dureza (hawk) o la flexibilidad (dove).
+    INSTRUCCIONES CRÍTICAS (SI NO SIGUES ESTO, EL REPORTE SERÁ RECHAZADO):
+    1. EXTRACCIÓN DE DATOS DUROS: NO HAGAS RESÚMENES GENÉRICOS. EXIGE NÚMEROS. Extrae cifras exactas mencionadas, porcentajes de inflación (general y subyacente, quincenal o mensual), estimaciones de PIB, y datos del mercado laboral. Si dicen "la inflación bajó", tú debes buscar en el texto y escribir "la inflación bajó a X.XX%".
+    2. MAPEO MILIMÉTRICO DE DISIDENCIAS: OBLIGATORIO LEER AL FINAL DE LA MINUTA (sección de VOTACIÓN y OPINIONES/VOTOS DISIDENTES). Busca EXPRESAMENTE si la votación fue unánime (ej. 5-0) o hubo votos disidentes (ej. 4-1). Por lo general, subgobernadores como Jonathan Heath o Irene Espinosa pueden disentir en la magnitud del recorte o en la señal del comunicado. Si hay un voto a favor de una decisión distinta (ej. recortar 25pb en lugar de 50pb, o mantener en lugar de recortar), ESTO ES UNA DISIDENCIA Y DEBE SER DOCUMENTADA A DETALLE.
+    3. DETALLE POR MIEMBROS: Rastrea diferencias de opinión: "un miembro destacó...", "algunos miembros advirtieron...", "la mayoría coincidió...". Atribuye posturas hawkish (restrictivas) o dovish (acomodaticias).
 
-    EXTRAE EN FORMATO JSON SIGUIENDO ESTA ESTRUCTURA EXACTA (genera textos largos y detallados, no párrafos de 2 líneas):
+    ESTRUCTURA DEL JSON A DEVOLVER (RESPETA ESTE ESQUEMA EXACTO):
     {
       "decision": { 
-        "tasa": "Valor exacto (ej. 7.00%)", 
-        "cambio": "Descripción precisa (ej. Mantenimiento del nivel objetivo)", 
-        "votacion": "Resultado detallado (ej. 4 votos a favor, 1 en contra)", 
-        "tipo": "Etiqueta estratégica profesional (ej. Pausa Restrictiva con Sesgo al Alza)" 
+        "tasa": "Valor final de la tasa de referencia impreso (ej. 11.25%, 11.00%)", 
+        "cambio": "Magnitud exacta del cambio (ej. Recorte de 25 puntos base, Sin cambios)", 
+        "votacion": "Resultado exacto de la votación (ej. Unanimidad, 4 votos a favor y 1 en contra de Heath por mantener)", 
+        "tipo": "Clasificación profesional (ej. Pausa Hawkish, Recorte Dovish con precaución)" 
       },
-      "veredicto": "Un veredicto ejecutivo robusto de al menos 3 párrafos técnicos donde conectes el entorno externo con la inflación local y la decisión tomada.",
+      "veredicto": "Resumen ejecutivo de 3 a 4 párrafos PROFUNDOS. Especifica qué pesó más en la balanza de riesgos (ej. debilidad económica vs resistencia en inflación de servicios). Cita los números exactos de inflación o crecimiento económico mencionados que justificaron el voto.",
       "insights": [
-        { "titulo": "Insight Estratégico 1", "desc": "Descripción detallada (mínimo 30 palabras) vinculando datos de la minuta con su impacto macro.", "color": "text-blue-500", "bg": "bg-blue-900/40" }
+        { "titulo": "Inflación de Servicios (Rigidez)", "desc": "Detalla los datos duros y la opinión de la junta sobre esto (Mín. 40 palabras).", "color": "text-rose-500", "bg": "bg-rose-900/10" },
+        { "titulo": "Balance de Riesgos Económicos", "desc": "Detalles sobre PIB, empleo, tipo de cambio y brecha de producto.", "color": "text-blue-500", "bg": "bg-blue-900/10" },
+        { "titulo": "Postura Global / FED", "desc": "Cómo influyó la decisión de la Reserva Federal o eventos geopolíticos.", "color": "text-indigo-500", "bg": "bg-indigo-900/10" }
       ],
       "detalle": {
-        "pormenorizado": "Un análisis técnico extenso (mínimo 200 palabras) sobre el debate interno de la Junta, contrastando las visiones sobre el crecimiento y la persistencia de la inflación en servicios.",
-        "factoresInflacion": ["Factor detallado 1 (ej. Persistencia de la inflación subyacente en el rubro de servicios alimenticios)", "Factor detallado 2"],
-        "mecanismosDefensa": ["Mecanismo detallado 1 (ej. Mantenimiento de una postura monetaria restrictiva por tiempo prolongado)", "Mecanismo detallado 2"],
-        "disidente": "Si hay disenso (ej. Heath), explica detalladamente su tesis técnica (comunicado vs tasa) y por qué cree que la estrategia actual es subóptima. Si no hay disenso, analiza el grado de cohesión de la mayoría."
+        "pormenorizado": "Análisis extenso (mínimo 200 palabras) sobre el debate interno. Qué miembros están preocupados por la persistencia inflacionaria. Qué miembros notan estancamiento económico. Menciona el tono exacto sobre el Forward Guidance (guía prospectiva para las siguientes decisiones).",
+        "factoresInflacion": ["Factor 1 exacto (ej. Servicios educativos crecieron X%)", "Factor 2 (Choques de oferta en agropecuarios)"],
+        "mecanismosDefensa": ["Estrategia 1 (Mantener tasa en terreno restrictivo un tiempo prolongado)", "Estrategia 2 (Monitoreo de expectativas de inflación a largo plazo)"],
+        "disidente": "¡REVISIÓN CRÍTICA! Ve a la sección de Votación. Si la decisión NO fue unánime, documenta nombre, voto exacto (qué proponía) y sus argumentos a profundidad. Si hubo unanimidad, explica qué concesión se en el comunicado para lograr esa unanimidad."
       },
       "ponderaciones": [
-        { "label": "Nombre del Pilar Coyuntural", "pct": 40, "color": "bg-blue-600" }
+        { "label": "Inflación de Servicios / Subyacente", "pct": 45, "color": "bg-rose-600" },
+        { "label": "Riesgo de Desaceleración / Brecha", "pct": 30, "color": "bg-blue-600" },
+        { "label": "Entorno Externo y FED", "pct": 25, "color": "bg-indigo-600" }
       ]
     }
 
-    IMPORTANTE: Si en una sección no encuentras información explícita, intenta inferirla del tono general de los miembros o indica que es un punto de consenso no detallado. No digas "No especificado" a menos que sea absolutamente imposible de hallar.
+    IMPORTANTE: LEE TODO EL TEXTO. LA DISIDENCIA USUALMENTE ESTÁ EN LOS ÚLTIMOS PÁRRAFOS O ANEXOS. ASEGÚRATE DE USAR DATOS CUANTITATIVOS SI LA MINUTA LOS CONTIENE. RECHAZA PARRAFOS GENERALES.
 
     Contenido de la minuta:
     ${contenido.substring(0, 100000)}
@@ -139,7 +130,7 @@ export async function analizarMinutaBanxico(formData: FormData) {
 
     if (!response.ok) {
       console.error("Error de OpenAI API:", data);
-      throw new Error(`OpenAI API error: ${data.error?.message || response.statusText}`);
+      throw new Error(`OpenAI API error: ${data.error?.message || response.statusText} `);
     }
 
     if (!data.choices || !data.choices[0]?.message?.content) {

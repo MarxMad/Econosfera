@@ -1,14 +1,19 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { TrendingUp, DollarSign, ArrowRight, Info, Calculator, Lock } from "lucide-react";
+import { TrendingUp, DollarSign, ArrowRight, Info, Calculator, Lock, Save } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { registrarExportacion } from "@/lib/actions/exportActions";
+import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
+import { saveScenario } from "@/lib/actions/scenarioActions";
+import PricingModal from "../PricingModal";
 
 export default function SimuladorDCF() {
     const { data: session } = useSession();
     const isPro = session?.user?.plan === 'PRO' || session?.user?.plan === 'RESEARCHER';
+    const [showPricing, setShowPricing] = useState(false);
 
     const [cfo, setCfo] = useState(100); // Flujo inicial
     // ... rest of state stays same
@@ -49,7 +54,69 @@ export default function SimuladorDCF() {
         };
     }, [cfo, growth, wacc, terminalGrowth, years]);
 
+    const handleExport = async () => {
+        if ((session?.user?.credits ?? 0) < 1) {
+            setShowPricing(true);
+            return;
+        }
+        try {
+            await registrarExportacion("Finanzas DCF", "PDF");
+            let chartUrl: string | null = null;
+            try {
+                const { getGraficoAsDataUrl } = await import("@/lib/exportarGrafico");
+                chartUrl = await getGraficoAsDataUrl("grafico-dcf");
+            } catch (_) {}
+            exportarFinanzasAPdf({
+                tipo: 'DCF',
+                titulo: 'Análisis de Valuación (Flujos Descontados)',
+                variables: [
+                    { label: 'Flujo Caja Año 0', valor: `$${cfo}` },
+                    { label: 'Tasa Crecimiento', valor: `${growth}%` },
+                    { label: 'WACC / Tasa Descto', valor: `${wacc}%` },
+                    { label: 'Crecimiento Perpetuo', valor: `${terminalGrowth}%` },
+                    { label: 'Horizonte Temporal', valor: `${years} años` }
+                ],
+                resultados: [
+                    { label: 'VP Flujos Fase 1', valor: `$${dcfData.projection[dcfData.projection.length - 1].accumulatedPv.toLocaleString()}` },
+                    { label: 'VP Valor Terminal', valor: `$${dcfData.pvTerminal.toLocaleString()}` },
+                    { label: 'VALOR INTRÍNSECO (EV)', valor: `$${dcfData.enterpriseValue.toLocaleString()}` }
+                ],
+                extra: {
+                    label: 'Proyección de Flujos Detallada',
+                    columns: ['Año', 'Flujo Nominal', 'Valor Presente', 'Acumulado'],
+                    data: dcfData.projection.map(p => ({
+                        year: p.year,
+                        flow: `$${p.flow.toLocaleString()}`,
+                        pv: `$${p.pv.toLocaleString()}`,
+                        acc: `$${p.accumulatedPv.toLocaleString()}`
+                    }))
+                },
+                chart: chartUrl
+            });
+        } catch (error: any) {
+            if (String(error?.message || error).includes("créditos")) setShowPricing(true);
+            else alert(error?.message || "Error al exportar");
+        }
+    };
+
+    const handleSave = async () => {
+        try {
+            const res = await saveScenario({
+                type: "FINANZAS",
+                subType: "DCF",
+                name: `DCF ${new Date().toLocaleDateString()}`,
+                variables: { cfo, growth, wacc, terminalGrowth, years },
+                results: { enterpriseValue: dcfData.enterpriseValue }
+            });
+            if (res.success) alert("Escenario guardado correctamente (1 crédito utilizado)");
+            else alert(res.error);
+        } catch (e: any) {
+            alert("Error al guardar");
+        }
+    };
+
     return (
+        <>
         <div className="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden relative">
             {!isPro && (
                 <div className="absolute inset-0 z-50 backdrop-blur-[2px] bg-slate-900/40 flex items-center justify-center p-6 transition-all">
@@ -69,11 +136,31 @@ export default function SimuladorDCF() {
             )}
 
             <div className="bg-slate-900 p-6 text-white">
-                <div className="flex items-center gap-3 mb-2">
-                    <div className="p-2 bg-blue-500 rounded-xl">
-                        <Calculator className="w-5 h-5" />
+                <div className="flex items-center justify-between gap-3 mb-2">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-blue-500 rounded-xl">
+                            <Calculator className="w-5 h-5" />
+                        </div>
+                        <h2 className="text-xl font-black">Valuación por Flujos Descontados (DCF)</h2>
                     </div>
-                    <h2 className="text-xl font-black">Valuación por Flujos Descontados (DCF)</h2>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleExport}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all shadow-lg active:scale-95"
+                        >
+                            <TrendingUp className="w-4 h-4" />
+                            Reporte PDF
+                        </button>
+                        {session && (
+                            <button
+                                onClick={handleSave}
+                                className="flex items-center gap-2 px-4 py-2 bg-slate-800 hover:bg-slate-700 text-white text-xs font-bold rounded-xl transition-all shadow-lg active:scale-95"
+                            >
+                                <Save className="w-4 h-4" />
+                                Guardar
+                            </button>
+                        )}
+                    </div>
                 </div>
                 <p className="text-sm text-slate-400">El estándar de oro para la valuación intrínseca de activos y empresas.</p>
             </div>
@@ -138,7 +225,7 @@ export default function SimuladorDCF() {
 
                 {/* Gráfica y Resultados */}
                 <div className="lg:col-span-2 space-y-8">
-                    <div className="h-[300px] w-full bg-slate-50 dark:bg-slate-800/20 rounded-3xl p-4 border border-slate-100 dark:border-slate-800">
+                    <div id="grafico-dcf" className="h-[300px] w-full bg-slate-50 dark:bg-slate-800/20 rounded-3xl p-4 border border-slate-100 dark:border-slate-800">
                         <ResponsiveContainer width="100%" height="100%">
                             <AreaChart data={dcfData.projection}>
                                 <defs>
@@ -182,5 +269,7 @@ export default function SimuladorDCF() {
                 </div>
             </div>
         </div>
+        <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
+        </>
     );
 }

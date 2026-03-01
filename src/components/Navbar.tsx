@@ -42,6 +42,13 @@ export default function Navbar() {
                                     <LayoutDashboard className="w-4 h-4" />
                                     Mis Cálculos
                                 </Link>
+                                <Link
+                                    href="/dashboard"
+                                    className="p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
+                                    title="Mi Perfil"
+                                >
+                                    <User className="w-5 h-5" />
+                                </Link>
                                 <div className="flex items-center gap-3 pl-4 border-l border-slate-700">
                                     <div className="text-right hidden lg:block">
                                         <p className="text-xs font-bold">{session.user.name || session.user.email}</p>
@@ -86,22 +93,25 @@ export default function Navbar() {
             {menuOpen && (
                 <div className="md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
                     {session && (
-                        <Link href="/simulador" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Simuladores</Link>
+                        <Link href="/simulador" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Simuladores</Link>
                     )}
-                    <Link href="/pricing" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Precios</Link>
-                    <Link href="/manual" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Manual</Link>
+                    <Link href="/pricing" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Precios</Link>
+                    <Link href="/manual" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Manual</Link>
                     <hr className="border-slate-800" />
                     {session ? (
                         <>
-                            <Link href="/dashboard" className="block px-3 py-2 rounded-md text-base font-medium text-blue-400">Dashboard ({session.user.credits} créditos)</Link>
-                            <button onClick={() => signOut()} className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10">
+                            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">
+                                <User className="w-5 h-5" /> Mi Perfil
+                            </Link>
+                            <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-blue-400">Dashboard ({session.user.credits} créditos)</Link>
+                            <button onClick={() => { setMenuOpen(false); signOut(); }} className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10">
                                 <LogOut className="w-5 h-5" /> Cerrar Sesión
                             </button>
                         </>
                     ) : (
                         <>
-                            <Link href="/auth/signin" className="block px-3 py-2 rounded-md text-base font-medium text-slate-300">Entrar</Link>
-                            <Link href="/auth/register" className="block px-3 py-2 rounded-md text-base font-bold text-blue-400">Registrarse</Link>
+                            <Link href="/auth/signin" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-slate-300">Entrar</Link>
+                            <Link href="/auth/register" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-bold text-blue-400">Registrarse</Link>
                         </>
                     )}
                 </div>

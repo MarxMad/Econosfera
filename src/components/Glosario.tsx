@@ -32,40 +32,45 @@ export default function Glosario({ moduloActivo, onIrAModulo }: GlosarioProps) {
   ];
 
   return (
-    <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg overflow-hidden">
-      <div className="p-5 border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800">
-        <div className="flex items-center gap-2 mb-4">
-          <BookOpen className="w-6 h-6 text-slate-600 dark:text-slate-400" aria-hidden />
-          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Glosario de términos</h2>
+    <div className="space-y-6 animate-in fade-in duration-700">
+      <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-900 dark:to-slate-900 p-8 shadow-sm relative overflow-hidden">
+        <div className="absolute top-0 right-0 p-8 opacity-10 text-blue-500">
+          <BookOpen className="w-24 h-24" />
         </div>
-        <div className="space-y-3">
+        <div className="relative z-10">
+          <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-3 flex items-center gap-3">
+            <BookOpen className="text-blue-500 w-8 h-8" />
+            Glosario de Términos
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400 text-sm max-w-2xl italic mb-6">
+            Diccionario económico interactivo para encontrar definiciones y conceptos clave en un instante.
+          </p>
           <input
             type="text"
             placeholder="Buscar término..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
-            className="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full lg:w-96 px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
-          <div className="flex flex-wrap gap-2">
-            {modulos.map((mod) => (
-              <button
-                key={mod.id}
-                type="button"
-                onClick={() => setFiltroModulo(mod.id)}
-                className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
-                  filtroModulo === mod.id
-                    ? "bg-blue-600 text-white shadow"
-                    : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
-                }`}
-              >
-                {mod.label}
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 
-      <div className="p-5 max-h-[600px] overflow-y-auto">
+      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
+        {modulos.map((mod) => (
+          <button
+            key={mod.id}
+            type="button"
+            onClick={() => setFiltroModulo(mod.id)}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${filtroModulo === mod.id
+              ? "bg-blue-600 text-white shadow"
+              : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600"
+              }`}
+          >
+            {mod.label}
+          </button>
+        ))}
+      </div>
+      <div className="p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl max-h-[600px] overflow-y-auto">
         {terminosFiltrados.length === 0 ? (
           <p className="text-slate-500 dark:text-slate-400 text-center py-8">
             No se encontraron términos con "{busqueda}"
@@ -96,8 +101,8 @@ export default function Glosario({ moduloActivo, onIrAModulo }: GlosarioProps) {
                 </div>
                 <p className="text-slate-600 dark:text-slate-400 mb-2">{termino.definicion}</p>
                 {termino.formula && (
-                  <div className="mt-2 p-2 rounded bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600">
-                    <p className="text-sm font-mono text-slate-800 dark:text-slate-200">{termino.formula}</p>
+                  <div className="mt-2 p-3 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 overflow-x-auto">
+                    <p className="text-sm font-mono text-slate-800 dark:text-slate-200 whitespace-nowrap">{termino.formula}</p>
                   </div>
                 )}
                 {termino.ejemplo && (

@@ -48,7 +48,7 @@ export function InputLibre({
           onBlur={commit}
           onKeyDown={(e) => e.key === "Enter" && commit()}
           placeholder={placeholder}
-          className="w-full min-w-0 px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full min-w-[5rem] px-3 py-2 text-sm rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500 tabular-nums"
           aria-label={label}
         />
         {suffix && <span className="text-slate-500 dark:text-slate-400 shrink-0">{suffix}</span>}

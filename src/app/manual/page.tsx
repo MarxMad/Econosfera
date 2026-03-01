@@ -38,7 +38,7 @@ export default function ManualPage() {
                                 <li>Dirígete a la pestaña <strong>Inflación y política monetaria</strong>.</li>
                                 <li>Sube un documento en formato <strong>.PDF o .TXT</strong> de las decisiones del banco central (ej. Banxico).</li>
                                 <li>La plataforma identificará posturas "Hawkish" o "Dovish", votos disidentes y el balance de riesgos macroeconómicos automáticamente.</li>
-                                <li><strong>Tip:</strong> Todos los análisis procesados por la IA pueden guardarse en tu cuenta.</li>
+                                <li><strong>Consumo de Créditos:</strong> Cada análisis profundo consume <strong>10 créditos</strong>. Los usuarios gratuitos inician con 10 créditos, mientras que el plan <strong>Estudiante Pro</strong> otorga 50 mensuales y el <strong>Researcher</strong> 100 mensuales.</li>
                             </ul>
                         </div>
                     </section>
@@ -46,21 +46,35 @@ export default function ManualPage() {
                     {/* Section 2 */}
                     <section className="space-y-4">
                         <h2 className="text-2xl font-bold flex items-center gap-3 text-slate-800 dark:text-slate-100 mb-6 pb-2 border-b border-slate-100 dark:border-slate-800">
-                            <span className="text-blue-500">2.</span> Simuladores y Modelos
+                            <span className="text-blue-500">2.</span> Simuladores y Modelos Principales
                         </h2>
                         <div className="grid sm:grid-cols-2 gap-6 mt-4">
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
                                 <LineChart className="w-6 h-6 text-emerald-500 mb-3" />
                                 <h3 className="font-bold text-lg mb-2">Macroeconomía</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                                    Explora el modelo <strong>IS-LM</strong> y el comportamiento de la economía ante cambios fiscales (Gasto, Impuestos) y monetarios (Oferta monetaria). Incluye cálculo de Multiplicadores Keynesianos.
+                                    Modelo IS-LM, Curva de Phillips y la <strong>Regla de Taylor</strong> para el análisis de inflación, política fiscal y monetaria.
                                 </p>
                             </div>
                             <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
                                 <LineChart className="w-6 h-6 text-amber-500 mb-3" />
                                 <h3 className="font-bold text-lg mb-2">Microeconomía</h3>
                                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                                    Experimenta con curvas de <strong>Oferta y Demanda</strong>, determina el precio óptimo del mercado, calcula excedentes del consumidor/productor y elasticidades precio.
+                                    Curvas de Oferta/Demanda, precio equilibrio, excedentes y cálculo automático de elasticidades precio-demanda.
+                                </p>
+                            </div>
+                            <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                <LineChart className="w-6 h-6 text-blue-500 mb-3" />
+                                <h3 className="font-bold text-lg mb-2">Finanzas Cuantitativas <span className="ml-2 text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">Pro</span></h3>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                    Modelos profesionales de valuación DCF (Flujos Descontados), Gordon-Shapiro y Black-Scholes para opciones financieras algorítmicas.
+                                </p>
+                            </div>
+                            <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700">
+                                <LineChart className="w-6 h-6 text-purple-500 mb-3" />
+                                <h3 className="font-bold text-lg mb-2">Economía Blockchain <span className="ml-2 text-[10px] bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">Full</span></h3>
+                                <p className="text-sm text-slate-600 dark:text-slate-400">
+                                    Herramientas de criptografía: Hashes, simuladores de Árboles de Merkle, redes P2P Gossip y demostraciones de ataques a Smart Contracts.
                                 </p>
                             </div>
                         </div>
