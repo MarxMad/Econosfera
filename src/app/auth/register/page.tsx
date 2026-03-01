@@ -4,12 +4,22 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap, Phone, Briefcase } from "lucide-react";
 import { registerUser } from "@/lib/actions/authActions";
 
 export default function RegisterPage() {
     const { status } = useSession();
-    const [formData, setFormData] = useState({ name: "", lastName: "", email: "", institution: "", password: "", confirmPassword: "" });
+    const [formData, setFormData] = useState({
+        name: "",
+        lastName: "",
+        email: "",
+        institution: "",
+        phone: "",
+        occupation: "",
+        educationLevel: "",
+        password: "",
+        confirmPassword: "",
+    });
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
@@ -42,6 +52,9 @@ export default function RegisterPage() {
         data.append("lastName", formData.lastName);
         data.append("email", formData.email);
         data.append("institution", formData.institution);
+        data.append("phone", formData.phone);
+        data.append("occupation", formData.occupation);
+        data.append("educationLevel", formData.educationLevel);
         data.append("password", formData.password);
 
         const res = await registerUser(data);
@@ -139,6 +152,53 @@ export default function RegisterPage() {
                                     className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
                                     placeholder="Ej. UNAM, ITAM..."
                                 />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Teléfono <span className="font-normal text-slate-400">(opcional)</span></label>
+                            <div className="relative">
+                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <input
+                                    type="tel"
+                                    value={formData.phone}
+                                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    placeholder="Ej. +52 55 1234 5678"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Ocupación <span className="font-normal text-slate-400">(opcional)</span></label>
+                            <div className="relative">
+                                <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <input
+                                    type="text"
+                                    value={formData.occupation}
+                                    onChange={(e) => setFormData({ ...formData, occupation: e.target.value })}
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                    placeholder="Ej. Estudiante, Economista"
+                                />
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-1 block">Nivel de estudios <span className="font-normal text-slate-400">(opcional)</span></label>
+                            <div className="relative">
+                                <GraduationCap className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+                                <select
+                                    value={formData.educationLevel}
+                                    onChange={(e) => setFormData({ ...formData, educationLevel: e.target.value })}
+                                    className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                                >
+                                    <option value="">Seleccionar</option>
+                                    <option value="preparatoria">Preparatoria / Bachillerato</option>
+                                    <option value="licenciatura">Licenciatura</option>
+                                    <option value="maestria">Maestría</option>
+                                    <option value="doctorado">Doctorado</option>
+                                    <option value="otro">Otro</option>
+                                </select>
                             </div>
                         </div>
 

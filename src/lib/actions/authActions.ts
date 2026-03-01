@@ -49,6 +49,9 @@ export async function registerUser(formData: FormData) {
         const lastName = formData.get("lastName") as string;
         const email = formData.get("email") as string;
         const institution = formData.get("institution") as string;
+        const phone = (formData.get("phone") as string) || undefined;
+        const occupation = (formData.get("occupation") as string) || undefined;
+        const educationLevel = (formData.get("educationLevel") as string) || undefined;
         const password = formData.get("password") as string;
 
         if (!email || !password || !name) {
@@ -74,6 +77,9 @@ export async function registerUser(formData: FormData) {
                 lastName,
                 email,
                 institution,
+                phone: phone || undefined,
+                occupation: occupation || undefined,
+                educationLevel: educationLevel || undefined,
                 password: hashedPassword,
             },
         });
@@ -156,11 +162,17 @@ export async function updateProfile(userId: string, data: {
     }
 }
 
-/** Sube la imagen de perfil a Supabase Storage y devuelve la URL pública. */
-export async function uploadProfileImage(userId: string, file: File): Promise<{ url: string } | { error: string }> {
+/** Sube la imagen de perfil a Supabase Storage y devuelve la URL pública. Acepta FormData con "file" y "userId". */
+export async function uploadProfileImage(formData: FormData): Promise<{ url: string } | { error: string }> {
     const session = await getServerSession(authOptions);
-    if (!session?.user?.id || session.user.id !== userId) {
+    const userId = formData.get("userId");
+    if (!session?.user?.id || typeof userId !== "string" || session.user.id !== userId) {
         return { error: "No autorizado" };
+    }
+
+    const file = formData.get("file");
+    if (!file || !(file instanceof File)) {
+        return { error: "No se envió ninguna imagen" };
     }
 
     const { getSupabaseServer, BUCKET_AVATARS } = await import("@/lib/supabase");
@@ -177,7 +189,7 @@ export async function uploadProfileImage(userId: string, file: File): Promise<{ 
 
     const { error } = await supabase.storage
         .from(BUCKET_AVATARS)
-        .upload(path, buffer, { upsert: true, contentType: file.type });
+        .upload(path, buffer, { upsert: true, contentType: file.type || "image/jpeg" });
 
     if (error) {
         console.error("Supabase upload error:", error);

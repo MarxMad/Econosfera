@@ -24,6 +24,7 @@ export default function Navbar() {
                         </Link>
 
                         <div className="hidden md:flex items-center gap-6">
+                            <Link href="/glosario" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Glosario</Link>
                             {session && (
                                 <Link href="/simulador" className="text-sm font-medium text-slate-300 hover:text-white transition-colors">Simuladores</Link>
                             )}
@@ -92,6 +93,7 @@ export default function Navbar() {
             {/* Mobile Menu */}
             {menuOpen && (
                 <div className="md:hidden bg-slate-900 border-b border-slate-800 px-4 pt-2 pb-6 space-y-3">
+                    <Link href="/glosario" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Glosario</Link>
                     {session && (
                         <Link href="/simulador" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-slate-300 hover:bg-slate-800">Simuladores</Link>
                     )}

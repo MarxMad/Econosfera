@@ -63,7 +63,7 @@ export default function ProfileCard() {
                 setProfile(p);
                 if (p) {
                     setForm({
-                        name: p.name || "",
+                        name: p.name || (session?.user?.name as string) || "",
                         lastName: p.lastName || "",
                         institution: p.institution || "",
                         phone: p.phone || "",
@@ -100,19 +100,23 @@ export default function ProfileCard() {
 
     const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file || !session?.user?.id) return;
+        const userId = session?.user?.id;
+        if (!file || !userId) return;
         if (!file.type.startsWith("image/")) {
             alert("Selecciona una imagen (JPG, PNG, etc.).");
             return;
         }
         setUploadingPhoto(true);
-        const uploadRes = await uploadProfileImage(session.user.id, file);
+        const formData = new FormData();
+        formData.set("userId", userId);
+        formData.set("file", file);
+        const uploadRes = await uploadProfileImage(formData);
         if ("error" in uploadRes) {
             alert(uploadRes.error);
             setUploadingPhoto(false);
             return;
         }
-        const updateRes = await updateProfile(session.user.id, { image: uploadRes.url });
+        const updateRes = await updateProfile(userId, { image: uploadRes.url });
         if (updateRes.success) {
             setProfile((prev) => (prev ? { ...prev, image: uploadRes.url } : null));
             await update();
