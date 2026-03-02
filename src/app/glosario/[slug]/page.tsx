@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ChevronRight, BookOpen, ArrowLeft, Link2 } from "lucide-react";
 import { getTerminoBySlug, getTodosLosSlugs, getTerminosPorModulo, getSlugDeTermino } from "@/lib/glosario";
 import { getBaseUrl } from "@/lib/siteUrl";
+import GlosarioAdBanner from "@/components/GlosarioAdBanner";
 
 const MODULO_LABEL: Record<string, string> = {
   inflacion: "Inflación",
@@ -122,6 +123,12 @@ export default function GlosarioTerminoPage({ params }: Props) {
             </h1>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{termino.definicion}</p>
 
+            <GlosarioAdBanner
+              slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_1}
+              format="rectangle"
+              label="Publicidad"
+            />
+
             {termino.formula && (
               <div className="mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                 <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-2">
@@ -141,6 +148,12 @@ export default function GlosarioTerminoPage({ params }: Props) {
                 <p className="text-sm text-slate-700 dark:text-slate-300 italic">{termino.ejemplo}</p>
               </div>
             )}
+
+            <GlosarioAdBanner
+              slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_2}
+              format="horizontal"
+              label="Publicidad"
+            />
 
             {relacionados.length > 0 && (
               <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
