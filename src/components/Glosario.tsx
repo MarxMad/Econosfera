@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { BookOpen, Award, BookMarked } from "lucide-react";
-import { buscarTerminos, getSlugDeTermino, FUENTES_CONCEPTOS, type TerminoGlosario } from "@/lib/glosario";
+import { buscarTerminos, getSlugDeTermino, getLetraInicial, FUENTES_CONCEPTOS, type TerminoGlosario } from "@/lib/glosario";
 import { getLineaTiempoCompleta } from "@/lib/teoriasEconomicas";
 import type { ModuloSimulador } from "./NavSimuladores";
 
@@ -30,6 +30,24 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
     }
     return resultado;
   }, [busqueda, filtroModulo]);
+
+  /** Agrupa términos por letra inicial (A, B, C...) para vista tipo diccionario. */
+  const terminosPorLetra = useMemo(() => {
+    const groups: Record<string, TerminoGlosario[]> = {};
+    for (const t of terminosFiltrados) {
+      const letra = getLetraInicial(t.termino);
+      if (!groups[letra]) groups[letra] = [];
+      groups[letra].push(t);
+    }
+    const ordenLetras = (a: string, b: string) => {
+      if (a === "0-9") return -1;
+      if (b === "0-9") return 1;
+      if (a === "·") return 1;
+      if (b === "·") return -1;
+      return a.localeCompare(b, "es");
+    };
+    return Object.entries(groups).sort(([la], [lb]) => ordenLetras(la, lb));
+  }, [terminosFiltrados]);
 
   const lineaTiempo = useMemo(() => getLineaTiempoCompleta(), []);
 
@@ -126,8 +144,19 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
             No se encontraron términos con "{busqueda}"
           </p>
         ) : (
-          <div className="space-y-4">
-            {terminosFiltrados.map((termino, idx) => {
+          <div className="space-y-8">
+            {terminosPorLetra.map(([letra, terminos]) => (
+              <div key={letra}>
+                <div className="sticky top-0 z-10 py-2 mb-3 flex items-center gap-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white text-lg font-bold shadow">
+                    {letra}
+                  </span>
+                  <span className="text-sm font-medium text-slate-500 dark:text-slate-400">
+                    {terminos.length} {terminos.length === 1 ? "término" : "términos"}
+                  </span>
+                </div>
+                <div className="space-y-4">
+                  {terminos.map((termino, idx) => {
               const slug = getSlugDeTermino(termino.termino);
               const isLink = Boolean(slug && standalone);
               const content = (
@@ -169,15 +198,18 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
               );
               const className = `p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30 hover:shadow-md transition-shadow ${isLink ? "block" : ""}`;
               return isLink && slug ? (
-                <Link key={idx} href={`/glosario/${slug}`} className={className}>
+                <Link key={`${letra}-${idx}`} href={`/glosario/${slug}`} className={className}>
                   {content}
                 </Link>
               ) : (
-                <div key={idx} className={className}>
+                <div key={`${letra}-${idx}`} className={className}>
                   {content}
                 </div>
               );
             })}
+                </div>
+              </div>
+            ))}
           </div>
         )}
         <div className="mt-6 pt-5 border-t border-slate-200 dark:border-slate-700">

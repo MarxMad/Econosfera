@@ -388,6 +388,14 @@ export const TERMINOS: TerminoGlosario[] = [
   { termino: "Normalidad asintótica", definicion: "Propiedad por la cual la distribución del estimador (normalizado por su error estándar) converge a una distribución normal estándar cuando el tamaño de la muestra n tiende a infinito. Muchos estimadores (MCO, máxima verosimilitud, GMM) son asintóticamente normales bajo condiciones de regularidad; ello permite construir intervalos de confianza y tests (t, Wald) aproximados en muestras grandes aunque la distribución exacta sea desconocida. Es la base de la inferencia asintótica en econometría cuando no se puede asumir normalidad exacta del error.", modulo: "estadistica" },
 ];
 
+/** Orden alfabético por nombre del término (español). */
+function sortTerminosAlfabetico(a: TerminoGlosario, b: TerminoGlosario): number {
+  return a.termino.localeCompare(b.termino, "es", { sensitivity: "base" });
+}
+
+/** Términos ordenados alfabéticamente (como glosario por letras). */
+const TERMINOS_ORDENADOS = [...TERMINOS].sort(sortTerminosAlfabetico);
+
 /** Normaliza el nombre del término a un slug URL-friendly (minúsculas, sin acentos, espacios → guiones). */
 export function terminoToSlug(termino: string): string {
   let s = termino.trim().toLowerCase();
@@ -399,11 +407,11 @@ export function terminoToSlug(termino: string): string {
   return s || "termino";
 }
 
-/** Mapa slug → término para resolución única (slugs duplicados llevan sufijo -2, -3, ...). */
+/** Mapa slug → término para resolución única (slugs duplicados llevan sufijo -2, -3, ...). Orden de inserción = alfabético por término. */
 const MAP_SLUG_TO_TERMINO = (() => {
   const map = new Map<string, TerminoGlosario>();
   const seen = new Map<string, number>();
-  for (const t of TERMINOS) {
+  for (const t of TERMINOS_ORDENADOS) {
     let slug = terminoToSlug(t.termino);
     const count = (seen.get(slug) ?? 0) + 1;
     seen.set(slug, count);
@@ -417,7 +425,7 @@ const MAP_SLUG_TO_TERMINO = (() => {
 export const MAP_TERMINO_TO_SLUG = (() => {
   const map = new Map<string, string>();
   const seen = new Map<string, number>();
-  for (const t of TERMINOS) {
+  for (const t of TERMINOS_ORDENADOS) {
     let slug = terminoToSlug(t.termino);
     const count = (seen.get(slug) ?? 0) + 1;
     seen.set(slug, count);
@@ -442,7 +450,7 @@ export function getSlugDeTermino(termino: string): string | null {
 
 export function buscarTerminos(query: string): TerminoGlosario[] {
   const q = query.toLowerCase().trim();
-  if (!q) return TERMINOS;
+  if (!q) return [...TERMINOS_ORDENADOS];
   return TERMINOS.filter(
     (t) =>
       t.termino.toLowerCase().includes(q) ||
@@ -450,9 +458,17 @@ export function buscarTerminos(query: string): TerminoGlosario[] {
       (t.formula && t.formula.toLowerCase().includes(q)) ||
       (t.ejemplo && t.ejemplo.toLowerCase().includes(q)) ||
       t.modulo === q
-  );
+  ).sort(sortTerminosAlfabetico);
 }
 
 export function getTerminosPorModulo(modulo: TerminoGlosario["modulo"]): TerminoGlosario[] {
-  return TERMINOS.filter((t) => t.modulo === modulo);
+  return TERMINOS.filter((t) => t.modulo === modulo).sort(sortTerminosAlfabetico);
+}
+
+/** Letra inicial para agrupar términos (A–Z; números/símbolos → "0-9"). */
+export function getLetraInicial(termino: string): string {
+  const first = (termino.trim()[0] ?? "").toUpperCase();
+  if (/[A-ZÁÉÍÓÚÑ]/.test(first)) return first;
+  if (/[0-9]/.test(first)) return "0-9";
+  return first || "·";
 }

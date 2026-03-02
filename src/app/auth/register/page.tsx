@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
-import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap, Phone, Briefcase } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap, Phone, Briefcase, Sparkles, Loader2 } from "lucide-react";
 import { registerUser } from "@/lib/actions/authActions";
 
 export default function RegisterPage() {
@@ -23,15 +23,39 @@ export default function RegisterPage() {
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [signInError, setSignInError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const router = useRouter();
+    const signInAttempted = useRef(false);
 
     useEffect(() => {
         if (status === "authenticated") {
             router.push("/dashboard");
         }
     }, [status, router]);
+
+    // Tras crear la cuenta, iniciar sesión automáticamente y redirigir
+    useEffect(() => {
+        if (!success || !formData.email || !formData.password || signInAttempted.current) return;
+        signInAttempted.current = true;
+        let cancelled = false;
+        (async () => {
+            const res = await signIn("credentials", {
+                email: formData.email,
+                password: formData.password,
+                redirect: false,
+            });
+            if (cancelled) return;
+            if (res?.error) {
+                setSignInError("Cuenta creada. Por favor inicia sesión con tu email y contraseña.");
+                return;
+            }
+            router.push("/dashboard");
+            router.refresh();
+        })();
+        return () => { cancelled = true; };
+    }, [success, formData.email, formData.password, router]);
 
     const passwordsMatch = formData.password === formData.confirmPassword;
     const showPasswordError = formData.confirmPassword.length > 0 && !passwordsMatch;
@@ -64,17 +88,44 @@ export default function RegisterPage() {
             setLoading(false);
         } else {
             setSuccess(true);
-            setTimeout(() => router.push("/auth/signin"), 2000);
+            // Inicio de sesión automático y redirección se hacen en el efecto al mostrar la pantalla de éxito
         }
     };
 
     if (success) {
         return (
             <div className="min-h-[80vh] flex items-center justify-center p-4">
-                <div className="w-full max-w-md text-center space-y-4">
-                    <CheckCircle2 className="w-16 h-16 text-emerald-500 mx-auto animate-bounce" />
-                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white">¡Cuenta creada!</h2>
-                    <p className="text-slate-500 dark:text-slate-400">Redirigiéndote al inicio de sesión...</p>
+                <div className="w-full max-w-md bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-6">
+                    <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mx-auto border border-emerald-200 dark:border-emerald-800/50">
+                        <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
+                    </div>
+                    <div>
+                        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
+                            ¡Bienvenido a Econosfera{formData.name ? `, ${formData.name}` : ""}!
+                        </h2>
+                        <p className="mt-2 text-slate-600 dark:text-slate-400">
+                            Tu cuenta está lista. Estamos entrando a tu panel…
+                        </p>
+                    </div>
+                    {signInError ? (
+                        <div className="space-y-3">
+                            <p className="text-sm text-amber-600 dark:text-amber-400">{signInError}</p>
+                            <Link
+                                href="/auth/signin"
+                                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 transition-colors"
+                            >
+                                Ir a iniciar sesión <ArrowRight className="w-4 h-4" />
+                            </Link>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col items-center gap-3">
+                            <Loader2 className="w-8 h-8 text-blue-500 animate-spin" aria-hidden />
+                            <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
+                                <Sparkles className="w-4 h-4 text-amber-500" />
+                                Entrando a tu panel…
+                            </p>
+                        </div>
+                    )}
                 </div>
             </div>
         );
