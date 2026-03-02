@@ -34,8 +34,8 @@ Sigue estos pasos para lanzar la terminal Econosfera al mundo.
 2. Configura las siguientes variables de entorno:
    - `DATABASE_URL`
    - `DIRECT_URL`
-   - `NEXTAUTH_SECRET` (Genera una con `openssl rand -base64 32`)
-   - `NEXTAUTH_URL` (Tu URL de producción)
+   - `NEXTAUTH_SECRET` **(obligatorio)** — Genera una con `openssl rand -base64 32`. Sin ella, el login devuelve "Server error / problem with server configuration".
+   - `NEXTAUTH_URL` **(obligatorio en producción)** — Debe ser la URL pública de la app (ej. `https://econosfera.vercel.app`). No uses la URL de preview de Vercel para login.
    - `GOOGLE_CLIENT_ID`
    - `GOOGLE_CLIENT_SECRET`
    - `OPENAI_API_KEY`

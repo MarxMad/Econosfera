@@ -54,17 +54,17 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Headline Premium */}
-            <h1 className="font-black tracking-tighter text-white mb-8 leading-[0.9]">
+            {/* Headline Premium: dos líneas sin partir palabras en pantallas grandes */}
+            <h1 className="font-black tracking-tighter text-white mb-8 leading-tight">
               <span className="block text-emerald-400 text-2xl sm:text-3xl md:text-4xl mb-4 tracking-wider uppercase drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]">Econosfera</span>
-              <span className="text-[12vw] sm:text-6xl md:text-7xl lg:text-8xl break-words block">
-                EL SIMULADOR <br />
-                <div className="relative inline-block mt-2">
+              <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-8xl max-w-full">
+                <span className="block whitespace-nowrap">EL SIMULADOR</span>
+                <span className="relative block mt-2">
                   <span className="absolute -inset-2 bg-blue-600/20 blur-2xl opacity-40 animate-pulse" />
-                  <span className="relative text-white">
+                  <span className="relative text-white whitespace-nowrap block">
                     PROFESIONAL
                   </span>
-                </div>
+                </span>
               </span>
             </h1>
 

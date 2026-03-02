@@ -33,7 +33,10 @@ export default function SignInPage() {
         });
 
         if (res?.error) {
-            setError("Email o contraseña incorrectos");
+            const isConfigError = /configuration|server|config/i.test(res.error);
+            setError(isConfigError
+                ? "Error del servidor. Si eres el administrador, revisa en Vercel que NEXTAUTH_SECRET y NEXTAUTH_URL estén definidos y que la base de datos sea accesible."
+                : "Email o contraseña incorrectos");
             setLoading(false);
         } else {
             router.push("/simulador");
