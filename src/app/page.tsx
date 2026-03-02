@@ -12,6 +12,7 @@ export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
   const [authModalOpen, setAuthModalOpen] = useState(false);
+  const [unamLogoError, setUnamLogoError] = useState(false);
 
   const handleProbarClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -22,9 +23,19 @@ export default function Home() {
     }
   };
 
+  const handleExplorarModelos = () => {
+    const preview = document.getElementById("simuladores-preview");
+    const isMobile = typeof window !== "undefined" && window.innerWidth < 1024;
+    if (isMobile && preview) {
+      preview.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      router.push("/simulador");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
-      <section className="relative min-h-[90vh] flex flex-col justify-center bg-[#020617] text-white overflow-hidden py-20">
+      <section className="relative min-h-[90vh] flex flex-col justify-center bg-[#020617] text-white overflow-hidden py-12 sm:py-16 lg:py-20">
         {/* Background Effects Premium */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           {/* Animated Glow Orbs */}
@@ -36,30 +47,30 @@ export default function Home() {
           <div className="absolute inset-0 bg-[linear-gradient(to_right,#4f4f4f2e_1px,transparent_1px),linear-gradient(to_bottom,#4f4f4f2e_1px,transparent_1px)] bg-[size:40px_40px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
         </div>
 
-        <div className="relative z-10 max-w-7xl mx-auto px-4 w-full grid lg:grid-cols-2 gap-16 items-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 w-full grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
           <div className="text-left animate-in fade-in slide-in-from-left duration-1000">
-            {/* Pill Badge Premium */}
-            <div className="relative inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-slate-900/50 border border-white/10 text-sm font-bold mb-8 backdrop-blur-xl shadow-2xl overflow-hidden group hover:border-blue-500/50 transition-colors cursor-default">
+            {/* Pill Badge: más compacto en móvil */}
+            <div className="relative inline-flex items-center gap-2 sm:gap-3 px-3 sm:px-5 py-2 sm:py-2.5 rounded-full bg-slate-900/50 border border-white/10 text-xs sm:text-sm font-bold mb-5 sm:mb-8 backdrop-blur-xl shadow-2xl overflow-hidden group hover:border-blue-500/50 transition-colors cursor-default">
               <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-emerald-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="flex -space-x-2 relative z-10">
                 {[1, 2, 3].map(i => (
-                  <div key={i} className="w-7 h-7 rounded-full border-2 border-[#020617] bg-slate-800 flex items-center justify-center overflow-hidden shadow-lg">
+                  <div key={i} className="w-6 h-6 sm:w-7 sm:h-7 rounded-full border-2 border-[#020617] bg-slate-800 flex items-center justify-center overflow-hidden shadow-lg">
                     <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" className="w-full h-full object-cover" />
                   </div>
                 ))}
               </div>
-              <span className="text-slate-400 relative z-10 flex items-center gap-2">
+              <span className="text-slate-400 relative z-10 flex items-center gap-1.5 sm:gap-2">
                 Confianza de <span className="text-white relative"><span className="absolute -bottom-1 left-0 w-full h-px bg-white/30 hidden group-hover:block"></span>+1,200 analistas</span>
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping ml-1" />
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping ml-0.5 sm:ml-1" />
               </span>
             </div>
 
-            {/* Headline Premium: dos líneas sin partir palabras en pantallas grandes */}
-            <h1 className="font-black tracking-tighter text-white mb-8 leading-tight">
-              <span className="block text-emerald-400 text-2xl sm:text-3xl md:text-4xl mb-4 tracking-wider uppercase drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]">Econosfera</span>
-              <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-8xl 2xl:text-8xl max-w-full">
+            {/* Headline: tamaños ajustados para móvil */}
+            <h1 className="font-black tracking-tighter text-white mb-5 sm:mb-8 leading-tight">
+              <span className="block text-emerald-400 text-xl sm:text-2xl md:text-3xl lg:text-4xl mb-3 sm:mb-4 tracking-wider uppercase drop-shadow-[0_0_15px_rgba(52,211,153,0.5)]">Econosfera</span>
+              <span className="block text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl 2xl:text-8xl max-w-full">
                 <span className="block whitespace-nowrap">EL SIMULADOR</span>
-                <span className="relative block mt-2">
+                <span className="relative block mt-1 sm:mt-2">
                   <span className="absolute -inset-2 bg-blue-600/20 blur-2xl opacity-40 animate-pulse" />
                   <span className="relative text-white whitespace-nowrap block">
                     PROFESIONAL
@@ -68,38 +79,67 @@ export default function Home() {
               </span>
             </h1>
 
-            {/* Description Premium */}
-            <p className="text-slate-400 text-xl sm:text-2xl mb-12 max-w-2xl leading-relaxed font-medium">
+            {/* Description: más legible en móvil */}
+            <p className="text-slate-400 text-base sm:text-xl md:text-2xl mb-8 sm:mb-12 max-w-2xl leading-relaxed font-medium">
               El puente real entre la teoría económica y el <span className="text-white font-bold">Trading Institucional</span>. Modela, proyecta y opera el mercado con <span className="text-emerald-400 border-b border-emerald-400/30 pb-0.5">poder de IA</span> y herramientas Wall Street grade.
             </p>
 
-            {/* CTA Buttons Premium */}
-            <div className="flex flex-col sm:flex-row gap-5 mb-16 relative z-20">
-              <button
-                onClick={handleProbarClick}
-                className="group relative inline-flex items-center justify-center w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold tracking-wide rounded-2xl text-white overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.6)]"
-              >
-                {/* Background gradient */}
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:from-blue-500 group-hover:to-indigo-500 transition-colors" />
-                {/* Shine effect */}
-                <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-                <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/10 to-transparent shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
+            {/* CTAs: en móvil "Explorar Modelos" primero para destacar simuladores */}
+            <div className="flex flex-col gap-4 sm:gap-5 mb-8 sm:mb-16 relative z-20">
+              {/* Móvil: Explorar Modelos arriba para llamar la atención */}
+              <div className="flex flex-col-reverse sm:flex-row gap-4 sm:gap-5">
+                <button
+                  onClick={handleProbarClick}
+                  className="group relative inline-flex items-center justify-center w-full sm:w-auto px-6 sm:px-10 py-3.5 sm:py-5 text-base sm:text-lg font-bold tracking-wide rounded-2xl text-white overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.6)]"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:from-blue-500 group-hover:to-indigo-500 transition-colors" />
+                  <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+                  <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/10 to-transparent shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
+                  <span className="relative flex items-center gap-2">
+                    Desbloquea Acceso
+                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                  </span>
+                </button>
 
-                <span className="relative flex items-center gap-2">
-                  Desbloquea Acceso
-                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                </span>
-              </button>
-
-              <button className="group w-full sm:w-auto px-8 sm:px-10 py-4 sm:py-5 text-base sm:text-lg font-bold rounded-2xl bg-white/[0.03] border border-white/10 text-slate-300 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-300 shadow-xl backdrop-blur-sm">
-                <span className="flex items-center justify-center gap-2">
-                  <svg className="w-5 h-5 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <button
+                  onClick={handleExplorarModelos}
+                  className="group w-full sm:w-auto px-6 sm:px-10 py-3.5 sm:py-5 text-base sm:text-lg font-bold rounded-2xl bg-white/[0.08] border-2 border-white/20 text-white hover:bg-white/15 hover:border-emerald-400/50 transition-all duration-300 shadow-xl backdrop-blur-sm flex items-center justify-center gap-2"
+                >
+                  <svg className="w-5 h-5 opacity-90 group-hover:opacity-100 transition-opacity flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   Explorar Modelos
-                </span>
-              </button>
+                </button>
+              </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500">
+            {/* Móvil: preview de simuladores casi de inmediato (solo < lg) */}
+            <div id="simuladores-preview" className="lg:hidden mt-6 sm:mt-8 -mx-2 sm:mx-0">
+              <div className="rounded-2xl sm:rounded-3xl border border-white/15 bg-slate-900/80 shadow-[0_0_40px_rgba(0,0,0,0.4)] overflow-hidden backdrop-blur-sm">
+                <div className="h-8 sm:h-9 bg-slate-800/80 border-b border-white/10 flex items-center px-3 sm:px-4 gap-1.5">
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-rose-500/60" />
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-500/60" />
+                  <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-emerald-500/60" />
+                  <span className="ml-auto text-[9px] sm:text-[10px] uppercase font-bold text-slate-500 tracking-widest">Simuladores</span>
+                </div>
+                <div className="p-2 sm:p-3 max-h-[320px] sm:max-h-[380px] overflow-y-auto no-scrollbar">
+                  <MiniSimulator />
+                  <div className="mt-3 pt-3 border-t border-white/5">
+                    <MiniValuacion />
+                  </div>
+                </div>
+                <div className="px-3 sm:px-4 py-2.5 bg-slate-800/50 border-t border-white/5 flex items-center justify-between">
+                  <span className="text-[10px] sm:text-xs text-slate-500 font-medium">Vista previa · Abre el simulador completo abajo</span>
+                  <button
+                    type="button"
+                    onClick={handleProbarClick}
+                    className="text-[10px] sm:text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
+                  >
+                    Ir al simulador →
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500 mt-6">
               <span className="text-xs font-black uppercase tracking-[0.2em] break-words">Usada por alumnos de:</span>
               <div className="flex flex-wrap gap-4 sm:gap-6 items-center w-full">
                 <div className="font-serif italic font-bold text-sm sm:text-base">ITAM</div>
@@ -166,6 +206,45 @@ export default function Home() {
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Satisfacción</span>
           </div>
         </div>
+      </div>
+
+      {/* Banner UNAM - alumn@s */}
+      <div className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-r from-amber-500/90 via-yellow-400/95 to-amber-500/90 dark:from-amber-600/95 dark:via-amber-500/95 dark:to-amber-600/95" />
+        <div className="relative max-w-7xl mx-auto px-4 py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
+          <button
+            type="button"
+            onClick={handleProbarClick}
+            className="flex-1 w-full sm:w-auto text-left group"
+          >
+            <p className="text-slate-900 font-black text-lg sm:text-xl md:text-2xl leading-tight drop-shadow-sm">
+              ¿Eres alumn@ de UNAM?
+            </p>
+            <p className="text-slate-800 font-bold text-base sm:text-lg mt-0.5">
+              Tenemos una sorpresa para ti — Crea tu cuenta ahora.
+            </p>
+            <span className="inline-flex items-center gap-1.5 mt-2 text-slate-800 font-bold text-sm group-hover:gap-2 transition-all">
+              Crear cuenta gratis
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+            </span>
+          </button>
+          <div className="flex-shrink-0 w-32 h-16 sm:w-40 sm:h-20 flex items-center justify-center bg-white/20 rounded-xl border-2 border-white/40 shadow-lg overflow-hidden">
+            {!unamLogoError ? (
+              <img
+                src="/unam-logo.png"
+                alt="UNAM"
+                className="max-w-full max-h-full object-contain"
+                onError={() => setUnamLogoError(true)}
+              />
+            ) : (
+              <span className="w-full h-full flex items-center justify-center text-slate-800 font-black text-sm sm:text-base bg-white/30">
+                UNAM
+              </span>
+            )}
+          </div>
+        </div>
+        {/* Brillo luminoso */}
+        <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_50px_rgba(255,255,255,0.25),0_0_30px_rgba(251,191,36,0.3)]" />
       </div>
 
       {/* Grid de Funcionalidades Pro */}

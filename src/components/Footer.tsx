@@ -13,7 +13,13 @@ export default function Footer() {
           <p className="text-sm text-slate-500 dark:text-slate-400">
             © {currentYear} Econosfera. Herramienta didáctica.
           </p>
-          <nav className="flex items-center gap-6" aria-label="Legal">
+          <nav className="flex flex-wrap items-center justify-center gap-4 sm:gap-6" aria-label="Legal">
+            <Link
+              href="/blog"
+              className="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-2 hover:underline"
+            >
+              Blog
+            </Link>
             <Link
               href="/aviso-privacidad"
               className="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors underline-offset-2 hover:underline"

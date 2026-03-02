@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getTodosLosSlugs } from "@/lib/glosario";
+import { getBlogSlugs } from "@/lib/blog";
 
 const getBaseUrl = () => {
   if (process.env.NEXT_PUBLIC_SITE_URL) return process.env.NEXT_PUBLIC_SITE_URL;
@@ -17,11 +18,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
+  const blogSlugs = getBlogSlugs();
+  const blogEntries: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
+    url: `${base}/blog/${slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.75,
+  }));
+
   return [
     { url: base, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 1 },
     { url: `${base}/simulador`, lastModified: new Date(), changeFrequency: "always" as const, priority: 0.9 },
     { url: `${base}/glosario`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.85 },
     ...glossaryEntries,
+    { url: `${base}/blog`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
+    ...blogEntries,
     { url: `${base}/pricing`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.8 },
     { url: `${base}/manual`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.7 },
     { url: `${base}/cuestionarios`, lastModified: new Date(), changeFrequency: "daily" as const, priority: 0.8 },
