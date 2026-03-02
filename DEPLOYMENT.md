@@ -16,8 +16,11 @@ Sigue estos pasos para lanzar la terminal Econosfera al mundo.
 3. Crea credenciales de "ID de cliente de OAuth 2.0" (Aplicación Web).
 4. Añade las URI de redireccionamiento autorizadas:
    - `http://localhost:3000/api/auth/callback/google` (Dev)
-   - `https://tusitio.vercel.app/api/auth/callback/google` (Prod)
+   - `https://econosfera.xyz/api/auth/callback/google` (Prod, dominio propio)
+   - `https://tusitio.vercel.app/api/auth/callback/google` (si usas subdominio Vercel)
 5. Obtén `GOOGLE_CLIENT_ID` y `GOOGLE_CLIENT_SECRET`.
+6. **Guía detallada:** Ver [docs/GOOGLE_OAUTH_SETUP.md](docs/GOOGLE_OAUTH_SETUP.md) para paso a paso y solución de errores (redirect_uri_mismatch, etc.).
+7. Cuando esté listo, pon `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED=true` en Vercel para mostrar el botón de Google.
 
 ## 3. Email (Resend)
 1. Regístrate en [Resend](https://resend.com).
@@ -31,16 +34,19 @@ Sigue estos pasos para lanzar la terminal Econosfera al mundo.
 
 ## 5. Hosting (Vercel)
 1. Conecta tu repositorio de GitHub a Vercel.
-2. Configura las siguientes variables de entorno:
+2. **Dominio:** Configura tu dominio (ej. **econosfera.xyz**) en Vercel → Project → Settings → Domains.
+3. Configura las siguientes variables de entorno (para **Production** y, si quieres, Preview):
    - `DATABASE_URL`
    - `DIRECT_URL`
    - `NEXTAUTH_SECRET` **(obligatorio)** — Genera una con `openssl rand -base64 32`. Sin ella, el login devuelve "Server error / problem with server configuration".
-   - `NEXTAUTH_URL` **(obligatorio en producción)** — Debe ser la URL pública de la app (ej. `https://econosfera.vercel.app`). No uses la URL de preview de Vercel para login.
-   - `GOOGLE_CLIENT_ID`
-   - `GOOGLE_CLIENT_SECRET`
+   - `NEXTAUTH_URL` **(obligatorio en producción)** — URL pública de la app, **sin barra final**. Ejemplos:
+     - `https://econosfera.xyz` (dominio propio)
+     - `https://econosfera.vercel.app` (subdominio Vercel)
+   - `NEXT_PUBLIC_SITE_URL` — Misma URL que uses en `NEXTAUTH_URL` (ej. `https://econosfera.xyz`).
+   - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` (si usas login con Google).
+   - `NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED="true"` — Solo cuando tengas Google OAuth listo; si no, el botón de Google permanece oculto.
    - `OPENAI_API_KEY`
    - `RESEND_API_KEY`
-   - `NEXT_PUBLIC_SITE_URL` (Ej: https://econosfera.com)
    - `STRIPE_SECRET_KEY`
 
 ## 6. Siguiente Nivel (Producción Real)

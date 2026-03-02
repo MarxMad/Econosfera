@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
 import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap, Phone, Briefcase } from "lucide-react";
 import { registerUser } from "@/lib/actions/authActions";
@@ -259,7 +259,24 @@ export default function RegisterPage() {
                     </button>
                 </form>
 
-                <p className="text-center text-sm text-slate-600 dark:text-slate-400">
+                {process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === "true" && (
+                    <>
+                        <div className="relative my-8">
+                            <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200 dark:border-slate-800"></span></div>
+                            <div className="relative flex justify-center text-xs uppercase"><span className="bg-white dark:bg-slate-900 px-2 text-slate-500">O regístrate con</span></div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+                            className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all font-medium text-slate-700 dark:text-slate-300"
+                        >
+                            <img src="https://www.google.com/favicon.ico" className="w-5 h-5" alt="Google" />
+                            Google
+                        </button>
+                    </>
+                )}
+
+                <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-6">
                     ¿Ya tienes cuenta?{" "}
                     <Link href="/auth/signin" className="font-bold text-blue-600 hover:text-blue-500">
                         Inicia sesión <ArrowRight className="inline w-4 h-4" />
