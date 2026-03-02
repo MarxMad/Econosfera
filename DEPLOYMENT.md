@@ -5,10 +5,12 @@ Sigue estos pasos para lanzar la terminal Econosfera al mundo.
 ## 1. Base de Datos (Supabase / Postgres)
 1. Crea un proyecto en [Supabase](https://supabase.com).
 2. Obtén la `DATABASE_URL` y la `DIRECT_URL`.
-3. Ejecuta las migraciones localmente apuntando a prod:
+3. **Sincroniza el esquema con la base de producción** (obligatorio antes de usar registro/login en prod):
    ```bash
+   # Con las variables de producción en .env (o exportándolas):
    npx prisma db push
    ```
+   Usa `DIRECT_URL` para la conexión (Supabase suele usar pooling en DATABASE_URL; para cambios de esquema hace falta la conexión directa). Si en producción falla con "The column User.phone does not exist", es que la base de prod no tiene las columnas actuales: ejecuta este comando apuntando a prod para crear las columnas que faltan.
 
 ## 2. Autenticación (Google Cloud)
 1. En [Google Cloud Console](https://console.cloud.google.com), crea un proyecto.
