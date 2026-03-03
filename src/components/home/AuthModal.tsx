@@ -37,9 +37,11 @@ export default function AuthModal({ isOpen, onClose }: AuthModalProps) {
                 </button>
 
                 <div className="text-center mb-8">
-                    <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center font-bold text-2xl mx-auto mb-4 shadow-lg shadow-blue-600/30">
-                        E
-                    </div>
+                    <img
+                        src="/logos.svg"
+                        alt="Econosfera"
+                        className="w-14 h-14 mx-auto mb-4 object-contain drop-shadow-lg"
+                    />
                     <h2 className="text-2xl font-bold text-white mb-2">Acceso a Simuladores</h2>
                     <p className="text-slate-400 text-sm">
                         Para guardar tus escenarios y usar la Inteligencia Artificial, necesitas una cuenta gratis.

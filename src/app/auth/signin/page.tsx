@@ -48,9 +48,11 @@ export default function SignInPage() {
         <div className="min-h-[80vh] flex items-center justify-center p-4">
             <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800">
                 <div className="text-center">
-                    <div className="w-16 h-16 bg-blue-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg shadow-blue-600/20">
-                        <Lock className="w-8 h-8 text-white" />
-                    </div>
+                    <img
+                        src="/logos.svg"
+                        alt="Econosfera"
+                        className="w-16 h-16 mx-auto mb-4 object-contain"
+                    />
                     <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Bienvenido de nuevo</h2>
                     <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Inicia sesión en tu cuenta de Econosfera</p>
                 </div>

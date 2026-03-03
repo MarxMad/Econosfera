@@ -1,14 +1,14 @@
 /**
  * Textos para citar la herramienta Econosfera en trabajos académicos.
- * La URL se resuelve en el cliente con window.location.origin si está disponible.
+ * Se usa la URL canónica econosfera.xyz en todas las citas.
  */
 
 const NOMBRE = "Econosfera";
 const DESCRIPCION = "Herramienta didáctica de inflación y política monetaria";
+const URL_CANONICA = "https://econosfera.xyz";
 
 function getUrlBase(): string {
-  if (typeof window !== "undefined" && window.location?.origin) return window.location.origin;
-  return "https://econosfera.vercel.app"; // Fallback si se usa en SSR
+  return URL_CANONICA;
 }
 
 const ANIO = new Date().getFullYear();

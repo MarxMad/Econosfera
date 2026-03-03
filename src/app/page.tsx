@@ -231,7 +231,7 @@ export default function Home() {
           <div className="flex-shrink-0 w-32 h-16 sm:w-40 sm:h-20 flex items-center justify-center bg-white/20 rounded-xl border-2 border-white/40 shadow-lg overflow-hidden">
             {!unamLogoError ? (
               <img
-                src="/unam-logo.png"
+                src="/Unam-Logo.jpg"
                 alt="UNAM"
                 className="max-w-full max-h-full object-contain"
                 onError={() => setUnamLogoError(true)}

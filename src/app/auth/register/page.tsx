@@ -135,6 +135,11 @@ export default function RegisterPage() {
         <div className="min-h-[80vh] flex items-center justify-center p-4">
             <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800">
                 <div className="text-center">
+                    <img
+                        src="/logos.svg"
+                        alt="Econosfera"
+                        className="w-16 h-16 mx-auto mb-4 object-contain"
+                    />
                     <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Únete a Econosfera</h2>
                     <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Guarda tus escenarios y accede a análisis avanzados</p>
                 </div>
