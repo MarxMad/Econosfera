@@ -1,7 +1,7 @@
 "use client";
 
 import { signIn, useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Lock, Mail, ArrowRight, LogIn, Eye, EyeOff, CheckCircle2 } from "lucide-react";
@@ -12,7 +12,7 @@ const VERIFY_ERROR_MESSAGES: Record<string, string> = {
     InternalError: "Error al verificar. Intenta de nuevo más tarde.",
 };
 
-export default function SignInPage() {
+function SignInContent() {
     const { status } = useSession();
     const searchParams = useSearchParams();
     const [email, setEmail] = useState("");
@@ -157,5 +157,17 @@ export default function SignInPage() {
                 </p>
             </div>
         </div>
+    );
+}
+
+export default function SignInPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-[80vh] flex items-center justify-center p-4">
+                <div className="w-full max-w-md text-center p-8 text-slate-500 dark:text-slate-400">Cargando...</div>
+            </div>
+        }>
+            <SignInContent />
+        </Suspense>
     );
 }
