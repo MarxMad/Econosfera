@@ -14,7 +14,19 @@ export async function GET(request: Request) {
             where: { token },
         });
 
-        if (!verificationToken || verificationToken.expires < new Date()) {
+        if (!verificationToken) {
+            return NextResponse.redirect(new URL('/auth/signin?error=InvalidToken', request.url));
+        }
+
+        // Si el enlace ya expiró pero el usuario ya fue verificado antes, redirigir como éxito
+        if (verificationToken.expires < new Date()) {
+            const user = await prisma.user.findUnique({
+                where: { email: verificationToken.identifier },
+                select: { emailVerified: true },
+            });
+            if (user?.emailVerified) {
+                return NextResponse.redirect(new URL('/auth/signin?verified=1', request.url));
+            }
             return NextResponse.redirect(new URL('/auth/signin?error=InvalidToken', request.url));
         }
 

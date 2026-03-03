@@ -20,7 +20,7 @@ export async function resendVerification() {
 
     const userEmail = user.email!;
     const token = crypto.randomBytes(32).toString("hex");
-    const expires = new Date(Date.now() + 3600000);
+    const expires = new Date(Date.now() + 24 * 3600000); // 24 horas
 
     await prisma.verificationToken.deleteMany({ where: { identifier: userEmail } });
     await prisma.verificationToken.create({ data: { identifier: userEmail, token, expires } });
@@ -48,7 +48,7 @@ export async function resendVerificationByEmail(email: string) {
     if (user.emailVerified) return { error: "Esa cuenta ya está verificada. Inicia sesión." };
 
     const token = crypto.randomBytes(32).toString("hex");
-    const expires = new Date(Date.now() + 3600000);
+    const expires = new Date(Date.now() + 24 * 3600000); // 24 horas
 
     await prisma.verificationToken.deleteMany({ where: { identifier: trimmed } });
     await prisma.verificationToken.create({ data: { identifier: trimmed, token, expires } });
@@ -103,7 +103,7 @@ export async function registerUser(formData: FormData) {
 
         // Generar token de verificación
         const token = crypto.randomBytes(32).toString('hex');
-        const expires = new Date(Date.now() + 3600000); // 1 hora
+        const expires = new Date(Date.now() + 24 * 3600000); // 24 horas
 
         await prisma.verificationToken.create({
             data: {

@@ -8,7 +8,7 @@ import { Lock, Mail, ArrowRight, LogIn, Eye, EyeOff, CheckCircle2 } from "lucide
 
 const VERIFY_ERROR_MESSAGES: Record<string, string> = {
     MissingToken: "Faltó el enlace de verificación.",
-    InvalidToken: "El enlace expiró o no es válido. Solicita uno nuevo desde el registro.",
+    InvalidToken: "Este enlace ya no es válido. Si pediste otro correo, usa el enlace del último que enviamos. Si no, solicita uno nuevo (el enlace dura 24 h).",
     InternalError: "Error al verificar. Intenta de nuevo más tarde.",
 };
 

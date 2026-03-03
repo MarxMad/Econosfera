@@ -19,7 +19,7 @@ export async function sendVerificationEmail(email: string, token: string, name: 
         <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 24px;">
           <h1 style="color: #1e293b; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Hola ${name},</h1>
           <p style="color: #475569; font-size: 16px; line-height: 24px; margin-bottom: 24px;">
-            Gracias por unirte a la terminal de análisis económico Econosfera. Para asegurar tu cuenta y activar tus créditos de IA, por favor verifica tu correo electrónico.
+            Gracias por unirte a la terminal de análisis económico Econosfera. Para asegurar tu cuenta y activar tus créditos de IA, haz clic en el botón de abajo. Este enlace es válido durante 24 horas. Si pides otro correo de verificación, el enlace anterior dejará de funcionar.
           </p>
           <a href="${verifyUrl}" style="display: inline-block; background-color: #2563eb; color: white; padding: 12px 24px; border-radius: 12px; text-decoration: none; font-weight: 700;">Verificar Cuenta</a>
           <p style="color: #94a3b8; font-size: 12px; margin-top: 32px; border-top: 1px solid #f1f5f9; pt-16px;">
