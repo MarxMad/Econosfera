@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, Heart, Coins, TrendingUp, Info } from "lucide-react";
+import { Shield, Heart, Coins, TrendingUp, Info, Lock } from "lucide-react";
 import { SimuladorMortalidad, SimuladorRuina, CalculadoraPoderAdquisitivo } from "./simuladores-actuaria";
+import { useSession } from "next-auth/react";
+import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
+import SimulatorLocked from "./SimulatorLocked";
 
 export default function Actuaria() {
+    const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState<"mortalidad" | "ruina" | "poder">("mortalidad");
 
     return (
@@ -29,25 +33,32 @@ export default function Actuaria() {
                     { id: 'mortalidad', label: 'Tablas de Mortalidad', icon: Heart },
                     { id: 'ruina', label: 'Modelo de Ruina', icon: Shield },
                     { id: 'poder', label: 'Poder Adquisitivo', icon: Coins }
-                ].map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-                            ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                            }`}
-                    >
-                        <tab.icon className="w-3.5 h-3.5" />
-                        {tab.label}
-                    </button>
-                ))}
+                ].map((tab) => {
+                    const locked = !canAccess(session?.user?.plan, "actuaria", tab.id);
+                    return (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
+                                ? 'bg-white dark:bg-slate-700 text-rose-600 shadow-sm'
+                                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                                } ${locked ? 'opacity-80' : ''}`}
+                        >
+                            {locked && <Lock className="w-3 h-3" />}
+                            <tab.icon className="w-3.5 h-3.5" />
+                            {tab.label}
+                        </button>
+                    );
+                })}
             </div>
 
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                {activeTab === 'mortalidad' && <SimuladorMortalidad />}
-                {activeTab === 'ruina' && <SimuladorRuina />}
-                {activeTab === 'poder' && <CalculadoraPoderAdquisitivo />}
+                {!canAccess(session?.user?.plan, "actuaria", activeTab) && getRequiredPlan("actuaria", activeTab) && (
+                    <SimulatorLocked requiredPlan={getRequiredPlan("actuaria", activeTab)!} moduleName="Actuaría" />
+                )}
+                {canAccess(session?.user?.plan, "actuaria", activeTab) && activeTab === 'mortalidad' && <SimuladorMortalidad />}
+                {canAccess(session?.user?.plan, "actuaria", activeTab) && activeTab === 'ruina' && <SimuladorRuina />}
+                {canAccess(session?.user?.plan, "actuaria", activeTab) && activeTab === 'poder' && <CalculadoraPoderAdquisitivo />}
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">

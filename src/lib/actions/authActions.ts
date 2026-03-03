@@ -19,26 +19,36 @@ export async function resendVerification() {
     if (user.emailVerified) return { error: "Ya verificado" };
 
     const userEmail = user.email!;
+    const token = crypto.randomBytes(32).toString("hex");
+    const expires = new Date(Date.now() + 3600000);
 
-    // Crear token
-    const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 3600000); // 1 hora
+    await prisma.verificationToken.deleteMany({ where: { identifier: userEmail } });
+    await prisma.verificationToken.create({ data: { identifier: userEmail, token, expires } });
+    await sendVerificationEmail(userEmail, token, user.name || "Usuario");
 
-    await prisma.verificationToken.upsert({
-        where: {
-            identifier_token: {
-                identifier: userEmail,
-                token: userEmail
-            }
-        },
-        create: { identifier: userEmail, token, expires },
-        update: { token, expires }
-    }).catch(async () => {
-        await prisma.verificationToken.deleteMany({ where: { identifier: userEmail } });
-        await prisma.verificationToken.create({ data: { identifier: userEmail, token, expires } });
+    return { success: true };
+}
+
+/** Reenvía el correo de verificación por email (sin requerir sesión). Útil tras registrarse. */
+export async function resendVerificationByEmail(email: string) {
+    if (!email || typeof email !== "string") return { error: "Correo no válido" };
+    const trimmed = email.trim().toLowerCase();
+    if (!trimmed) return { error: "Correo no válido" };
+
+    const user = await prisma.user.findUnique({
+        where: { email: trimmed },
+        select: { name: true, emailVerified: true }
     });
 
-    await sendVerificationEmail(userEmail, token, user.name || "Usuario");
+    if (!user) return { error: "No hay ninguna cuenta con ese correo." };
+    if (user.emailVerified) return { error: "Esa cuenta ya está verificada. Inicia sesión." };
+
+    const token = crypto.randomBytes(32).toString("hex");
+    const expires = new Date(Date.now() + 3600000);
+
+    await prisma.verificationToken.deleteMany({ where: { identifier: trimmed } });
+    await prisma.verificationToken.create({ data: { identifier: trimmed, token, expires } });
+    await sendVerificationEmail(trimmed, token, user.name || "Usuario");
 
     return { success: true };
 }

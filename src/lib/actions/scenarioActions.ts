@@ -18,13 +18,18 @@ export async function saveScenario(data: {
         return { error: "Debes iniciar sesión para guardar escenarios" };
     }
 
-    // Verificar créditos
     const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-        select: { credits: true }
+        select: { credits: true, emailVerified: true }
     });
 
-    if (!user || user.credits < 1) {
+    if (!user) {
+        return { error: "Usuario no encontrado." };
+    }
+    if (!user.emailVerified) {
+        return { error: "Verifica tu correo electrónico para guardar escenarios. Revisa tu bandeja de entrada." };
+    }
+    if (user.credits < 1) {
         return { error: "No tienes créditos suficientes para guardar el escenario." };
     }
 

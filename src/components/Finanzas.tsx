@@ -13,9 +13,13 @@ import {
   Zap,
   LineChart,
   BookOpen,
-  Info
+  Info,
+  Lock
 } from "lucide-react";
 import type { ModuloSimulador } from "./NavSimuladores";
+import { useSession } from "next-auth/react";
+import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
+import SimulatorLocked from "./SimulatorLocked";
 import {
   SimuladorVPVF,
   SimuladorBono,
@@ -38,6 +42,7 @@ import {
 } from "./simuladores-finanzas";
 
 export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (m: ModuloSimulador) => void; initialData?: any }) {
+  const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<"basico" | "valuacion" | "pro" | "mapas">("basico");
 
   return (
@@ -57,23 +62,30 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
           { id: 'valuacion', label: 'Valuación y DCF', icon: BarChart2 },
           { id: 'pro', label: 'Portafolios y Derivados', icon: PieChart },
           { id: 'mapas', label: 'Estructura y Flujos', icon: Layers },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-              ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-              }`}
-          >
-            <tab.icon className="w-3.5 h-3.5" />
-            {tab.label}
-          </button>
-        ))}
+        ].map((tab) => {
+          const locked = !canAccess(session?.user?.plan, "finanzas", tab.id);
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
+                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                } ${locked ? 'opacity-80' : ''}`}
+            >
+              {locked && <Lock className="w-3 h-3" />}
+              <tab.icon className="w-3.5 h-3.5" />
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {activeTab === 'basico' && (
+        {!canAccess(session?.user?.plan, "finanzas", activeTab) && getRequiredPlan("finanzas", activeTab) && (
+          <SimulatorLocked requiredPlan={getRequiredPlan("finanzas", activeTab)!} moduleName="Finanzas" />
+        )}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'basico' && (
           <div className="grid gap-6">
             <SimuladorVPVF initialData={initialData?.subType === "VPVF" ? initialData : undefined} />
             <SimuladorAmortizacion />
@@ -85,7 +97,7 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
           </div>
         )}
 
-        {activeTab === 'valuacion' && (
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'valuacion' && (
           <div className="grid gap-6">
             <SimuladorValuacion initialData={initialData?.subType === "VALUACION" ? initialData : undefined} />
             <SimuladorDCF />
@@ -94,7 +106,7 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
           </div>
         )}
 
-        {activeTab === 'pro' && (
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'pro' && (
           <div className="grid gap-6">
             <SimuladorMarkowitz />
             <SimuladorPortafolio2 />
@@ -107,7 +119,7 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
           </div>
         )}
 
-        {activeTab === 'mapas' && (
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'mapas' && (
           <div className="space-y-8">
             <FlujoSistemaFinanciero />
             <div className="grid lg:grid-cols-2 gap-6">

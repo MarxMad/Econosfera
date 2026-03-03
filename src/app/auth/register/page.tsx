@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
@@ -26,8 +26,8 @@ export default function RegisterPage() {
     const [signInError, setSignInError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [resendStatus, setResendStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
     const router = useRouter();
-    const signInAttempted = useRef(false);
 
     useEffect(() => {
         if (status === "authenticated") {
@@ -35,27 +35,10 @@ export default function RegisterPage() {
         }
     }, [status, router]);
 
-    // Tras crear la cuenta, iniciar sesión automáticamente y redirigir
+    // Si ya está autenticado, redirigir al dashboard
     useEffect(() => {
-        if (!success || !formData.email || !formData.password || signInAttempted.current) return;
-        signInAttempted.current = true;
-        let cancelled = false;
-        (async () => {
-            const res = await signIn("credentials", {
-                email: formData.email,
-                password: formData.password,
-                redirect: false,
-            });
-            if (cancelled) return;
-            if (res?.error) {
-                setSignInError("Cuenta creada. Por favor inicia sesión con tu email y contraseña.");
-                return;
-            }
-            router.push("/dashboard");
-            router.refresh();
-        })();
-        return () => { cancelled = true; };
-    }, [success, formData.email, formData.password, router]);
+        if (status === "authenticated") router.push("/dashboard");
+    }, [status, router]);
 
     const passwordsMatch = formData.password === formData.confirmPassword;
     const showPasswordError = formData.confirmPassword.length > 0 && !passwordsMatch;
@@ -85,10 +68,20 @@ export default function RegisterPage() {
 
         if (res.error) {
             setError(res.error);
-            setLoading(false);
         } else {
             setSuccess(true);
-            // Inicio de sesión automático y redirección se hacen en el efecto al mostrar la pantalla de éxito
+        }
+        setLoading(false);
+    };
+
+    const handleResendVerification = async () => {
+        if (!formData.email) return;
+        setResendStatus("sending");
+        const res = await import("@/lib/actions/authActions").then((m) => m.resendVerificationByEmail(formData.email));
+        if (res.success) {
+            setResendStatus("sent");
+        } else {
+            setResendStatus("error");
         }
     };
 
@@ -96,36 +89,37 @@ export default function RegisterPage() {
         return (
             <div className="min-h-[80vh] flex items-center justify-center p-4">
                 <div className="w-full max-w-md bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-center space-y-6">
-                    <div className="w-20 h-20 rounded-2xl bg-emerald-500/10 dark:bg-emerald-500/20 flex items-center justify-center mx-auto border border-emerald-200 dark:border-emerald-800/50">
-                        <CheckCircle2 className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
+                    <div className="w-20 h-20 rounded-2xl bg-blue-500/10 dark:bg-blue-500/20 flex items-center justify-center mx-auto border border-blue-200 dark:border-blue-800/50">
+                        <Mail className="w-10 h-10 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div>
                         <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white">
-                            ¡Bienvenido a Econosfera{formData.name ? `, ${formData.name}` : ""}!
+                            Revisa tu correo
                         </h2>
                         <p className="mt-2 text-slate-600 dark:text-slate-400">
-                            Tu cuenta está lista. Estamos entrando a tu panel…
+                            Te enviamos un enlace de verificación a <strong className="text-slate-700 dark:text-slate-300">{formData.email}</strong>. Sin verificar tu correo no podrás usar créditos de IA ni exportar reportes.
                         </p>
                     </div>
-                    {signInError ? (
-                        <div className="space-y-3">
-                            <p className="text-sm text-amber-600 dark:text-amber-400">{signInError}</p>
-                            <Link
-                                href="/auth/signin"
-                                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-medium hover:bg-blue-500 transition-colors"
-                            >
-                                Ir a iniciar sesión <ArrowRight className="w-4 h-4" />
-                            </Link>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col items-center gap-3">
-                            <Loader2 className="w-8 h-8 text-blue-500 animate-spin" aria-hidden />
-                            <p className="text-sm text-slate-500 dark:text-slate-400 flex items-center gap-2">
-                                <Sparkles className="w-4 h-4 text-amber-500" />
-                                Entrando a tu panel…
-                            </p>
-                        </div>
-                    )}
+                    <div className="space-y-3">
+                        <button
+                            type="button"
+                            onClick={handleResendVerification}
+                            disabled={resendStatus === "sending"}
+                            className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                        >
+                            {resendStatus === "sending" && <Loader2 className="w-4 h-4 animate-spin" />}
+                            {resendStatus === "sent" ? "Correo reenviado" : resendStatus === "sending" ? "Enviando…" : "Reenviar correo de verificación"}
+                        </button>
+                        {resendStatus === "error" && (
+                            <p className="text-xs text-amber-600 dark:text-amber-400">No se pudo reenviar. Espera unos minutos o intenta más tarde.</p>
+                        )}
+                        <Link
+                            href="/auth/signin"
+                            className="block w-full text-center py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-500 transition-colors"
+                        >
+                            Ir a iniciar sesión <ArrowRight className="inline w-4 h-4 ml-1" />
+                        </Link>
+                    </div>
                 </div>
             </div>
         );

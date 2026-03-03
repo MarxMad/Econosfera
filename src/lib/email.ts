@@ -12,7 +12,7 @@ export async function sendVerificationEmail(email: string, token: string, name: 
 
     try {
         const data = await resend.emails.send({
-            from: 'Econosfera <seguridad@econosfera.com>', // Cambiar por dominio verificado en prod
+            from: process.env.RESEND_FROM || 'Econosfera <noreply@econosfera.xyz>',
             to: email,
             subject: 'Verifica tu cuenta en Econosfera',
             html: `

@@ -3,9 +3,11 @@
 import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Area } from "recharts";
 import {
-  Calculator, TrendingUp, Info, ArrowRight, Download, Save, FileDown, Activity, BookOpen
+  Calculator, TrendingUp, Info, ArrowRight, Download, Save, FileDown, Activity, BookOpen, Lock
 } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
+import SimulatorLocked from "@/components/SimulatorLocked";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarMacroAPdf } from "@/lib/exportarMacroPdf";
 import { saveScenario } from "@/lib/actions/scenarioActions";
@@ -143,25 +145,32 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
           { id: 'solow', label: 'Crecimiento (Solow)' },
           { id: 'phillips', label: 'Curva Phillips' },
           { id: 'mundell', label: 'Mundell-Fleming' }
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-              ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-              }`}
-          >
-            {tab.label}
-          </button>
-        ))}
+        ].map((tab) => {
+          const locked = !canAccess(session?.user?.plan, "macro", tab.id);
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
+                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                } ${locked ? 'opacity-80' : ''}`}
+            >
+              {locked && <Lock className="w-3 h-3" />}
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
-      {activeTab === 'solow' && <SimuladorSolow />}
-      {activeTab === 'phillips' && <SimuladorPhillips />}
-      {activeTab === 'mundell' && <SimuladorISLMBP />}
+      {!canAccess(session?.user?.plan, "macro", activeTab) && getRequiredPlan("macro", activeTab) && (
+        <SimulatorLocked requiredPlan={getRequiredPlan("macro", activeTab)!} moduleName="Macroeconomía" />
+      )}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'solow' && <SimuladorSolow />}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'phillips' && <SimuladorPhillips />}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'mundell' && <SimuladorISLMBP />}
 
-      {activeTab === 'standard' && (
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'standard' && (
         <>
           {/* Multiplicador keynesiano */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">

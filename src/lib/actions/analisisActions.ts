@@ -11,13 +11,18 @@ export async function analizarMinutaBanxico(formData: FormData) {
     throw new Error("Debes iniciar sesión para realizar análisis de IA.");
   }
 
-  // Verificar créditos
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { credits: true }
+    select: { credits: true, emailVerified: true }
   });
 
-  if (!user || user.credits < 10) {
+  if (!user) {
+    throw new Error("Usuario no encontrado.");
+  }
+  if (!user.emailVerified) {
+    throw new Error("Verifica tu correo electrónico para usar el análisis con IA. Revisa tu bandeja de entrada.");
+  }
+  if (user.credits < 10) {
     throw new Error("No tienes créditos de IA suficientes (se requieren 10). Por favor, adquiere más créditos.");
   }
 

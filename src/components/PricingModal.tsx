@@ -1,6 +1,6 @@
 "use client";
 
-import { X, Check, Zap, Shield, Star } from "lucide-react";
+import { X, Check, Zap } from "lucide-react";
 
 interface PricingModalProps {
     isOpen: boolean;
@@ -23,54 +23,45 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                 <div className="p-8">
                     <div className="flex items-center gap-2 text-blue-600 font-bold text-sm uppercase tracking-wider mb-2">
                         <Zap className="w-4 h-4 fill-current" />
-                        Límite Alcanzado
+                        Necesitas Estudiante Pro
                     </div>
                     <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-4">
-                        Pásate a Pro y desbloquea todo el potencial
+                        Desbloquea más créditos y exportaciones
                     </h2>
-                    <p className="text-slate-600 dark:text-slate-400 mb-8">
-                        Has alcanzado el límite de exportaciones gratuitas mensuales. Suscríbete para obtener descargas ilimitadas y análisis de IA avanzados.
+                    <p className="text-slate-600 dark:text-slate-400 mb-6">
+                        Has alcanzado el límite gratuito. Con <strong>Estudiante Pro por $4.99/mes</strong> obtienes 50 créditos IA y exportaciones PDF ilimitadas.
                     </p>
 
-                    <div className="space-y-4 mb-8">
-                        <div className="flex items-start gap-3">
-                            <div className="mt-1 p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
+                    <div className="space-y-3 mb-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
                                 <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                             </div>
-                            <div>
-                                <p className="font-bold text-slate-800 dark:text-slate-200">Exportaciones PDF Ilimitadas</p>
-                                <p className="text-sm text-slate-500">Descarga todos los escenarios que necesites sin restricciones.</p>
-                            </div>
+                            <p className="font-medium text-slate-800 dark:text-slate-200">50 créditos IA al mes (análisis de minutas)</p>
                         </div>
-                        <div className="flex items-start gap-3">
-                            <div className="mt-1 p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
+                        <div className="flex items-center gap-3">
+                            <div className="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
                                 <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                             </div>
-                            <div>
-                                <p className="font-bold text-slate-800 dark:text-slate-200">Créditos de IA Extra</p>
-                                <p className="text-sm text-slate-500">Acceso a análisis profundos de Banxico e interpretación de mercado.</p>
-                            </div>
+                            <p className="font-medium text-slate-800 dark:text-slate-200">Exportaciones PDF ilimitadas</p>
                         </div>
-                        <div className="flex items-start gap-3">
-                            <div className="mt-1 p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
+                        <div className="flex items-center gap-3">
+                            <div className="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
                                 <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                             </div>
-                            <div>
-                                <p className="font-bold text-slate-800 dark:text-slate-200">Datos en Tiempo Real</p>
-                                <p className="text-sm text-slate-500">Conexión con APIs bursátiles para valuaciones automáticas.</p>
-                            </div>
+                            <p className="font-medium text-slate-800 dark:text-slate-200">DCF, Black-Scholes y simuladores cripto</p>
                         </div>
                     </div>
 
-                    <div className="bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 mb-8">
-                        <div className="flex justify-between items-center">
-                            <div>
-                                <p className="text-sm font-medium text-slate-500">Suscripción Anual</p>
-                                <p className="text-3xl font-black text-slate-900 dark:text-white">$49 <span className="text-sm font-normal text-slate-500">/ año</span></p>
-                            </div>
-                            <div className="px-3 py-1 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 text-xs font-bold rounded-full uppercase">
-                                Ahorra 20%
-                            </div>
+                    <div className="flex gap-3 mb-6">
+                        <div className="flex-1 bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-4 border border-blue-100 dark:border-blue-900/40">
+                            <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Pro mensual</p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">$4.99<span className="text-sm font-normal text-slate-500">/mes</span></p>
+                        </div>
+                        <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
+                            <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pro anual</p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">$49<span className="text-sm font-normal text-slate-500">/año</span></p>
+                            <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">2 meses gratis</p>
                         </div>
                     </div>
 
@@ -78,7 +69,7 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                         className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl shadow-lg shadow-blue-500/20 transition-all active:scale-[0.98]"
                         onClick={() => window.location.href = "/pricing"}
                     >
-                        Suscribirme Ahora
+                        Ver planes y suscribirme
                     </button>
 
                     <p className="text-center text-[10px] text-slate-400 mt-4 uppercase tracking-widest font-bold">

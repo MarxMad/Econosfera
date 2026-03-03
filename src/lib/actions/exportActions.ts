@@ -11,13 +11,18 @@ export async function registrarExportacion(modulo: string, type: string = "PDF")
         throw new Error("Debes iniciar sesión para exportar datos y reportes.");
     }
 
-    // Verificar créditos
     const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-        select: { credits: true }
+        select: { credits: true, emailVerified: true }
     });
 
-    if (!user || user.credits < 1) {
+    if (!user) {
+        throw new Error("Usuario no encontrado.");
+    }
+    if (!user.emailVerified) {
+        throw new Error("Verifica tu correo electrónico para exportar. Revisa tu bandeja de entrada.");
+    }
+    if (user.credits < 1) {
         throw new Error("No tienes créditos suficientes para exportar. Por favor, adquiere más créditos.");
     }
 

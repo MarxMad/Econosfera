@@ -117,6 +117,7 @@ const jsonLd = {
 
 import { Providers } from "@/components/Providers";
 import Navbar from "@/components/Navbar";
+import VerifyEmailBanner from "@/components/VerifyEmailBanner";
 
 export default function RootLayout({
   children,
@@ -142,6 +143,7 @@ export default function RootLayout({
         <div className="flex-1 flex flex-col bg-slate-50 dark:bg-slate-950">
           <Providers>
             <Navbar />
+            <VerifyEmailBanner />
             <main className="flex-1">
               {children}
             </main>

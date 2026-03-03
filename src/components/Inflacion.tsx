@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LineChart, BarChart2, Brain, Scale, Save, Info, Calculator, Percent } from "lucide-react";
+import { LineChart, BarChart2, Brain, Scale, Save, Info, Calculator, Percent, Lock } from "lucide-react";
 import PanelVariables from "@/components/PanelVariables";
 import Resultados from "@/components/Resultados";
 import GraficoSimulacion from "@/components/GraficoSimulacion";
@@ -15,6 +15,8 @@ import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
 import TaylorSolver from "@/components/TaylorSolver";
 import { SimuladorTasaRealNominal } from "@/components/simuladores-inflacion";
 import { useSession } from "next-auth/react";
+import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
+import SimulatorLocked from "@/components/SimulatorLocked";
 
 export default function Inflacion({
     variables,
@@ -64,23 +66,30 @@ export default function Inflacion({
                     { id: 'comparador', label: 'Comparar Escenarios', icon: Scale },
                     { id: 'taylor', label: 'Matemáticas Taylor', icon: Calculator },
                     { id: 'tasaReal', label: 'Tasa real vs nominal', icon: Percent },
-                ].map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-                            ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                            }`}
-                    >
-                        <tab.icon className="w-3.5 h-3.5" />
-                        {tab.label}
-                    </button>
-                ))}
+                ].map((tab) => {
+                    const locked = !canAccess(session?.user?.plan, "inflacion", tab.id);
+                    return (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
+                                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
+                                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                                } ${locked ? 'opacity-80' : ''}`}
+                        >
+                            {locked && <Lock className="w-3 h-3" />}
+                            <tab.icon className="w-3.5 h-3.5" />
+                            {tab.label}
+                        </button>
+                    );
+                })}
             </div>
 
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                {activeTab === 'ai' && (
+                {!canAccess(session?.user?.plan, "inflacion", activeTab) && getRequiredPlan("inflacion", activeTab) && (
+                    <SimulatorLocked requiredPlan={getRequiredPlan("inflacion", activeTab)!} moduleName="Inflación" />
+                )}
+                {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'ai' && (
                     <div className="space-y-6">
                         <AnalisisMinuta
                             onAnalisisComplete={setDatosAI}
@@ -89,7 +98,7 @@ export default function Inflacion({
                     </div>
                 )}
 
-                {activeTab === 'core' && (
+                {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'core' && (
                     <div className="space-y-6">
                         <GuiaRapida />
 
@@ -124,7 +133,7 @@ export default function Inflacion({
                     </div>
                 )}
 
-                {activeTab === 'comparador' && (
+                {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'comparador' && (
                     <div className="space-y-6">
                         <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg p-6">
                             <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
@@ -136,13 +145,13 @@ export default function Inflacion({
                     </div>
                 )}
 
-                {activeTab === 'taylor' && (
+                {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'taylor' && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <TaylorSolver />
                     </div>
                 )}
 
-                {activeTab === 'tasaReal' && (
+                {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'tasaReal' && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
                         <SimuladorTasaRealNominal />
                     </div>

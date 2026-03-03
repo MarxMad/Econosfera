@@ -1,10 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, BarChart, Info, BookOpen, Layers, Activity } from "lucide-react";
+import { TrendingUp, BarChart, Info, BookOpen, Layers, Activity, Lock } from "lucide-react";
 import { SimuladorRegresion, SimuladorTCL } from "./simuladores-stats";
+import { useSession } from "next-auth/react";
+import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
+import SimulatorLocked from "./SimulatorLocked";
 
 export default function Estadistica() {
+    const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState<"regresion" | "tcl">("regresion");
 
     return (
@@ -28,24 +32,31 @@ export default function Estadistica() {
                 {[
                     { id: 'regresion', label: 'Regresión Lineal', icon: Activity },
                     { id: 'tcl', label: 'Teorema Límite Central', icon: Layers },
-                ].map((tab) => (
-                    <button
-                        key={tab.id}
-                        onClick={() => setActiveTab(tab.id as any)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-                            ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                            : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                            }`}
-                    >
-                        <tab.icon className="w-3.5 h-3.5" />
-                        {tab.label}
-                    </button>
-                ))}
+                ].map((tab) => {
+                    const locked = !canAccess(session?.user?.plan, "estadistica", tab.id);
+                    return (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id as any)}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
+                                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
+                                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                                } ${locked ? 'opacity-80' : ''}`}
+                        >
+                            {locked && <Lock className="w-3 h-3" />}
+                            <tab.icon className="w-3.5 h-3.5" />
+                            {tab.label}
+                        </button>
+                    );
+                })}
             </div>
 
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                {activeTab === 'regresion' && <SimuladorRegresion />}
-                {activeTab === 'tcl' && <SimuladorTCL />}
+                {!canAccess(session?.user?.plan, "estadistica", activeTab) && getRequiredPlan("estadistica", activeTab) && (
+                    <SimulatorLocked requiredPlan={getRequiredPlan("estadistica", activeTab)!} moduleName="Estadística" />
+                )}
+                {canAccess(session?.user?.plan, "estadistica", activeTab) && activeTab === 'regresion' && <SimuladorRegresion />}
+                {canAccess(session?.user?.plan, "estadistica", activeTab) && activeTab === 'tcl' && <SimuladorTCL />}
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">

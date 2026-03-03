@@ -6,7 +6,7 @@ export async function GET(request: Request) {
     const token = searchParams.get('token');
 
     if (!token) {
-        return NextResponse.redirect(new URL('/dashboard?error=MissingToken', request.url));
+        return NextResponse.redirect(new URL('/auth/signin?error=MissingToken', request.url));
     }
 
     try {
@@ -15,23 +15,21 @@ export async function GET(request: Request) {
         });
 
         if (!verificationToken || verificationToken.expires < new Date()) {
-            return NextResponse.redirect(new URL('/dashboard?error=InvalidToken', request.url));
+            return NextResponse.redirect(new URL('/auth/signin?error=InvalidToken', request.url));
         }
 
-        // Actualizar usuario
         await prisma.user.update({
             where: { email: verificationToken.identifier },
             data: { emailVerified: new Date() },
         });
 
-        // Borrar token usado
         await prisma.verificationToken.delete({
             where: { token },
         });
 
-        return NextResponse.redirect(new URL('/dashboard?verified=true', request.url));
+        return NextResponse.redirect(new URL('/auth/signin?verified=1', request.url));
     } catch (error) {
         console.error("Verificación fallida:", error);
-        return NextResponse.redirect(new URL('/dashboard?error=InternalError', request.url));
+        return NextResponse.redirect(new URL('/auth/signin?error=InternalError', request.url));
     }
 }

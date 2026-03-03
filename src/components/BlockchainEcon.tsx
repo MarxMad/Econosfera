@@ -7,6 +7,8 @@ import {
   TrendingDown, Info, ShieldCheck, Zap, Globe, Cpu, Scale, GitMerge, KeyRound, Bug,
   FileDown, Save, Lock
 } from "lucide-react";
+import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
+import SimulatorLocked from "./SimulatorLocked";
 import { emisionConHalving, anosPorHalving, datosGraficoHalving } from "@/lib/blockchain";
 import { InputLibre } from "./simuladores-finanzas/InputLibre";
 import { registrarExportacion } from "@/lib/actions/exportActions";
@@ -53,8 +55,6 @@ function SeccionBlockchain({ id, titulo, icono: Icono, children, defaultAbierto 
 
 export default function BlockchainEcon() {
   const { data: session } = useSession();
-  const isPro = session?.user?.plan === 'PRO' || session?.user?.plan === 'RESEARCHER';
-  const isResearcher = session?.user?.plan === 'RESEARCHER';
   const [showPricing, setShowPricing] = useState(false);
   const [exportandoHalving, setExportandoHalving] = useState(false);
   const [guardandoHalving, setGuardandoHalving] = useState(false);
@@ -177,23 +177,30 @@ export default function BlockchainEcon() {
           { id: 'consenso', label: 'PoW vs PoS', icon: Scale },
           { id: 'redp2p', label: 'Redes P2P', icon: Globe },
           { id: 'smartcontracts', label: 'Hacking Contracts', icon: Bug },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-              ? 'bg-white dark:bg-slate-700 text-violet-600 dark:text-violet-400 shadow-sm'
-              : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-              }`}
-          >
-            <tab.icon className="w-3.5 h-3.5" />
-            {tab.label}
-          </button>
-        ))}
+        ].map((tab) => {
+          const locked = !canAccess(session?.user?.plan, "blockchain", tab.id);
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
+                ? 'bg-white dark:bg-slate-700 text-violet-600 dark:text-violet-400 shadow-sm'
+                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
+                } ${locked ? 'opacity-80' : ''}`}
+            >
+              {locked && <Lock className="w-3 h-3" />}
+              <tab.icon className="w-3.5 h-3.5" />
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-        {activeTab === 'halving' && (
+        {!canAccess(session?.user?.plan, "blockchain", activeTab) && getRequiredPlan("blockchain", activeTab) && (
+          <SimulatorLocked requiredPlan={getRequiredPlan("blockchain", activeTab)!} moduleName="Blockchain" />
+        )}
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'halving' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
             <div className="flex items-center justify-between gap-4 mb-2">
               <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -294,91 +301,55 @@ export default function BlockchainEcon() {
           </div>
         )}
 
-        {activeTab === 'trading' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'trading' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
             <SimuladorTrading />
           </div>
         )}
 
-        {activeTab === 'amm' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'amm' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
             <SimuladorAMM />
           </div>
         )}
 
-        {activeTab === 'cadenabloques' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'cadenabloques' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
             <SimuladorCadenaBloques />
           </div>
         )}
 
-        {activeTab === 'llaves' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'llaves' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
             <SimuladorLlaves />
           </div>
         )}
 
-        {activeTab === 'merkle' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'merkle' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
-            {!isPro && (
-              <div className="absolute inset-0 z-50 backdrop-blur-[4px] bg-slate-900/60 flex items-center justify-center p-6">
-                <div className="max-w-sm bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-center animate-in fade-in zoom-in">
-                  <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Lock className="w-8 h-8" />
-                  </div>
-                  <h3 className="text-xl font-black mb-2">Características Premium</h3>
-                  <p className="text-sm text-slate-500 mb-8">El Árbol de Merkle es avanzado y requiere nivel Estudiante Pro o Researcher.</p>
-                  <a href="/pricing" className="block w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-500">Subir a Pro</a>
-                </div>
-              </div>
-            )}
             <SimuladorMerkle />
           </div>
         )}
 
-        {activeTab === 'consenso' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'consenso' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
             <SimuladorConsenso />
           </div>
         )}
 
-        {activeTab === 'smartcontracts' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'smartcontracts' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
-            {!isResearcher && (
-              <div className="absolute inset-0 z-50 backdrop-blur-[4px] bg-slate-900/60 flex items-center justify-center p-6">
-                <div className="max-w-sm bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-center animate-in fade-in zoom-in">
-                  <div className="w-16 h-16 bg-rose-100 dark:bg-rose-900/30 text-rose-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Lock className="w-8 h-8" />
-                  </div>
-                  <h3 className="text-xl font-black mb-2">Simulador Researcher</h3>
-                  <p className="text-sm text-slate-500 mb-8">El laboratorio de ataques a Smart Contracts es exclusivo para el plan <b>Investigador / Full</b>.</p>
-                  <a href="/pricing" className="block w-full py-3 bg-rose-600 text-white font-bold rounded-xl hover:bg-rose-500 shadow-lg shadow-rose-500/20 active:scale-95 transition-all">Desbloquear Nivel Investigador</a>
-                </div>
-              </div>
-            )}
             <SimuladorSmartContracts />
           </div>
         )}
 
-        {activeTab === 'redp2p' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'redp2p' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
-            {!isResearcher && (
-              <div className="absolute inset-0 z-50 backdrop-blur-[4px] bg-slate-900/60 flex items-center justify-center p-6">
-                <div className="max-w-sm bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 text-center animate-in fade-in zoom-in">
-                  <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Lock className="w-8 h-8" />
-                  </div>
-                  <h3 className="text-xl font-black mb-2">Simulador de Nodos</h3>
-                  <p className="text-sm text-slate-500 mb-8">Experimenta la propagación de transacciones y consenso en tiempo real con nivel <b>Investigador / Full</b>.</p>
-                  <a href="/pricing" className="block w-full py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 shadow-lg shadow-indigo-500/20 active:scale-95 transition-all">Desbloquear Full</a>
-                </div>
-              </div>
-            )}
             <SimuladorRedP2P />
           </div>
         )}
 
-        {activeTab === 'staking' && (
+        {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'staking' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
             <SimuladorStaking />
           </div>

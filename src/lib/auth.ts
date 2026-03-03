@@ -87,7 +87,7 @@ export const authOptions: NextAuthOptions = {
                 name: dbUser.name,
                 email: dbUser.email,
                 picture: dbUser.image,
-                credits: dbUser.credits,
+                credits: dbUser.emailVerified ? dbUser.credits : 0,
                 exportsCount: (dbUser as any).exportsCount,
                 plan: (dbUser as any).plan,
                 emailVerified: dbUser.emailVerified,

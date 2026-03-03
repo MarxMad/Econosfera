@@ -3,7 +3,9 @@
 import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Area } from "recharts";
 import type { VariablesMercado, VariablesElasticidad } from "@/lib/micro";
-import { TrendingDown, Download, Ruler, BookOpen } from "lucide-react";
+import { TrendingDown, Download, Ruler, BookOpen, Lock } from "lucide-react";
+import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
+import SimulatorLocked from "@/components/SimulatorLocked";
 import { calcularMercado, calcularElasticidadArco } from "@/lib/micro";
 import { exportarGraficoComoPNG } from "@/lib/exportarGrafico";
 
@@ -213,21 +215,28 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
           { id: "estructuras", label: "Estructuras de Mercado" },
           { id: "juegos", label: "Teoría de Juegos" },
           { id: "elasticidad", label: "Elasticidad" },
-        ].map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setActiveTab(t.id as any)}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === t.id
-              ? "bg-white dark:bg-slate-700 text-emerald-600 shadow-sm"
-              : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-              }`}
-          >
-            {t.label}
-          </button>
-        ))}
+        ].map((t) => {
+          const locked = !canAccess(session?.user?.plan, "micro", t.id);
+          return (
+            <button
+              key={t.id}
+              onClick={() => setActiveTab(t.id as any)}
+              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === t.id
+                ? "bg-white dark:bg-slate-700 text-emerald-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                } ${locked ? "opacity-80" : ""}`}
+            >
+              {locked && <Lock className="w-3 h-3" />}
+              {t.label}
+            </button>
+          );
+        })}
       </div>
 
-      {activeTab === "mercado" && (
+      {!canAccess(session?.user?.plan, "micro", activeTab) && getRequiredPlan("micro", activeTab) && (
+        <SimulatorLocked requiredPlan={getRequiredPlan("micro", activeTab)!} moduleName="Microeconomía" />
+      )}
+      {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "mercado" && (
         <>
           {/* Mercado: oferta y demanda */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
@@ -400,9 +409,9 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
         </>
       )}
 
-      {activeTab === "estructuras" && <SimuladorEstructurasMercado />}
-      {activeTab === "juegos" && <SimuladorTeoriaJuegos />}
-      {activeTab === "elasticidad" && (
+      {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "estructuras" && <SimuladorEstructurasMercado />}
+      {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "juegos" && <SimuladorTeoriaJuegos />}
+      {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "elasticidad" && (
         <div className="space-y-6">
           <SimuladorElasticidad />
           {/* Conservamos la calculadora de arco original por precision academica */}

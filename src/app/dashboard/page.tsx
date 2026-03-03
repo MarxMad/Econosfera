@@ -4,9 +4,10 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { getScenarios, deleteScenario } from "@/lib/actions/scenarioActions";
 import { getUserStats } from "@/lib/actions/quizActions";
-import { Trash2, ExternalLink, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Trophy, Flame } from "lucide-react";
+import { Trash2, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Flame, Sparkles, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import ProfileCard from "@/components/ProfileCard";
+import PlanComparador from "@/components/PlanComparador";
 
 export default function DashboardPage() {
     const { data: session, status } = useSession();
@@ -45,6 +46,24 @@ export default function DashboardPage() {
                 <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Mi Espacio de Trabajo</h1>
                 <p className="text-slate-500 dark:text-slate-400">Gestiona tus simulaciones guardadas y créditos de análisis AI.</p>
             </header>
+
+            {/* Banner: sin créditos → CTA a Pro/Researcher */}
+            {(session.user.credits ?? 0) === 0 && (
+                <div className="mb-6 p-5 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex flex-wrap items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/40">
+                            <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                        </div>
+                        <div>
+                            <p className="font-bold text-slate-900 dark:text-white">Sin créditos</p>
+                            <p className="text-sm text-slate-600 dark:text-slate-400">Recarga con Pro (50/mes) o Researcher (100/mes) para seguir usando análisis IA y exportaciones.</p>
+                        </div>
+                    </div>
+                    <Link href="/pricing" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 text-white font-bold hover:bg-amber-500 transition-colors">
+                        Ver planes <ArrowRight className="w-4 h-4" />
+                    </Link>
+                </div>
+            )}
 
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Left Column: Stats, Profile & Credits */}
@@ -85,6 +104,9 @@ export default function DashboardPage() {
                         </div>
                     </div>
 
+                    {/* Comparador Free vs Pro vs Researcher */}
+                    <PlanComparador />
+
                     {/* Resumen de Actividad Académica */}
                     <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
                         <h3 className="font-bold text-slate-900 dark:text-white mb-4">Progreso Económico</h3>
@@ -115,6 +137,26 @@ export default function DashboardPage() {
 
                 {/* Right Column: Scenario List & Suggestions */}
                 <div className="lg:col-span-2 space-y-6">
+
+                    {/* Tu siguiente paso */}
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-5 border border-blue-100 dark:border-slate-700">
+                        <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Tu siguiente paso</h3>
+                        {(session.user.credits ?? 0) > 0 ? (
+                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Completa un análisis de minuta con IA o exporta tu primer reporte para aprovechar al máximo la plataforma.</p>
+                        ) : (
+                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Sin créditos por ahora. Pásate a Pro para obtener 50 créditos IA al mes y exportaciones ilimitadas.</p>
+                        )}
+                        <div className="flex flex-wrap gap-2">
+                            <Link href="/simulador" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors">
+                                <Calculator className="w-4 h-4" /> Ir al simulador
+                            </Link>
+                            {(session.user.credits ?? 0) === 0 && (
+                                <Link href="/pricing" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                    Ver planes Pro
+                                </Link>
+                            )}
+                        </div>
+                    </div>
 
                     {/* Acciones Rápidas */}
                     <div className="w-full">

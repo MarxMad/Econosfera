@@ -2,18 +2,27 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Lock, Mail, ArrowRight, LogIn, Eye, EyeOff } from "lucide-react";
+import { Lock, Mail, ArrowRight, LogIn, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+
+const VERIFY_ERROR_MESSAGES: Record<string, string> = {
+    MissingToken: "Faltó el enlace de verificación.",
+    InvalidToken: "El enlace expiró o no es válido. Solicita uno nuevo desde el registro.",
+    InternalError: "Error al verificar. Intenta de nuevo más tarde.",
+};
 
 export default function SignInPage() {
     const { status } = useSession();
+    const searchParams = useSearchParams();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const verified = searchParams.get("verified") === "1";
+    const verifyError = searchParams.get("error");
 
     useEffect(() => {
         if (status === "authenticated") {
@@ -56,6 +65,18 @@ export default function SignInPage() {
                     <h2 className="text-3xl font-bold text-slate-900 dark:text-white">Bienvenido de nuevo</h2>
                     <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Inicia sesión en tu cuenta de Econosfera</p>
                 </div>
+
+                {verified && (
+                    <div className="p-3 text-sm text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-center gap-2">
+                        <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
+                        Tu correo ya está verificado. Inicia sesión para usar tus créditos.
+                    </div>
+                )}
+                {verifyError && (
+                    <div className="p-3 text-sm text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
+                        {VERIFY_ERROR_MESSAGES[verifyError] || "Error de verificación. Intenta reenviar el correo desde el registro."}
+                    </div>
+                )}
 
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
