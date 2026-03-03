@@ -10,6 +10,7 @@ export default function VerifyEmailBanner() {
     const [dismissed, setDismissed] = useState(false);
     const [sending, setSending] = useState(false);
     const [sent, setSent] = useState(false);
+    const [error, setError] = useState("");
 
     const show = session?.user && session.user.emailVerified === null && !dismissed;
 
@@ -17,11 +18,14 @@ export default function VerifyEmailBanner() {
 
     const handleResend = async () => {
         setSending(true);
+        setError("");
         const res = await resendVerification();
         setSending(false);
         if (res?.success) {
             setSent(true);
             update();
+        } else if (res?.error) {
+            setError(res.error);
         }
     };
 
@@ -39,6 +43,7 @@ export default function VerifyEmailBanner() {
             >
                 {sent ? "Correo reenviado" : sending ? "Enviando…" : "Reenviar correo"}
             </button>
+            {error && <span className="text-red-900 font-semibold">— {error}</span>}
             <button
                 type="button"
                 onClick={() => setDismissed(true)}

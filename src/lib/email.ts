@@ -5,7 +5,7 @@ const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KE
 export async function sendVerificationEmail(email: string, token: string, name: string) {
     if (!resend) {
         console.warn("RESEND_API_KEY no configurada. Saltando envío de email.");
-        return;
+        return { success: false, error: "Servicio de correo no configurado" };
     }
 
     const verifyUrl = `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/api/auth/verify?token=${token}`;
@@ -28,9 +28,13 @@ export async function sendVerificationEmail(email: string, token: string, name: 
         </div>
       `,
         });
+        if (data?.error) {
+            console.error("Resend API error:", data.error);
+            return { success: false, error: (data.error as { message?: string })?.message || "Error al enviar" };
+        }
         return { success: true, data };
     } catch (error) {
         console.error("Error enviando email:", error);
-        return { success: false, error };
+        return { success: false, error: error instanceof Error ? error.message : "Error al enviar el correo" };
     }
 }

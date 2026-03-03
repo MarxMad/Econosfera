@@ -24,7 +24,11 @@ export async function resendVerification() {
 
     await prisma.verificationToken.deleteMany({ where: { identifier: userEmail } });
     await prisma.verificationToken.create({ data: { identifier: userEmail, token, expires } });
-    await sendVerificationEmail(userEmail, token, user.name || "Usuario");
+
+    const sendResult = await sendVerificationEmail(userEmail, token, user.name || "Usuario");
+    if (!sendResult?.success) {
+        return { error: sendResult?.error || "No se pudo enviar el correo. Revisa en Vercel que RESEND_API_KEY y el dominio estén configurados." };
+    }
 
     return { success: true };
 }
@@ -48,7 +52,10 @@ export async function resendVerificationByEmail(email: string) {
 
     await prisma.verificationToken.deleteMany({ where: { identifier: trimmed } });
     await prisma.verificationToken.create({ data: { identifier: trimmed, token, expires } });
-    await sendVerificationEmail(trimmed, token, user.name || "Usuario");
+    const sendResult = await sendVerificationEmail(trimmed, token, user.name || "Usuario");
+    if (!sendResult?.success) {
+        return { error: sendResult?.error || "No se pudo enviar el correo." };
+    }
 
     return { success: true };
 }
