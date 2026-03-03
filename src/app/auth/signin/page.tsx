@@ -23,12 +23,33 @@ function SignInContent() {
     const router = useRouter();
     const verified = searchParams.get("verified") === "1";
     const verifyError = searchParams.get("error");
+    const loginToken = searchParams.get("loginToken");
 
     useEffect(() => {
         if (status === "authenticated") {
             router.push("/simulador");
         }
     }, [status, router]);
+
+    // Tras verificar correo: login con token de un solo uso y redirigir al simulador
+    useEffect(() => {
+        if (!loginToken || status !== "unauthenticated") return;
+        let cancelled = false;
+        (async () => {
+            const res = await signIn("credentials", {
+                loginToken,
+                redirect: false,
+            });
+            if (cancelled) return;
+            if (res?.ok) {
+                router.push("/simulador");
+                router.refresh();
+            } else {
+                router.replace("/auth/signin?verified=1");
+            }
+        })();
+        return () => { cancelled = true; };
+    }, [loginToken, status, router]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -66,7 +87,13 @@ function SignInContent() {
                     <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Inicia sesión en tu cuenta de Econosfera</p>
                 </div>
 
-                {verified && (
+                {loginToken && (
+                    <div className="p-3 text-sm text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-center gap-2">
+                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 animate-pulse" />
+                        Correo verificado. Entrando a tu cuenta…
+                    </div>
+                )}
+                {verified && !loginToken && (
                     <div className="p-3 text-sm text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-center gap-2">
                         <CheckCircle2 className="w-5 h-5 flex-shrink-0" />
                         Tu correo ya está verificado. Inicia sesión para usar tus créditos.
@@ -78,6 +105,7 @@ function SignInContent() {
                     </div>
                 )}
 
+                {!loginToken && (
                 <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
                     {error && (
                         <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
@@ -132,8 +160,9 @@ function SignInContent() {
                         {loading ? "Entrando..." : <><LogIn className="w-5 h-5" /> Iniciar Sesión</>}
                     </button>
                 </form>
+                )}
 
-                {process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === "true" && (
+                {!loginToken && process.env.NEXT_PUBLIC_GOOGLE_OAUTH_ENABLED === "true" && (
                     <>
                         <div className="relative my-8">
                             <div className="absolute inset-0 flex items-center"><span className="w-full border-t border-slate-200 dark:border-slate-800"></span></div>
@@ -149,12 +178,14 @@ function SignInContent() {
                     </>
                 )}
 
+                {!loginToken && (
                 <p className="text-center text-sm text-slate-600 dark:text-slate-400">
                     ¿No tienes cuenta?{" "}
                     <Link href="/auth/register" className="font-bold text-blue-600 hover:text-blue-500">
                         Regístrate ahora <ArrowRight className="inline w-4 h-4" />
                     </Link>
                 </p>
+                )}
             </div>
         </div>
     );

@@ -23,8 +23,32 @@ export const authOptions: NextAuthOptions = {
             credentials: {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" },
+                loginToken: { label: "Login Token", type: "text" },
             },
             async authorize(credentials) {
+                // Inicio de sesión con token de un solo uso (tras verificar correo)
+                if (credentials?.loginToken) {
+                    const tokenRecord = await prisma.verificationToken.findUnique({
+                        where: { token: credentials.loginToken },
+                    });
+                    if (!tokenRecord || tokenRecord.expires < new Date()) return null;
+                    const user = await prisma.user.findUnique({
+                        where: { email: tokenRecord.identifier },
+                    });
+                    await prisma.verificationToken.delete({ where: { token: credentials.loginToken } }).catch(() => {});
+                    if (!user) return null;
+                    return {
+                        id: user.id,
+                        email: user.email,
+                        name: user.name,
+                        image: user.image,
+                        credits: user.credits,
+                        exportsCount: (user as any).exportsCount,
+                        plan: (user as any).plan,
+                        emailVerified: user.emailVerified,
+                    };
+                }
+
                 if (!credentials?.email || !credentials?.password) {
                     throw new Error("Invalid credentials");
                 }
