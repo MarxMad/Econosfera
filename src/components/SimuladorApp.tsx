@@ -18,6 +18,7 @@ import Actuaria from "@/components/Actuaria";
 import Contadores from "@/components/Contadores";
 import Estadistica from "@/components/Estadistica";
 import Inflacion from "@/components/Inflacion";
+import Monetaria from "@/components/Monetaria";
 import type { VariablesSimulacion } from "@/lib/types";
 import { calcularResultados } from "@/lib/calculos";
 import { getEconomia, type PaisEconomia } from "@/lib/paises";
@@ -46,7 +47,7 @@ export default function SimuladorApp() {
           else if (scenario.type === "MICRO") setModulo("micro");
           else if (scenario.type === "FINANZAS") setModulo("finanzas");
           else {
-            setModulo("inflacion");
+            setModulo("monetaria");
             if (scenario.data) {
               const data = scenario.data as any;
               if (data.variables) setVariables(data.variables);
@@ -79,7 +80,11 @@ export default function SimuladorApp() {
         </div>
 
         {modulo === "inflacion" && (
-          <Inflacion
+          <Inflacion variables={variables} setVariables={setVariables} />
+        )}
+
+        {modulo === "monetaria" && (
+          <Monetaria
             variables={variables}
             setVariables={setVariables}
             resultados={resultados}

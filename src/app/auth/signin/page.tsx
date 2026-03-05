@@ -152,6 +152,9 @@ function SignInContent() {
                                     {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                                 </button>
                             </div>
+                            <Link href="/auth/forgot-password" className="block mt-2 text-sm text-blue-600 hover:text-blue-500 font-medium">
+                                ¿Olvidaste tu contraseña?
+                            </Link>
                         </div>
                     </div>
 

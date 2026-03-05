@@ -28,7 +28,7 @@ export default function SimulatorLocked({ requiredPlan, moduleName }: SimulatorL
       </h3>
       <p className="text-slate-600 dark:text-slate-400 text-sm max-w-md mx-auto mb-6">
         {requiredPlan === "PRO" && (
-          <>Este simulador está disponible en el plan Estudiante Pro ($4.99/mes): 50 créditos IA, exportaciones ilimitadas y modelos avanzados.</>
+          <>Este simulador está disponible en el plan Estudiante Pro (MXN 99/mes): 50 créditos IA, exportaciones ilimitadas y modelos avanzados.</>
         )}
         {requiredPlan === "RESEARCHER" && (
           <>Este contenido está disponible en el plan Researcher: acceso completo a todos los simuladores, Smart Contracts, P2P y más.</>

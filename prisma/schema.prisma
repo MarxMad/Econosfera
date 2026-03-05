@@ -170,6 +170,16 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model PasswordResetToken {
+  id     String   @id @default(cuid())
+  email  String
+  code   String   // Código de 6 dígitos enviado por correo
+  expires DateTime
+
+  @@index([email])
+  @@index([email, code])
+}
+
 model ExportLog {
   id        String   @id @default(cuid())
   userId    String?  // Si está logueado

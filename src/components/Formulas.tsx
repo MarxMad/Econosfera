@@ -11,13 +11,13 @@ interface FormulasProps {
   onIrAModulo?: (modulo: ModuloSimulador) => void;
 }
 
-function toModuloFormula(m: ModuloSimulador | undefined): "inflacion" | "macro" | "micro" | "todos" {
-  if (m === "inflacion" || m === "macro" || m === "micro") return m;
+function toModuloFormula(m: ModuloSimulador | undefined): "inflacion" | "monetaria" | "macro" | "micro" | "todos" {
+  if (m === "inflacion" || m === "monetaria" || m === "macro" || m === "micro") return m;
   return "todos";
 }
 
 export default function Formulas({ moduloActivo, onIrAModulo }: FormulasProps) {
-  const [moduloSeleccionado, setModuloSeleccionado] = useState<"inflacion" | "macro" | "micro" | "todos">(
+  const [moduloSeleccionado, setModuloSeleccionado] = useState<"inflacion" | "monetaria" | "macro" | "micro" | "todos">(
     toModuloFormula(moduloActivo)
   );
 
@@ -44,6 +44,7 @@ export default function Formulas({ moduloActivo, onIrAModulo }: FormulasProps) {
         {[
           { id: "todos" as const, label: "Todas" },
           { id: "inflacion" as const, label: "Inflación" },
+          { id: "monetaria" as const, label: "Teoría monetaria" },
           { id: "macro" as const, label: "Macro" },
           { id: "micro" as const, label: "Micro" },
         ].map((mod) => (

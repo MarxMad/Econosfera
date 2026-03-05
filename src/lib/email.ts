@@ -38,3 +38,40 @@ export async function sendVerificationEmail(email: string, token: string, name: 
         return { success: false, error: error instanceof Error ? error.message : "Error al enviar el correo" };
     }
 }
+
+export async function sendPasswordResetEmail(email: string, code: string, name: string) {
+    if (!resend) {
+        console.warn("RESEND_API_KEY no configurada. Saltando envío de email.");
+        return { success: false, error: "Servicio de correo no configurado" };
+    }
+
+    try {
+        const data = await resend.emails.send({
+            from: process.env.RESEND_FROM || 'Econosfera <noreply@econosfera.xyz>',
+            to: email,
+            subject: 'Código para restablecer tu contraseña - Econosfera',
+            html: `
+        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 24px;">
+          <h1 style="color: #1e293b; font-size: 24px; font-weight: 800; margin-bottom: 16px;">Hola ${name},</h1>
+          <p style="color: #475569; font-size: 16px; line-height: 24px; margin-bottom: 24px;">
+            Solicitaste restablecer tu contraseña en Econosfera. Usa el siguiente código para continuar. El código es válido durante 15 minutos.
+          </p>
+          <div style="background: #f1f5f9; padding: 20px; border-radius: 12px; text-align: center; font-size: 28px; font-weight: 800; letter-spacing: 8px; color: #1e293b; margin: 24px 0;">
+            ${code}
+          </div>
+          <p style="color: #94a3b8; font-size: 12px; margin-top: 32px; border-top: 1px solid #f1f5f9; padding-top: 16px;">
+            Si no solicitaste este cambio, puedes ignorar este correo. Tu contraseña no se modificará.
+          </p>
+        </div>
+      `,
+        });
+        if (data?.error) {
+            console.error("Resend API error:", data.error);
+            return { success: false, error: (data.error as { message?: string })?.message || "Error al enviar" };
+        }
+        return { success: true, data };
+    } catch (error) {
+        console.error("Error enviando email:", error);
+        return { success: false, error: error instanceof Error ? error.message : "Error al enviar el correo" };
+    }
+}

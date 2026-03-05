@@ -17,7 +17,7 @@ const PLANS = [
   {
     id: "pro",
     name: "Estudiante Pro",
-    price: "$4.99/mes",
+    price: "MXN 99/mes",
     credits: "50 IA/mes",
     exports: "Ilimitados",
     features: ["DCF y Black-Scholes", "Simuladores cripto (Merkle)", "Soporte prioritario"],
@@ -26,7 +26,7 @@ const PLANS = [
   {
     id: "researcher",
     name: "Researcher",
-    price: "$9.99/mes",
+    price: "MXN 199/mes",
     credits: "100 IA/mes",
     exports: "Ilimitados",
     features: ["Smart Contracts, P2P", "Reportes ejecutivos", "Soporte 24/7"],

@@ -5,7 +5,7 @@
 export interface TerminoGlosario {
   termino: string;
   definicion: string;
-  modulo: "inflacion" | "macro" | "micro" | "finanzas" | "general" | "blockchain" | "actuaria" | "estadistica" | "teorias";
+  modulo: "inflacion" | "monetaria" | "macro" | "micro" | "finanzas" | "general" | "blockchain" | "actuaria" | "estadistica" | "teorias";
   formula?: string;
   ejemplo?: string;
 }
@@ -44,14 +44,14 @@ export const TERMINOS: TerminoGlosario[] = [
   {
     termino: "Regla de Taylor",
     definicion: "Fórmula que indica cómo debería ajustarse la tasa de política monetaria ante desviaciones de la inflación respecto a su meta y de la brecha de producto. Sirve como referencia teórica y de comunicación para los bancos centrales; no se aplica de forma mecánica porque la economía es incierta y existen rezagos. Los coeficientes α y β ponderan la importancia de estabilizar inflación y producto.",
-    modulo: "inflacion",
+    modulo: "monetaria",
     formula: "i = r* + π* + α(π - π*) + β(y - y*)",
     ejemplo: "Con r*=2%, π*=3%, α=0.5, β=0.5, si π=5% y brecha=+1%, entonces i ≈ 6.5%.",
   },
   {
     termino: "Brecha de producto",
     definicion: "Diferencia porcentual entre el PIB observado y el PIB potencial. Cuando es positiva la economía opera por encima de su capacidad y suelen aparecer presiones inflacionarias; cuando es negativa hay holgura y el banco central puede mantener o bajar la tasa. Se estima con filtros estadísticos o modelos de producción y es un insumo clave de la Regla de Taylor.",
-    modulo: "inflacion",
+    modulo: "monetaria",
     formula: "brecha = (Y - Y*) / Y* × 100",
   },
   {
@@ -68,17 +68,17 @@ export const TERMINOS: TerminoGlosario[] = [
   {
     termino: "Política expansiva",
     definicion: "Postura del banco central consistente en bajar o mantener baja la tasa de interés de política para estimular el crédito, el consumo y la inversión. Se usa cuando la inflación está controlada y existe holgura en la economía o riesgo recesivo. Los canales de transmisión incluyen el costo del crédito, el tipo de cambio y el valor de los activos.",
-    modulo: "inflacion",
+    modulo: "monetaria",
   },
   {
     termino: "Política restrictiva",
     definicion: "Postura del banco central que sube la tasa de interés para enfriar la demanda agregada y anclar las expectativas de inflación. Se aplica cuando la inflación está por encima de la meta o la economía está sobrecalentada. Reduce el incentivo a endeudarse y a gastar, lo que con rezago contribuye a bajar la inflación.",
-    modulo: "inflacion",
+    modulo: "monetaria",
   },
   {
     termino: "Tasa de política monetaria",
     definicion: "Tasa de interés que el banco central fija como referencia para el mercado interbancario; en México corresponde a la tasa de fondeo a un día. Es el principal instrumento de política monetaria: su nivel influye en las tasas de crédito, depósitos y bonos, y por tanto en el gasto y la inflación. Se anuncia en las decisiones de política monetaria (Banxico).",
-    modulo: "inflacion",
+    modulo: "monetaria",
   },
   // Macroeconomía
   {
@@ -299,7 +299,7 @@ export const TERMINOS: TerminoGlosario[] = [
   { termino: "Tasa neutral", definicion: "Tasa de interés real (ajustada por inflación) que mantendría la economía en equilibrio con el producto en su potencial y la inflación estable. Por encima de ella la política es restrictiva; por debajo, expansiva. Los bancos centrales la usan como referencia para diagnosticar la postura monetaria. No es observable directamente y se estima con modelos (ej. Laubach-Williams).", modulo: "inflacion" },
   { termino: "Deflación", definicion: "Caída sostenida y generalizada del nivel de precios (inflación negativa). Puede generar expectativas de precios aún más bajos y posponer el consumo y la inversión, debilitando la actividad. Aumenta el valor real de la deuda y complica la política monetaria si las tasas nominales ya están cerca de cero. Suele asociarse a recesiones profundas o crisis financieras.", modulo: "inflacion" },
   { termino: "Estanflación", definicion: "Combinación de estancamiento o recesión (crecimiento bajo o negativo del PIB y alto desempleo) con alta inflación. Suele surgir tras choques de oferta que elevan precios y reducen la actividad. Plantea un dilema: subir la tasa para combatir la inflación puede agravar el desempleo; bajar la tasa para reactivar puede alimentar más inflación. Los años setenta son un ejemplo histórico.", modulo: "inflacion" },
-  { termino: "Transmisión monetaria", definicion: "Mecanismos por los que un cambio en la tasa de política monetaria afecta la inflación y el producto. Incluyen el canal de tasas de interés (crédito más caro o más barato), el canal del tipo de cambio (apreciación o depreciación) y el canal de precios de activos (riqueza y colateral). Los efectos operan con rezagos, por lo que el banco central debe actuar con anticipación.", modulo: "inflacion" },
+  { termino: "Transmisión monetaria", definicion: "Mecanismos por los que un cambio en la tasa de política monetaria afecta la inflación y el producto. Incluyen el canal de tasas de interés (crédito más caro o más barato), el canal del tipo de cambio (apreciación o depreciación) y el canal de precios de activos (riqueza y colateral). Los efectos operan con rezagos, por lo que el banco central debe actuar con anticipación.", modulo: "monetaria" },
   { termino: "Curva de Phillips corto plazo", definicion: "Relación inversa entre desempleo e inflación en el corto plazo cuando las expectativas de inflación están dadas: menor desempleo se asocia a mayor inflación porque las empresas suben precios y los trabajadores negocian salarios más altos. Permite un trade-off entre inflación y desempleo que la política monetaria puede explotar temporalmente. La pendiente depende de cómo se formen las expectativas y de la rigidez de precios y salarios.", modulo: "macro" },
   { termino: "Curva de Phillips largo plazo", definicion: "Con expectativas de inflación totalmente ajustadas, la curva de Phillips es vertical al nivel del NAIRU: no existe trade-off permanente entre inflación y desempleo. Cualquier tasa de inflación puede ser compatible con el desempleo natural; la política monetaria no puede mantener el desempleo por debajo del NAIRU sin acelerar la inflación. Refuerza el papel del anclaje de expectativas.", modulo: "macro" },
   { termino: "Modelo de Solow", definicion: "Modelo de crecimiento a largo plazo en el que el producto depende del capital, el trabajo y la productividad total de factores (PTF): Y = A × K^α × L^(1-α). El crecimiento sostenido del ingreso per cápita proviene del progreso técnico (crecimiento de A), no solo de la acumulación de capital, que tiene rendimientos decrecientes. Es la referencia para analizar convergencia entre países y políticas de crecimiento.", modulo: "macro" },

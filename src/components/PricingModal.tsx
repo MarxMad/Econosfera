@@ -29,7 +29,7 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                         Desbloquea más créditos y exportaciones
                     </h2>
                     <p className="text-slate-600 dark:text-slate-400 mb-6">
-                        Has alcanzado el límite gratuito. Con <strong>Estudiante Pro por $4.99/mes</strong> obtienes 50 créditos IA y exportaciones PDF ilimitadas.
+                        Has alcanzado el límite gratuito. Con <strong>Estudiante Pro por MXN 99/mes</strong> obtienes 50 créditos IA y exportaciones PDF ilimitadas.
                     </p>
 
                     <div className="space-y-3 mb-6">
@@ -56,11 +56,11 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                     <div className="flex gap-3 mb-6">
                         <div className="flex-1 bg-blue-50 dark:bg-blue-900/20 rounded-2xl p-4 border border-blue-100 dark:border-blue-900/40">
                             <p className="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-wider">Pro mensual</p>
-                            <p className="text-2xl font-black text-slate-900 dark:text-white">$4.99<span className="text-sm font-normal text-slate-500">/mes</span></p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">MXN 99<span className="text-sm font-normal text-slate-500">/mes</span></p>
                         </div>
                         <div className="flex-1 bg-slate-50 dark:bg-slate-800/50 rounded-2xl p-4 border border-slate-200 dark:border-slate-700">
                             <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">Pro anual</p>
-                            <p className="text-2xl font-black text-slate-900 dark:text-white">$49<span className="text-sm font-normal text-slate-500">/año</span></p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">MXN 990<span className="text-sm font-normal text-slate-500">/año</span></p>
                             <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-bold">2 meses gratis</p>
                         </div>
                     </div>

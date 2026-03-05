@@ -314,7 +314,7 @@ export default function Home() {
               <span className="text-sm font-black uppercase tracking-widest text-blue-200 mb-2">Popular</span>
               <h3 className="text-2xl font-bold mb-6">Estudiante Pro</h3>
               <div className="mb-10">
-                <span className="text-5xl font-black">$4.99</span>
+                <span className="text-5xl font-black">MXN 99</span>
                 <span className="text-blue-200 font-medium"> /mes</span>
               </div>
               <ul className="space-y-5 mb-12 flex-1">
@@ -333,7 +333,7 @@ export default function Home() {
               <span className="text-sm font-black uppercase tracking-widest text-slate-500 mb-2">Full</span>
               <h3 className="text-2xl font-bold mb-6">Researcher</h3>
               <div className="mb-10">
-                <span className="text-5xl font-black">$9.99</span>
+                <span className="text-5xl font-black">MXN 199</span>
                 <span className="text-slate-500 font-medium"> /mes</span>
               </div>
               <ul className="space-y-5 mb-12 flex-1">

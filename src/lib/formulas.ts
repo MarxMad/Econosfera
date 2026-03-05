@@ -9,7 +9,7 @@ export interface Formula {
 }
 
 export interface ModuloFormulas {
-  modulo: "inflacion" | "macro" | "micro";
+  modulo: "inflacion" | "monetaria" | "macro" | "micro";
   titulo: string;
   formulas: Formula[];
 }
@@ -17,7 +17,7 @@ export interface ModuloFormulas {
 export const FORMULAS: ModuloFormulas[] = [
   {
     modulo: "inflacion",
-    titulo: "Inflación y Política Monetaria",
+    titulo: "Inflación",
     formulas: [
       {
         nombre: "Tasa real ex post",
@@ -50,6 +50,23 @@ export const FORMULAS: ModuloFormulas[] = [
           { simbolo: "\\pi^*", descripcion: "Meta de inflación (%)" },
         ],
       },
+      {
+        nombre: "Poder adquisitivo",
+        formula: "V_n = V_0 \\times (1 + \\pi)^n",
+        descripcion: "Valor del dinero en el futuro para mantener el mismo poder de compra ante inflación constante.",
+        variables: [
+          { simbolo: "V_n", descripcion: "Valor necesario en n años" },
+          { simbolo: "V_0", descripcion: "Valor actual" },
+          { simbolo: "\\pi", descripcion: "Inflación anual (%)" },
+          { simbolo: "n", descripcion: "Número de años" },
+        ],
+      },
+    ],
+  },
+  {
+    modulo: "monetaria",
+    titulo: "Teoría Monetaria",
+    formulas: [
       {
         nombre: "Brecha de producto",
         formula: "brecha_Y = \\frac{Y - Y^*}{Y^*} \\times 100",
@@ -222,7 +239,7 @@ export const FORMULAS: ModuloFormulas[] = [
   },
 ];
 
-export function getFormulasPorModulo(modulo: "inflacion" | "macro" | "micro"): Formula[] {
+export function getFormulasPorModulo(modulo: "inflacion" | "monetaria" | "macro" | "micro"): Formula[] {
   const mod = FORMULAS.find((m) => m.modulo === modulo);
   return mod?.formulas || [];
 }

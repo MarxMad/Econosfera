@@ -15,7 +15,7 @@ interface GlosarioProps {
 }
 
 const MODULO_LABEL: Record<string, string> = {
-  inflacion: "Inflación", macro: "Macro", micro: "Micro", finanzas: "Finanzas", general: "General",
+  inflacion: "Inflación", monetaria: "Teoría monetaria", macro: "Macro", micro: "Micro", finanzas: "Finanzas", general: "General",
   blockchain: "Blockchain", actuaria: "Actuaria", estadistica: "Estadística",
 };
 
@@ -54,6 +54,7 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
   const modulos: Array<{ id: "todos" | ModuloSimulador | "general" | "teorias"; label: string }> = [
     { id: "todos", label: "Todos" },
     { id: "inflacion", label: "Inflación" },
+    { id: "monetaria", label: "Teoría monetaria" },
     { id: "macro", label: "Macro" },
     { id: "micro", label: "Micro" },
     { id: "finanzas", label: "Finanzas" },

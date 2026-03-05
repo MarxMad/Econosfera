@@ -44,7 +44,7 @@ export default function ManualPage() {
                                 Econosfera incluye un motor de IA que procesa actas de política monetaria en segundos y genera reportes ejecutivos.
                             </p>
                             <ul className="list-disc pl-5 space-y-2 mt-4">
-                                <li>Ve al módulo <strong>Inflación y política monetaria</strong> y abre la pestaña <strong>Análisis AI Minutas</strong>.</li>
+                                <li>Ve al módulo <strong>Teoría monetaria</strong> y abre la pestaña <strong>Análisis AI Minutas</strong>.</li>
                                 <li>Sube un documento en <strong>PDF o TXT</strong> (por ejemplo, minutas de Banxico).</li>
                                 <li>La plataforma identifica posturas <em>hawkish</em> o <em>dovish</em>, votos disidentes y el balance de riesgos macroeconómicos.</li>
                                 <li><strong>Créditos:</strong> Cada análisis profundo consume <strong>10 créditos</strong>. Plan Free: 10 créditos iniciales; <strong>Estudiante Pro</strong>: 50/mes; <strong>Researcher</strong>: 100/mes.</li>
@@ -66,16 +66,27 @@ export default function ManualPage() {
                         {/* Inflación */}
                         <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
                             <h3 className="font-bold text-lg flex items-center gap-2 text-slate-800 dark:text-slate-100">
+                                <Calculator className="w-5 h-5 text-amber-500" />
+                                Inflación
+                            </h3>
+                            <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1 list-disc pl-5">
+                                <li><strong>Tasa real vs nominal:</strong> ecuación de Fisher, tasa real ex ante / ex post.</li>
+                                <li><strong>Poder adquisitivo:</strong> cómo la inflación erosiona el valor del dinero en el tiempo.</li>
+                                <li><strong>Comparar escenarios:</strong> comparativa de sensibilidad entre dos conjuntos de parámetros de inflación.</li>
+                            </ul>
+                        </div>
+
+                        {/* Teoría monetaria */}
+                        <div className="bg-slate-50 dark:bg-slate-800/50 p-5 rounded-2xl border border-slate-200 dark:border-slate-700 space-y-3">
+                            <h3 className="font-bold text-lg flex items-center gap-2 text-slate-800 dark:text-slate-100">
                                 <Calculator className="w-5 h-5 text-indigo-500" />
-                                Inflación y política monetaria
+                                Teoría monetaria
                             </h3>
                             <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1 list-disc pl-5">
                                 <li><strong>Simulador Core:</strong> variables macro, choques de oferta/demanda, transmisión a inflación y tasa.</li>
-                                <li><strong>Análisis AI Minutas:</strong> subida de PDF/TXT de actas; análisis semántico y exportación a PDF.</li>
-                                <li><strong>Comparar Escenarios:</strong> comparativa de sensibilidad entre dos conjuntos de parámetros.</li>
-                                <li><strong>Matemáticas Taylor:</strong> resolución numérica de la{" "}
+                                <li><strong>Regla de Taylor:</strong> resolución numérica de la{" "}
                                     {slugReglaTaylor ? <Link href={`/glosario/${slugReglaTaylor}`} className="text-blue-600 dark:text-blue-400 hover:underline">Regla de Taylor</Link> : "Regla de Taylor"}.</li>
-                                <li><strong>Tasa real vs nominal:</strong> simulador de tasa real ex ante / ex post y poder adquisitivo.</li>
+                                <li><strong>Análisis AI Minutas:</strong> subida de PDF/TXT de actas de Banxico; análisis semántico y exportación a PDF.</li>
                             </ul>
                         </div>
 

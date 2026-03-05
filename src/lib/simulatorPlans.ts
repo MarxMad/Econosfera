@@ -16,10 +16,13 @@ export const PLAN_ORDER: Record<PlanLevel, number> = {
 /** Módulo -> tabId -> plan mínimo requerido */
 export const SIMULATOR_ACCESS: Record<string, Record<string, PlanLevel>> = {
   inflacion: {
-    core: "FREE",
     tasaReal: "FREE",
-    taylor: "PRO",
+    poderAdquisitivo: "FREE",
     comparador: "PRO",
+  },
+  monetaria: {
+    core: "FREE",
+    taylor: "PRO",
     ai: "RESEARCHER",
   },
   macro: {
