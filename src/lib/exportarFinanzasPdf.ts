@@ -4,7 +4,7 @@ import autoTable from 'jspdf-autotable';
 const MARGIN = 15;
 
 export type FinanzasExportData = {
-    tipo: 'VPVF' | 'Bono' | 'Cetes' | 'Ahorro' | 'DCF' | 'BlackScholes' | 'Amortizacion' | 'VPNTIR' | 'WACC' | 'Forward' | 'BreakEven' | 'Portafolio2';
+    tipo: 'VPVF' | 'Bono' | 'Cetes' | 'Ahorro' | 'DCF' | 'BlackScholes' | 'Amortizacion' | 'VPNTIR' | 'WACC' | 'Forward' | 'BreakEven' | 'Portafolio2' | 'InteresSimpleCompuesto' | 'Regla72' | 'TasaEfectiva' | 'ImpactoNoticias' | 'CorrelacionFundamental';
     titulo: string;
     variables: Array<{ label: string; valor: string }>;
     resultados: Array<{ label: string; valor: string }>;

@@ -1,11 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { HelpCircle, FileDown, Save } from "lucide-react";
 import { InputLibre } from "../simuladores-finanzas/InputLibre";
 import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { costoProduccion } from "@/lib/contabilidad";
+import { useSession } from "next-auth/react";
+import PricingModal from "../PricingModal";
 
 export default function SimuladorCostoProduccion() {
+  const { data: session } = useSession();
+  const [showPricing, setShowPricing] = useState(false);
+  const [exportando, setExportando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [materiaPrima, setMateriaPrima] = useState(50000);
   const [manoObraDirecta, setManoObraDirecta] = useState(30000);
   const [costosIndirectos, setCostosIndirectos] = useState(20000);
@@ -22,9 +29,68 @@ export default function SimuladorCostoProduccion() {
   const pctMOD = totalBase > 0 ? (manoObraDirecta / totalBase) * 100 : 0;
   const pctCIF = totalBase > 0 ? (costosIndirectos / totalBase) * 100 : 0;
 
+  const handleExport = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setExportando(true);
+    try {
+      await import("@/lib/actions/exportActions").then((m) => m.registrarExportacion("Contabilidad Costo Producción", "PDF"));
+      await import("@/lib/exportarContabilidadPdf").then((m) => m.exportarContabilidadAPdf({
+        tipo: "CostoProduccion",
+        titulo: "Costo de producción",
+        variables: [
+          { label: "Materia prima", valor: `$${fmt(materiaPrima)}` },
+          { label: "Mano de obra directa", valor: `$${fmt(manoObraDirecta)}` },
+          { label: "Costos indirectos", valor: `$${fmt(costosIndirectos)}` },
+          { label: "Unidades producidas", valor: String(unidadesProducidas) },
+        ],
+        resultados: [
+          { label: "Costo total", valor: `$${fmt(costoTotal)}` },
+          { label: "Costo unitario", valor: `$${fmt(costoUnitario)}` },
+          { label: "MP %", valor: `${pctMP.toFixed(1)}%` },
+          { label: "MOD %", valor: `${pctMOD.toFixed(1)}%` },
+          { label: "CIF %", valor: `${pctCIF.toFixed(1)}%` },
+        ],
+      }));
+    } catch (e) {
+      if (String(e).includes("créditos")) setShowPricing(true);
+      else alert("Error al exportar reporte");
+    } finally { setExportando(false); }
+  };
+
+  const handleSave = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setGuardando(true);
+    try {
+      const { saveScenario } = await import("@/lib/actions/scenarioActions");
+      const res = await saveScenario({
+        type: "CONTABILIDAD",
+        subType: "COSTO_PRODUCCION",
+        name: `Costo producción ${new Date().toLocaleDateString()}`,
+        variables: { materiaPrima, manoObraDirecta, costosIndirectos, unidadesProducidas },
+        results: { costoTotal, costoUnitario },
+      });
+      if (res.success) alert("Escenario guardado");
+      else alert(res.error);
+    } catch (e) { alert("Error al guardar"); } finally { setGuardando(false); }
+  };
+
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg p-5">
-      <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-3">Costo de producción</h3>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+        <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Costo de producción</h3>
+        <div className="flex gap-2">
+          <button type="button" onClick={handleExport} disabled={exportando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50">
+            <FileDown className="w-3.5 h-3.5" />
+            {exportando ? "Generando..." : "Reporte PDF"}
+          </button>
+          {session && (
+            <button type="button" onClick={handleSave} disabled={guardando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white hover:bg-teal-500 transition-all shadow-md active:scale-95 disabled:opacity-50">
+              <Save className="w-3.5 h-3.5" />
+              {guardando ? "Guardando..." : "Guardar"}
+            </button>
+          )}
+        </div>
+      </div>
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         MP + MOD + CIF = Costo total. Costo unitario = Costo total / Unidades producidas.
       </p>
@@ -48,11 +114,11 @@ export default function SimuladorCostoProduccion() {
         </div>
         <div className="space-y-4">
           <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50">
-            <p className="text-xs font-bold text-slate-500 uppercase mb-1">Costo total</p>
+            <p className="text-xs font-bold text-slate-500 uppercase mb-1 flex items-center gap-1">Costo total<span title="MP + MOD + CIF." className="cursor-help"><HelpCircle className="w-3.5 h-3.5 text-slate-400" /></span></p>
             <p className="text-2xl font-black text-slate-900 dark:text-white">${fmt(costoTotal)}</p>
           </div>
           <div className="p-4 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20">
-            <p className="text-xs font-bold text-emerald-600 uppercase mb-1">Costo unitario</p>
+            <p className="text-xs font-bold text-emerald-600 uppercase mb-1 flex items-center gap-1">Costo unitario<span title="Costo total ÷ Unidades producidas." className="cursor-help"><HelpCircle className="w-3.5 h-3.5 text-emerald-500" /></span></p>
             <p className="text-2xl font-black text-slate-900 dark:text-white">${fmt(costoUnitario)}</p>
           </div>
           <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-600">
@@ -74,6 +140,7 @@ export default function SimuladorCostoProduccion() {
           </div>
         </div>
       </div>
+      <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }

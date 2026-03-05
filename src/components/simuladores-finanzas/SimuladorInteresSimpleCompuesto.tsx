@@ -1,12 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { HelpCircle } from "lucide-react";
+import { HelpCircle, FileDown, Save } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { valorFuturo, valorFuturoSimple } from "@/lib/finanzas";
 import { InstruccionesSimulador, LabelConAyuda } from "../InstruccionesSimulador";
+import { useSession } from "next-auth/react";
+import PricingModal from "../PricingModal";
 
 export default function SimuladorInteresSimpleCompuesto() {
+  const { data: session } = useSession();
+  const [showPricing, setShowPricing] = useState(false);
+  const [exportando, setExportando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [monto, setMonto] = useState(10000);
   const [tasaPct, setTasaPct] = useState(8);
   const [anios, setAnios] = useState(10);
@@ -28,9 +34,68 @@ export default function SimuladorInteresSimpleCompuesto() {
   const vfCompuesto = valorFuturo(monto, tasa, anios);
   const diferencia = vfCompuesto - vfSimple;
 
+  const handleExport = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setExportando(true);
+    try {
+      await import("@/lib/actions/exportActions").then((m) => m.registrarExportacion("Finanzas Interés Simple/Compuesto", "PDF"));
+      let chartUrl: string | null = null;
+      try { chartUrl = await import("@/lib/exportarGrafico").then((m) => m.getGraficoAsDataUrl("grafico-interes-simple")); } catch (_) {}
+      await import("@/lib/exportarFinanzasPdf").then((m) => m.exportarFinanzasAPdf({
+        tipo: "InteresSimpleCompuesto",
+        titulo: "Interés simple vs compuesto",
+        variables: [
+          { label: "Monto inicial", valor: `$${monto.toLocaleString("es-MX")}` },
+          { label: "Tasa anual", valor: `${tasaPct}%` },
+          { label: "Años", valor: String(anios) },
+        ],
+        resultados: [
+          { label: "VF Simple", valor: `$${vfSimple.toLocaleString("es-MX", { minimumFractionDigits: 2 })}` },
+          { label: "VF Compuesto", valor: `$${vfCompuesto.toLocaleString("es-MX", { minimumFractionDigits: 2 })}` },
+          { label: "Diferencia", valor: `$${diferencia.toLocaleString("es-MX", { minimumFractionDigits: 2 })}` },
+        ],
+        chart: chartUrl ?? undefined,
+      }));
+    } catch (e) {
+      if (String(e).includes("créditos")) setShowPricing(true);
+      else alert("Error al exportar reporte");
+    } finally { setExportando(false); }
+  };
+
+  const handleSave = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setGuardando(true);
+    try {
+      const { saveScenario } = await import("@/lib/actions/scenarioActions");
+      const res = await saveScenario({
+        type: "FINANZAS",
+        subType: "INTERES_SIMPLE_COMPUESTO",
+        name: `Interés simple/compuesto ${new Date().toLocaleDateString()}`,
+        variables: { monto, tasaPct, anios },
+        results: { vfSimple, vfCompuesto, diferencia },
+      });
+      if (res.success) alert("Escenario guardado");
+      else alert(res.error);
+    } catch (e) { alert("Error al guardar"); } finally { setGuardando(false); }
+  };
+
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg p-6">
-      <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">Interés simple vs compuesto</h3>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Interés simple vs compuesto</h3>
+        <div className="flex gap-2">
+          <button type="button" onClick={handleExport} disabled={exportando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50">
+            <FileDown className="w-3.5 h-3.5" />
+            {exportando ? "Generando..." : "Reporte PDF"}
+          </button>
+          {session && (
+            <button type="button" onClick={handleSave} disabled={guardando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-md active:scale-95 disabled:opacity-50">
+              <Save className="w-3.5 h-3.5" />
+              {guardando ? "Guardando..." : "Guardar"}
+            </button>
+          )}
+        </div>
+      </div>
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         Simple: VF = VP(1 + r×n). Compuesto: VF = VP(1+r)ⁿ. El interés compuesto genera rendimientos sobre los intereses acumulados.
       </p>
@@ -97,7 +162,7 @@ export default function SimuladorInteresSimpleCompuesto() {
       <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
         Diferencia a favor del compuesto: <strong>${diferencia.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong>
       </p>
-      <div className="h-64">
+      <div id="grafico-interes-simple" className="h-64">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={datosGrafico} margin={{ top: 8, right: 8, left: 8, bottom: 24 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-600" />
@@ -110,6 +175,7 @@ export default function SimuladorInteresSimpleCompuesto() {
           </LineChart>
         </ResponsiveContainer>
       </div>
+      <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }

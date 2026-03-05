@@ -1,10 +1,17 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { HelpCircle, FileDown, Save } from "lucide-react";
 import { InputLibre } from "../simuladores-finanzas/InputLibre";
 import { InstruccionesSimulador } from "../InstruccionesSimulador";
+import { useSession } from "next-auth/react";
+import PricingModal from "../PricingModal";
 
 export default function SimuladorEcuacionContable() {
+  const { data: session } = useSession();
+  const [showPricing, setShowPricing] = useState(false);
+  const [exportando, setExportando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [activo, setActivo] = useState(500000);
   const [pasivo, setPasivo] = useState(200000);
   const [capital, setCapital] = useState(300000);
@@ -18,9 +25,65 @@ export default function SimuladorEcuacionContable() {
 
   const fmt = (n: number) => n.toLocaleString("es-MX", { minimumFractionDigits: 2 });
 
+  const handleExport = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setExportando(true);
+    try {
+      await import("@/lib/actions/exportActions").then((m) => m.registrarExportacion("Contabilidad Ecuación Contable", "PDF"));
+      await import("@/lib/exportarContabilidadPdf").then((m) => m.exportarContabilidadAPdf({
+        tipo: "EcuacionContable",
+        titulo: "Ecuación contable",
+        variables: [
+          { label: "Activo", valor: `$${fmt(activo)}` },
+          { label: "Pasivo", valor: `$${fmt(pasivo)}` },
+          { label: "Capital", valor: `$${fmt(capital)}` },
+        ],
+        resultados: [
+          { label: "Lado izq. (Activo)", valor: `$${fmt(activo)}` },
+          { label: "Lado der. (P+C)", valor: `$${fmt(pasivo + capital)}` },
+          { label: "Balanceado", valor: balanceado ? "Sí" : "No" },
+        ],
+      }));
+    } catch (e) {
+      if (String(e).includes("créditos")) setShowPricing(true);
+      else alert("Error al exportar reporte");
+    } finally { setExportando(false); }
+  };
+
+  const handleSave = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setGuardando(true);
+    try {
+      const { saveScenario } = await import("@/lib/actions/scenarioActions");
+      const res = await saveScenario({
+        type: "CONTABILIDAD",
+        subType: "ECUACION_CONTABLE",
+        name: `Ecuación contable ${new Date().toLocaleDateString()}`,
+        variables: { activo, pasivo, capital },
+        results: { balanceado, diferencia },
+      });
+      if (res.success) alert("Escenario guardado");
+      else alert(res.error);
+    } catch (e) { alert("Error al guardar"); } finally { setGuardando(false); }
+  };
+
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg p-5">
-      <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-3">Ecuación contable</h3>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+        <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Ecuación contable</h3>
+        <div className="flex gap-2">
+          <button type="button" onClick={handleExport} disabled={exportando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50">
+            <FileDown className="w-3.5 h-3.5" />
+            {exportando ? "Generando..." : "Reporte PDF"}
+          </button>
+          {session && (
+            <button type="button" onClick={handleSave} disabled={guardando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-teal-600 text-white hover:bg-teal-500 transition-all shadow-md active:scale-95 disabled:opacity-50">
+              <Save className="w-3.5 h-3.5" />
+              {guardando ? "Guardando..." : "Guardar"}
+            </button>
+          )}
+        </div>
+      </div>
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         Activo = Pasivo + Capital. La ecuación debe cuadrar siempre.
       </p>
@@ -43,11 +106,11 @@ export default function SimuladorEcuacionContable() {
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/30">
-          <p className="text-xs font-bold text-slate-500 uppercase mb-2">Lado izquierdo (Activo)</p>
+          <p className="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center gap-1">Lado izquierdo (Activo)<span title="Recursos que posee la empresa." className="cursor-help"><HelpCircle className="w-3.5 h-3.5 text-slate-400" /></span></p>
           <p className="text-2xl font-black text-slate-900 dark:text-white">${fmt(activo)}</p>
         </div>
         <div className="p-6 rounded-xl border-2 border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/30">
-          <p className="text-xs font-bold text-slate-500 uppercase mb-2">Lado derecho (Pasivo + Capital)</p>
+          <p className="text-xs font-bold text-slate-500 uppercase mb-2 flex items-center gap-1">Lado derecho (Pasivo + Capital)<span title="Obligaciones más patrimonio." className="cursor-help"><HelpCircle className="w-3.5 h-3.5 text-slate-400" /></span></p>
           <p className="text-2xl font-black text-slate-900 dark:text-white">${fmt(pasivo + capital)}</p>
         </div>
       </div>
@@ -60,6 +123,7 @@ export default function SimuladorEcuacionContable() {
           {balanceado ? "Activo = Pasivo + Capital. Los registros cuadran." : "Ajusta Activo, Pasivo o Capital para que la ecuación cuadre."}
         </p>
       </div>
+      <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }

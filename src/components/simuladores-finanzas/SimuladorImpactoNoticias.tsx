@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Newspaper, TrendingUp, TrendingDown, HelpCircle, Info } from "lucide-react";
+import { Newspaper, TrendingUp, TrendingDown, HelpCircle, Info, FileDown, Save } from "lucide-react";
 import { InstruccionesSimulador, LabelConAyuda } from "../InstruccionesSimulador";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { impactoNoticias } from "@/lib/finanzas";
+import { useSession } from "next-auth/react";
+import PricingModal from "../PricingModal";
 
 const TIPOS_EVENTO = [
   { id: "earnings", label: "Earnings (EPS)", unidad: "USD", ejExpectativa: 2.5, ejReal: 2.8 },
@@ -14,6 +16,10 @@ const TIPOS_EVENTO = [
 ] as const;
 
 export default function SimuladorImpactoNoticias() {
+  const { data: session } = useSession();
+  const [showPricing, setShowPricing] = useState(false);
+  const [exportando, setExportando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [tipoEvento, setTipoEvento] = useState<(typeof TIPOS_EVENTO)[number]["id"]>("earnings");
   const [precioAnterior, setPrecioAnterior] = useState(100);
   const [expectativa, setExpectativa] = useState(2.5);
@@ -36,11 +42,72 @@ export default function SimuladorImpactoNoticias() {
 
   const esPositivo = surprise >= 0;
 
+  const handleExport = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setExportando(true);
+    try {
+      await import("@/lib/actions/exportActions").then((m) => m.registrarExportacion("Finanzas Impacto Noticias", "PDF"));
+      let chartUrl: string | null = null;
+      try { chartUrl = await import("@/lib/exportarGrafico").then((m) => m.getGraficoAsDataUrl("grafico-impacto-noticias")); } catch (_) {}
+      await import("@/lib/exportarFinanzasPdf").then((m) => m.exportarFinanzasAPdf({
+        tipo: "ImpactoNoticias",
+        titulo: "Impacto de noticias en el precio",
+        variables: [
+          { label: "Tipo evento", valor: tipo.label },
+          { label: "Precio anterior", valor: `$${precioAnterior}` },
+          { label: "Expectativa", valor: `${expectativa} ${tipo.unidad}` },
+          { label: "Resultado real", valor: `${resultadoReal} ${tipo.unidad}` },
+          { label: "Sensibilidad", valor: `${sensibilidad}%` },
+        ],
+        resultados: [
+          { label: "Surprise", valor: `${surprise >= 0 ? "+" : ""}${surprise.toFixed(2)} ${tipo.unidad}` },
+          { label: "Impacto %", valor: `${impactoPct >= 0 ? "+" : ""}${impactoPct.toFixed(2)}%` },
+          { label: "Precio nuevo", valor: `$${precioNuevo.toFixed(2)}` },
+        ],
+        chart: chartUrl ?? undefined,
+      }));
+    } catch (e) {
+      if (String(e).includes("créditos")) setShowPricing(true);
+      else alert("Error al exportar reporte");
+    } finally { setExportando(false); }
+  };
+
+  const handleSave = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setGuardando(true);
+    try {
+      const { saveScenario } = await import("@/lib/actions/scenarioActions");
+      const res = await saveScenario({
+        type: "FINANZAS",
+        subType: "IMPACTO_NOTICIAS",
+        name: `Impacto noticias ${new Date().toLocaleDateString()}`,
+        variables: { tipoEvento, precioAnterior, expectativa, resultadoReal, sensibilidad },
+        results: { surprise, impactoPct, precioNuevo },
+      });
+      if (res.success) alert("Escenario guardado");
+      else alert(res.error);
+    } catch (e) { alert("Error al guardar"); } finally { setGuardando(false); }
+  };
+
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg p-6">
-      <div className="flex items-center gap-2 mb-2">
-        <Newspaper className="w-5 h-5 text-amber-500" />
-        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Impacto de noticias en el precio</h3>
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+        <div className="flex items-center gap-2">
+          <Newspaper className="w-5 h-5 text-amber-500" />
+          <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100">Impacto de noticias en el precio</h3>
+        </div>
+        <div className="flex gap-2">
+          <button type="button" onClick={handleExport} disabled={exportando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50">
+            <FileDown className="w-3.5 h-3.5" />
+            {exportando ? "Generando..." : "Reporte PDF"}
+          </button>
+          {session && (
+            <button type="button" onClick={handleSave} disabled={guardando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-md active:scale-95 disabled:opacity-50">
+              <Save className="w-3.5 h-3.5" />
+              {guardando ? "Guardando..." : "Guardar"}
+            </button>
+          )}
+        </div>
       </div>
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         El mercado reacciona a la <strong>sorpresa</strong> (resultado real − expectativa). Un beat genera impacto positivo; un miss, negativo.
@@ -189,7 +256,7 @@ export default function SimuladorImpactoNoticias() {
         </p>
       </div>
 
-      <div className="h-48">
+      <div id="grafico-impacto-noticias" className="h-48">
         <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 flex items-center gap-1">
           Expectativa vs resultado
           <span title="Comparación visual: la barra gris es lo esperado, la verde/roja es lo real. La diferencia es la sorpresa." className="cursor-help">
@@ -210,6 +277,7 @@ export default function SimuladorImpactoNoticias() {
           </BarChart>
         </ResponsiveContainer>
       </div>
+      <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>
   );
 }
