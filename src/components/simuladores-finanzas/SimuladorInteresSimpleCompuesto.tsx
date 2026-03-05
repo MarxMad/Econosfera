@@ -1,8 +1,10 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { HelpCircle } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { valorFuturo, valorFuturoSimple } from "@/lib/finanzas";
+import { InstruccionesSimulador, LabelConAyuda } from "../InstruccionesSimulador";
 
 export default function SimuladorInteresSimpleCompuesto() {
   const [monto, setMonto] = useState(10000);
@@ -32,9 +34,19 @@ export default function SimuladorInteresSimpleCompuesto() {
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         Simple: VF = VP(1 + r×n). Compuesto: VF = VP(1+r)ⁿ. El interés compuesto genera rendimientos sobre los intereses acumulados.
       </p>
+      <InstruccionesSimulador>
+        <p>Compara el interés simple (solo sobre el capital inicial) vs compuesto (sobre capital + intereses acumulados).</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Monto inicial:</strong> Capital que inviertes.</li>
+          <li><strong>Tasa anual:</strong> Rendimiento por año (%).</li>
+          <li><strong>Años:</strong> Plazo. A mayor plazo, mayor diferencia entre simple y compuesto.</li>
+        </ul>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-3 gap-4 mb-4">
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Monto inicial ($)</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Monto inicial ($)" tooltip="Capital inicial que inviertes. Es la base para calcular ambos tipos de interés." />
+          </label>
           <input
             type="number"
             min="100"
@@ -45,7 +57,9 @@ export default function SimuladorInteresSimpleCompuesto() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Tasa anual (%)</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Tasa anual (%)" tooltip="Rendimiento anual en porcentaje. Ej: 8% significa que ganas 8% cada año." />
+          </label>
           <input
             type="number"
             min="0.5"
@@ -57,7 +71,9 @@ export default function SimuladorInteresSimpleCompuesto() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Años</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Años" tooltip="Plazo de la inversión. La diferencia entre simple y compuesto crece con el tiempo." />
+          </label>
           <input
             type="number"
             min="1"

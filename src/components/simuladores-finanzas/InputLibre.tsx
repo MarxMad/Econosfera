@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { HelpCircle } from "lucide-react";
 
 /** Input numérico sin límite: acepta cualquier valor. Al salir o Enter se aplica el número (si no es válido se mantiene el valor anterior). */
 export function InputLibre({
@@ -10,6 +11,7 @@ export function InputLibre({
   suffix = "",
   placeholder,
   step = "any",
+  tooltip,
 }: {
   label: string;
   value: number;
@@ -17,6 +19,7 @@ export function InputLibre({
   suffix?: string;
   placeholder?: string;
   step?: string;
+  tooltip?: string;
 }) {
   const [inputStr, setInputStr] = useState(String(value));
   const [editing, setEditing] = useState(false);
@@ -34,7 +37,18 @@ export function InputLibre({
 
   return (
     <div className="space-y-1">
-      <label className="block text-sm text-slate-600 dark:text-slate-400">{label}</label>
+      <label className="block text-sm text-slate-600 dark:text-slate-400">
+        {tooltip ? (
+          <span className="flex items-center gap-1.5">
+            {label}
+            <span title={tooltip} className="cursor-help text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+              <HelpCircle className="w-3.5 h-3.5" />
+            </span>
+          </span>
+        ) : (
+          label
+        )}
+      </label>
       <span className="flex items-center gap-1 font-mono">
         <input
           type="number"

@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { precioBono } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { FileDown, Save } from "lucide-react";
 import { useSession } from "next-auth/react";
 import PricingModal from "../PricingModal";
@@ -129,12 +130,21 @@ export default function SimuladorBono({ initialData }: { initialData?: any }) {
           )}
         </div>
       </div>
+      <InstruccionesSimulador>
+        <p>Calcula el precio teórico de un bono como la suma del valor presente de los cupones y del principal.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Valor nominal:</strong> Monto que recibirás al vencimiento (ej. $100).</li>
+          <li><strong>Tasa cupón:</strong> Interés anual que paga el bono (ej. 10% = $10 por cada $100).</li>
+          <li><strong>YTM:</strong> Rendimiento al vencimiento que exige el mercado. Si YTM &gt; cupón, el bono cotiza bajo la par.</li>
+          <li><strong>Años:</strong> Plazo restante hasta el vencimiento.</li>
+        </ul>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Valor nominal $" value={nominal} onChange={setNominal} step="0.01" />
-          <InputLibre label="Tasa cupón %" value={cuponPct} onChange={setCuponPct} suffix="%" step="0.01" />
-          <InputLibre label="YTM (rendimiento) %" value={ytmPct} onChange={setYtmPct} suffix="%" step="0.01" />
-          <InputLibre label="Años al vencimiento" value={anios} onChange={setAnios} step="0.1" />
+          <InputLibre label="Valor nominal $" value={nominal} onChange={setNominal} step="0.01" tooltip="Monto que recibirás al vencimiento. Típicamente $100 o $1000 por bono." />
+          <InputLibre label="Tasa cupón %" value={cuponPct} onChange={setCuponPct} suffix="%" step="0.01" tooltip="Tasa de interés anual que paga el emisor. Cupón anual = nominal × tasa cupón." />
+          <InputLibre label="YTM (rendimiento) %" value={ytmPct} onChange={setYtmPct} suffix="%" step="0.01" tooltip="Rendimiento al vencimiento: tasa que iguala el precio con los flujos futuros. Si sube, el precio baja." />
+          <InputLibre label="Años al vencimiento" value={anios} onChange={setAnios} step="0.1" tooltip="Años restantes hasta que el emisor pague el principal." />
         </div>
         <div className="space-y-3">
           <div className={`rounded-xl border p-4 ${sobrePar ? "border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30" : bajoPar ? "border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/30" : "border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50"}`}>

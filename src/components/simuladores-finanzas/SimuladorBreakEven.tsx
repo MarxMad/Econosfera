@@ -5,6 +5,7 @@ import { FileDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { breakEven } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import PricingModal from "../PricingModal";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
@@ -70,11 +71,20 @@ export default function SimuladorBreakEven() {
           {exportando ? "Generando..." : "Reporte PDF"}
         </button>
       </div>
+      <InstruccionesSimulador>
+        <p>Encuentra la cantidad de unidades que debes vender para que ingresos = costos (sin ganancia ni pérdida).</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Costos fijos:</strong> Gastos que no cambian con el volumen (renta, salarios, etc.).</li>
+          <li><strong>Precio de venta:</strong> Precio por unidad que cobras.</li>
+          <li><strong>Costo variable unitario:</strong> Costo por unidad que varía con la producción.</li>
+        </ul>
+        <p>Fórmula: Q = CF / (P − CVu). El margen de contribución (P − CVu) debe ser positivo.</p>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Costos fijos $" value={costosFijos} onChange={setCostosFijos} step="100" />
-          <InputLibre label="Precio de venta unitario $" value={precioVenta} onChange={setPrecioVenta} step="0.01" />
-          <InputLibre label="Costo variable unitario $" value={costoVariableUnitario} onChange={setCostoVariableUnitario} step="0.01" />
+          <InputLibre label="Costos fijos $" value={costosFijos} onChange={setCostosFijos} step="100" tooltip="Gastos que no dependen del volumen de producción." />
+          <InputLibre label="Precio de venta unitario $" value={precioVenta} onChange={setPrecioVenta} step="0.01" tooltip="Precio que cobras por cada unidad vendida." />
+          <InputLibre label="Costo variable unitario $" value={costoVariableUnitario} onChange={setCostoVariableUnitario} step="0.01" tooltip="Costo de producir o vender una unidad adicional." />
         </div>
         <div className="space-y-3">
           <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30 p-4">

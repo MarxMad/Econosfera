@@ -1,6 +1,7 @@
 "use client";
 
 import { ShieldAlert, TrendingUp, ShieldCheck, AlertTriangle, ArrowUp, ArrowDown } from "lucide-react";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 
 export default function MapaEstructuraCapital() {
     return (
@@ -10,11 +11,22 @@ export default function MapaEstructuraCapital() {
             </div>
 
             <h3 className="text-xl font-black text-slate-800 dark:text-slate-100 mb-2">Estructura de Capital</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400 mb-8 max-w-lg leading-relaxed">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 max-w-lg leading-relaxed">
                 Visualización de la jerarquía financiera y el orden de prelación en la cascada de pagos corporativa.
             </p>
 
-            <div className="flex gap-6">
+            <InstruccionesSimulador>
+                <p>Orden de prelación: quién cobra primero si la empresa tiene problemas. De mayor a menor seguridad:</p>
+                <ul className="list-disc list-inside space-y-1 ml-1">
+                    <li><strong>1. Senior Secured:</strong> Deuda con garantía. Primera en cobrar.</li>
+                    <li><strong>2. Senior Unsecured:</strong> Bonos sin garantía específica.</li>
+                    <li><strong>3. Subordinada:</strong> Cobra después de toda la deuda senior.</li>
+                    <li><strong>4. Capital preferente:</strong> Dividendos fijos antes que acciones comunes.</li>
+                    <li><strong>5. Capital común:</strong> Último en la cascada; mayor riesgo y potencial.</li>
+                </ul>
+            </InstruccionesSimulador>
+
+            <div className="flex gap-6 mt-6">
                 {/* Indicadores Laterales */}
                 <div className="flex flex-col justify-between py-2 text-[10px] font-black uppercase tracking-tighter w-4">
                     <div className="flex flex-col items-center text-emerald-500">

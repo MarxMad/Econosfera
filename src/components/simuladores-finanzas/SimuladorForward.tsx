@@ -5,6 +5,7 @@ import { FileDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { forwardPrecio } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import PricingModal from "../PricingModal";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
@@ -68,11 +69,20 @@ export default function SimuladorForward() {
           {exportando ? "Generando..." : "Reporte PDF"}
         </button>
       </div>
+      <InstruccionesSimulador>
+        <p>Calcula el precio teórico de un contrato forward (sin dividendos). F = S×(1+r)^T o F = S×e^(rT).</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Precio spot:</strong> Precio actual del activo.</li>
+          <li><strong>Tasa anual:</strong> Tasa libre de riesgo para el plazo.</li>
+          <li><strong>Plazo:</strong> Años hasta la entrega.</li>
+          <li><strong>Capitalización continua:</strong> Usa e^(rT) en lugar de (1+r)^T (típico en derivados).</li>
+        </ul>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Precio spot $" value={spot} onChange={setSpot} step="0.01" />
-          <InputLibre label="Tasa anual %" value={tasaPct} onChange={setTasaPct} suffix="%" step="0.01" />
-          <InputLibre label="Plazo (años)" value={anos} onChange={setAnos} step="0.1" />
+          <InputLibre label="Precio spot $" value={spot} onChange={setSpot} step="0.01" tooltip="Precio actual del activo subyacente en el mercado spot." />
+          <InputLibre label="Tasa anual %" value={tasaPct} onChange={setTasaPct} suffix="%" step="0.01" tooltip="Tasa libre de riesgo para el plazo del contrato." />
+          <InputLibre label="Plazo (años)" value={anos} onChange={setAnos} step="0.1" tooltip="Tiempo hasta la entrega del activo." />
           <label className="flex items-center gap-2 cursor-pointer">
             <input type="checkbox" checked={continuo} onChange={(e) => setContinuo(e.target.checked)} className="rounded" />
             <span className="text-sm text-slate-600 dark:text-slate-400">Capitalización continua (e^rt)</span>

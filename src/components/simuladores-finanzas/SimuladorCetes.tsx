@@ -3,6 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { cetesPrecio, cetesRendimiento } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { FileDown, Save } from "lucide-react";
 import { useSession } from "next-auth/react";
 import PricingModal from "../PricingModal";
@@ -134,12 +135,21 @@ export default function SimuladorCetes({ initialData }: { initialData?: any }) {
           )}
         </div>
       </div>
+      <InstruccionesSimulador>
+        <p>Los Cetes se colocan al descuento: pagas menos que el valor nominal y al vencimiento recibes el nominal. La diferencia es tu ganancia.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Valor nominal:</strong> Típicamente $10 por Cete. Lo que recibirás al vencimiento.</li>
+          <li><strong>Tasa de rendimiento:</strong> Tasa anualizada que ofrece la subasta.</li>
+          <li><strong>Plazo (días):</strong> 28, 91, 182 o 364 días. A mayor plazo, mayor descuento.</li>
+        </ul>
+        <p>Fórmula: Precio = Valor nominal / (1 + r × días/360)</p>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Valor nominal $" value={nominal} onChange={setNominal} step="0.01" />
-          <InputLibre label="Tasa de rendimiento anual %" value={tasaPct} onChange={setTasaPct} suffix="%" step="0.01" />
+          <InputLibre label="Valor nominal $" value={nominal} onChange={setNominal} step="0.01" tooltip="Monto que recibirás al vencimiento. Cetes mexicanos típicamente $10." />
+          <InputLibre label="Tasa de rendimiento anual %" value={tasaPct} onChange={setTasaPct} suffix="%" step="0.01" tooltip="Tasa anualizada de la subasta. Define el descuento al que compras." />
           <div className="space-y-1">
-            <InputLibre label="Plazo (días)" value={dias} onChange={setDias} step="1" />
+            <InputLibre label="Plazo (días)" value={dias} onChange={setDias} step="1" tooltip="Días hasta el vencimiento. Usa los botones para plazos estándar: 28, 91, 182, 364 días." />
             <div className="flex gap-2 flex-wrap pt-1">
               {PLAZOS_RAPIDOS.map((d) => (
                 <button

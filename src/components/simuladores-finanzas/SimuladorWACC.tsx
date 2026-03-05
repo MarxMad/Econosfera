@@ -5,6 +5,7 @@ import { FileDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { wacc } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import PricingModal from "../PricingModal";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
@@ -77,13 +78,23 @@ export default function SimuladorWACC() {
           {exportando ? "Generando..." : "Reporte PDF"}
         </button>
       </div>
+      <InstruccionesSimulador>
+        <p>Calcula el costo promedio ponderado de capital (WACC): la tasa mínima que debe ganar un proyecto para crear valor.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Valor Equity/Deuda:</strong> Valor de mercado del capital y de la deuda (o valores en libros si no hay cotización).</li>
+          <li><strong>Costo Equity:</strong> Retorno exigido por los accionistas (CAPM, DDM o prima de riesgo).</li>
+          <li><strong>Costo Deuda:</strong> Tasa de interés de la deuda. El escudo fiscal (1-Tc) reduce el costo efectivo.</li>
+          <li><strong>Tasa impuestos:</strong> Para calcular el beneficio fiscal de la deuda.</li>
+        </ul>
+        <p>Fórmula: WACC = (E/V)×Re + (D/V)×Rd×(1-Tc)</p>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Valor Equity $" value={valorEquity} onChange={setValorEquity} step="10" />
-          <InputLibre label="Valor Deuda $" value={valorDeuda} onChange={setValorDeuda} step="10" />
-          <InputLibre label="Costo Equity %" value={costoEquityPct} onChange={setCostoEquityPct} suffix="%" step="0.1" />
-          <InputLibre label="Costo Deuda %" value={costoDeudaPct} onChange={setCostoDeudaPct} suffix="%" step="0.1" />
-          <InputLibre label="Tasa impuestos %" value={tasaImpuestosPct} onChange={setTasaImpuestosPct} suffix="%" step="0.1" />
+          <InputLibre label="Valor Equity $" value={valorEquity} onChange={setValorEquity} step="10" tooltip="Valor de mercado del capital (acciones × precio)." />
+          <InputLibre label="Valor Deuda $" value={valorDeuda} onChange={setValorDeuda} step="10" tooltip="Valor de mercado de la deuda (o valor en libros)." />
+          <InputLibre label="Costo Equity %" value={costoEquityPct} onChange={setCostoEquityPct} suffix="%" step="0.1" tooltip="Retorno exigido por los accionistas. Típicamente 10-18%." />
+          <InputLibre label="Costo Deuda %" value={costoDeudaPct} onChange={setCostoDeudaPct} suffix="%" step="0.1" tooltip="Tasa de interés promedio de la deuda. El escudo fiscal lo reduce." />
+          <InputLibre label="Tasa impuestos %" value={tasaImpuestosPct} onChange={setTasaImpuestosPct} suffix="%" step="0.1" tooltip="Tasa corporativa de impuestos. A mayor tasa, mayor beneficio fiscal de la deuda." />
         </div>
         <div className="space-y-3">
           <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30 p-4">

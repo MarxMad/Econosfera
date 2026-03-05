@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { Newspaper, TrendingUp, TrendingDown, Info } from "lucide-react";
+import { Newspaper, TrendingUp, TrendingDown, HelpCircle, Info } from "lucide-react";
+import { InstruccionesSimulador, LabelConAyuda } from "../InstruccionesSimulador";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { impactoNoticias } from "@/lib/finanzas";
 
@@ -45,9 +46,26 @@ export default function SimuladorImpactoNoticias() {
         El mercado reacciona a la <strong>sorpresa</strong> (resultado real − expectativa). Un beat genera impacto positivo; un miss, negativo.
       </p>
 
+      <InstruccionesSimulador>
+        <p>Este simulador te ayuda a entender cómo las noticias económicas y financieras afectan el precio de los activos.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Paso 1:</strong> Elige el tipo de evento (earnings, PIB, inflación o tasa de interés).</li>
+          <li><strong>Paso 2:</strong> Ingresa el precio del activo antes de que se conozca la noticia.</li>
+          <li><strong>Paso 3:</strong> Define la expectativa del mercado (consenso de analistas o encuestas).</li>
+          <li><strong>Paso 4:</strong> Ingresa el resultado real publicado.</li>
+          <li><strong>Paso 5:</strong> Ajusta la sensibilidad según el activo (acciones suelen ser más sensibles que bonos).</li>
+        </ul>
+        <p>El mercado reacciona a la <strong>sorpresa</strong>: si el resultado supera la expectativa (beat), el precio suele subir; si no la alcanza (miss), baja.</p>
+      </InstruccionesSimulador>
+
       <div className="grid md:grid-cols-2 gap-6 mb-6">
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Tipo de evento</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">
+            <LabelConAyuda
+              label="Tipo de evento"
+              tooltip="Elige el indicador que se publicó: Earnings (utilidad por acción), PIB (crecimiento económico), Inflación o Tasa de interés del banco central."
+            />
+          </label>
           <select
             value={tipoEvento}
             onChange={(e) => {
@@ -65,7 +83,12 @@ export default function SimuladorImpactoNoticias() {
           </select>
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Precio anterior del activo ($)</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">
+            <LabelConAyuda
+              label="Precio anterior del activo ($)"
+              tooltip="El precio de la acción, bono o activo justo antes de que se publique la noticia. Es el punto de referencia para medir el impacto."
+            />
+          </label>
           <input
             type="number"
             min="1"
@@ -78,7 +101,12 @@ export default function SimuladorImpactoNoticias() {
 
       <div className="grid md:grid-cols-3 gap-4 mb-6">
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Expectativa del mercado ({tipo.unidad})</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda
+              label={`Expectativa del mercado (${tipo.unidad})`}
+              tooltip="El consenso o pronóstico que tenían los analistas antes del anuncio. Se obtiene de encuestas (ej. Bloomberg, Reuters) o estimaciones promedio."
+            />
+          </label>
           <input
             type="number"
             step="0.1"
@@ -88,7 +116,12 @@ export default function SimuladorImpactoNoticias() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Resultado real ({tipo.unidad})</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda
+              label={`Resultado real (${tipo.unidad})`}
+              tooltip="El dato que realmente se publicó. Si es mayor que la expectativa = sorpresa positiva (beat). Si es menor = sorpresa negativa (miss)."
+            />
+          </label>
           <input
             type="number"
             step="0.1"
@@ -98,7 +131,12 @@ export default function SimuladorImpactoNoticias() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Sensibilidad (% por unidad surprise)</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda
+              label="Sensibilidad (% por unidad surprise)"
+              tooltip="Cuántos puntos porcentuales cambia el precio por cada unidad de sorpresa. Acciones de crecimiento: 2-5%. Bonos: 0.5-2%. Valores típicos: 2-4%."
+            />
+          </label>
           <input
             type="number"
             min="0.5"
@@ -113,14 +151,24 @@ export default function SimuladorImpactoNoticias() {
 
       <div className="grid md:grid-cols-2 gap-4 mb-6">
         <div className="p-4 rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
-          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Surprise (resultado − expectativa)</p>
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1 flex items-center gap-1">
+            Surprise (resultado − expectativa)
+            <span title="La diferencia entre lo que se esperaba y lo que ocurrió. Positivo = beat, negativo = miss." className="cursor-help">
+              <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+            </span>
+          </p>
           <p className={`text-2xl font-black flex items-center gap-2 ${esPositivo ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
             {esPositivo ? <TrendingUp className="w-6 h-6" /> : <TrendingDown className="w-6 h-6" />}
             {surprise >= 0 ? "+" : ""}{surprise.toFixed(2)} {tipo.unidad}
           </p>
         </div>
         <div className="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
-          <p className="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1">Impacto estimado en precio</p>
+          <p className="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1 flex items-center gap-1">
+            Impacto estimado en precio
+            <span title="Variación porcentual estimada del precio. Se calcula como: sensibilidad × surprise." className="cursor-help">
+              <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+            </span>
+          </p>
           <p className={`text-2xl font-black ${impactoPct >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-600 dark:text-red-400"}`}>
             {impactoPct >= 0 ? "+" : ""}{impactoPct.toFixed(2)}%
           </p>
@@ -128,7 +176,12 @@ export default function SimuladorImpactoNoticias() {
       </div>
 
       <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 mb-6">
-        <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase mb-1">Precio estimado después de la noticia</p>
+        <p className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase mb-1 flex items-center gap-1">
+          Precio estimado después de la noticia
+          <span title="Precio anterior × (1 + impacto%). Es una estimación; en la práctica hay más factores." className="cursor-help">
+            <HelpCircle className="w-3.5 h-3.5 text-amber-500" />
+          </span>
+        </p>
         <p className="text-3xl font-black text-slate-900 dark:text-white">${precioNuevo.toFixed(2)}</p>
         <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 flex items-center gap-1">
           <Info className="w-3 h-3" />
@@ -137,7 +190,12 @@ export default function SimuladorImpactoNoticias() {
       </div>
 
       <div className="h-48">
-        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Expectativa vs resultado</p>
+        <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 flex items-center gap-1">
+          Expectativa vs resultado
+          <span title="Comparación visual: la barra gris es lo esperado, la verde/roja es lo real. La diferencia es la sorpresa." className="cursor-help">
+            <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+          </span>
+        </p>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={datosGrafico} layout="vertical" margin={{ top: 8, right: 8, left: 60, bottom: 8 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-slate-200 dark:stroke-slate-600" />

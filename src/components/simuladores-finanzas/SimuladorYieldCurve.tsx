@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { TrendingUp, Info, HelpCircle, Save, BarChart4, MoveUp, MoveDown, GitCommit } from "lucide-react";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, AreaChart, Area } from "recharts";
 
 export default function SimuladorYieldCurve() {
@@ -46,10 +47,20 @@ export default function SimuladorYieldCurve() {
                         Curva de Rendimiento (Yield Curve)
                     </h2>
                     <p className="text-slate-500 dark:text-slate-400 max-w-2xl">
-                        Modelado de la estructura temporal de tasas de interés mediante el modelo **Nelson-Siegel**. Analiza curvas normales, invertidas o planas.
+                        Modelado de la estructura temporal de tasas de interés mediante el modelo Nelson-Siegel. Analiza curvas normales, invertidas o planas.
                     </p>
                 </div>
             </div>
+
+            <InstruccionesSimulador>
+                <p>La curva de rendimiento muestra las tasas de interés según el plazo. El modelo Nelson-Siegel la parametriza con:</p>
+                <ul className="list-disc list-inside space-y-1 ml-1">
+                    <li><strong>β₀ (Nivel):</strong> Tasa de largo plazo (asíntota).</li>
+                    <li><strong>β₁ (Pendiente):</strong> Negativa = curva normal (corto &lt; largo). Positiva = curva invertida.</li>
+                    <li><strong>β₂ (Curvatura):</strong> Define el "hump" en plazos medios.</li>
+                    <li><strong>τ (Escala):</strong> Velocidad de transición entre corto y largo plazo.</li>
+                </ul>
+            </InstruccionesSimulador>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Controles */}

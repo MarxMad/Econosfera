@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { valorFuturo, valorPresente, evolucionVF } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { FileDown, Save } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Heatmap from "../common/Heatmap";
@@ -121,11 +122,21 @@ export default function SimuladorVPVF({ initialData }: { initialData?: any }) {
         </div>
       </div>
 
+      <InstruccionesSimulador>
+        <p>Calcula cuánto valdrá tu dinero en el futuro (VF) o cuánto vale hoy una cantidad futura (VP).</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Monto inicial (VP):</strong> Cantidad que inviertes hoy.</li>
+          <li><strong>Tasa anual:</strong> Rendimiento esperado por año (ej. 8% = 0.08).</li>
+          <li><strong>Años:</strong> Plazo de la inversión.</li>
+        </ul>
+        <p>Fórmulas: <strong>VF = VP × (1 + r)ⁿ</strong> | <strong>VP = VF / (1 + r)ⁿ</strong></p>
+      </InstruccionesSimulador>
+
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Monto inicial (VP) $" value={monto} onChange={setMonto} />
-          <InputLibre label="Tasa de interés anual %" value={tasa} onChange={setTasa} suffix="%" step="0.01" />
-          <InputLibre label="Años" value={anios} onChange={setAnios} step="0.1" />
+          <InputLibre label="Monto inicial (VP) $" value={monto} onChange={setMonto} tooltip="Cantidad de dinero que inviertes hoy. Es el valor presente (VP)." />
+          <InputLibre label="Tasa de interés anual %" value={tasa} onChange={setTasa} suffix="%" step="0.01" tooltip="Rendimiento anual esperado en porcentaje. Ej: 8% significa que cada año ganas 8% sobre el capital." />
+          <InputLibre label="Años" value={anios} onChange={setAnios} step="0.1" tooltip="Número de años que mantendrás la inversión. A mayor plazo, mayor efecto del interés compuesto." />
         </div>
         <div className="space-y-3">
           <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30 p-4">

@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { HelpCircle } from "lucide-react";
+import { InstruccionesSimulador, LabelConAyuda } from "../InstruccionesSimulador";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis, LineChart, Line } from "recharts";
 import { correlacionPearson, serieFundamental, seriePrecioCorrelacionada } from "@/lib/finanzas";
 
@@ -46,9 +48,22 @@ export default function SimuladorCorrelacionFundamental() {
         Genera una serie de fundamental (ej. utilidades) y otra de precios. Observa si el precio &quot;sigue&quot; al fundamental según la correlación.
       </p>
 
+      <InstruccionesSimulador>
+        <p>Este simulador genera datos sintéticos para explorar la relación entre un indicador fundamental (ej. utilidades, ventas) y el precio de un activo.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Base fundamental:</strong> Valor inicial del indicador (ej. 100 millones de utilidad).</li>
+          <li><strong>Crecimiento %:</strong> Tasa de crecimiento anual del fundamental.</li>
+          <li><strong>Ruido:</strong> Variación aleatoria que simula la realidad (no todo es predecible).</li>
+          <li><strong>Correlación:</strong> Qué tan ligado está el precio al fundamental. 1 = sigue perfectamente; 0 = no hay relación.</li>
+        </ul>
+        <p>El <strong>gráfico de dispersión</strong> muestra cada punto (fundamental, precio). Si hay correlación alta, los puntos forman una nube alargada. El <strong>gráfico de evolución</strong> compara ambas series en el tiempo (normalizadas 0–100).</p>
+      </InstruccionesSimulador>
+
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Base fundamental</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Base fundamental" tooltip="Valor inicial del indicador fundamental (ej. utilidad neta, ventas). Representa el nivel de partida en el periodo 0." />
+          </label>
           <input
             type="number"
             min="10"
@@ -58,7 +73,9 @@ export default function SimuladorCorrelacionFundamental() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Crecimiento % anual</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Crecimiento % anual" tooltip="Tasa de crecimiento anual del fundamental. Positivo = la empresa crece; negativo = decrece. Valores típicos: 5–15%." />
+          </label>
           <input
             type="number"
             min="-20"
@@ -70,7 +87,9 @@ export default function SimuladorCorrelacionFundamental() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Ruido fundamental %</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Ruido fundamental %" tooltip="Variación aleatoria añadida al fundamental. Simula eventos impredecibles (crisis, estacionalidad). 0 = perfectamente predecible; 10–20% = realista." />
+          </label>
           <input
             type="number"
             min="0"
@@ -82,7 +101,9 @@ export default function SimuladorCorrelacionFundamental() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Precio base</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Precio base" tooltip="Precio inicial del activo en el periodo 0. Es el punto de partida de la serie de precios." />
+          </label>
           <input
             type="number"
             min="1"
@@ -92,7 +113,9 @@ export default function SimuladorCorrelacionFundamental() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Correlación (0–1)</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Correlación (0–1)" tooltip="Grado de relación entre fundamental y precio. 1 = el precio sigue al fundamental casi perfectamente; 0 = no hay relación (precio aleatorio). Valores típicos: 0.5–0.8." />
+          </label>
           <input
             type="range"
             min="0"
@@ -105,7 +128,9 @@ export default function SimuladorCorrelacionFundamental() {
           <p className="text-xs text-slate-500 mt-0.5">{correlacion.toFixed(2)}</p>
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Ruido precio %</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Ruido precio %" tooltip="Variación aleatoria del precio no explicada por el fundamental. Simula rumores, liquidez, sentimiento. Mayor ruido = menor correlación observable." />
+          </label>
           <input
             type="number"
             min="0"
@@ -117,7 +142,9 @@ export default function SimuladorCorrelacionFundamental() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">Periodos</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-1">
+            <LabelConAyuda label="Periodos" tooltip="Número de observaciones en el tiempo (ej. 24 = 2 años de datos mensuales). Más periodos dan una correlación más estable." />
+          </label>
           <input
             type="number"
             min="6"
@@ -130,14 +157,24 @@ export default function SimuladorCorrelacionFundamental() {
       </div>
 
       <div className="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800 mb-6">
-        <p className="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1">Coeficiente de correlación de Pearson</p>
+        <p className="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1 flex items-center gap-1">
+          Coeficiente de correlación de Pearson
+          <span title="Mide la relación lineal entre fundamental y precio. Va de -1 (inversa) a +1 (directa). 0 = sin relación." className="cursor-help">
+            <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+          </span>
+        </p>
         <p className="text-3xl font-black text-slate-900 dark:text-white">{r.toFixed(3)}</p>
         <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">{interpretacion}</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div>
-          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Dispersión: fundamental vs precio</p>
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 flex items-center gap-1">
+            Dispersión: fundamental vs precio
+            <span title="Cada punto es un periodo. Si hay correlación, los puntos forman una nube alargada (no circular)." className="cursor-help">
+              <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+            </span>
+          </p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <ScatterChart margin={{ top: 8, right: 8, left: 8, bottom: 24 }}>
@@ -152,7 +189,12 @@ export default function SimuladorCorrelacionFundamental() {
           </div>
         </div>
         <div>
-          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Evolución (normalizado 0–100)</p>
+          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2 flex items-center gap-1">
+            Evolución (normalizado 0–100)
+            <span title="Ambas series escaladas a 0–100 para comparar la forma. Si se mueven juntas, hay correlación." className="cursor-help">
+              <HelpCircle className="w-3.5 h-3.5 text-slate-400" />
+            </span>
+          </p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={datosSerie} margin={{ top: 8, right: 8, left: 8, bottom: 24 }}>

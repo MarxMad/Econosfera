@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { LineChart, BarChart, FileDown } from "lucide-react";
 import { InputLibre } from "./InputLibre";
 import { useSession } from "next-auth/react";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import PricingModal from "../PricingModal";
 
 interface SimuladorValuacionProps {
@@ -72,13 +73,24 @@ export function SimuladorValuacion({ initialData }: SimuladorValuacionProps) {
                     Reporte PDF
                 </button>
             </div>
+            <InstruccionesSimulador>
+                <p>Calcula ratios bursátiles clave para valorar una acción: EPS, P/E, Dividend Yield y ROE.</p>
+                <ul className="list-disc list-inside space-y-1 ml-1">
+                    <li><strong>Precio de la acción:</strong> Cotización actual en el mercado.</li>
+                    <li><strong>Utilidad neta:</strong> Ganancia después de impuestos (del estado de resultados).</li>
+                    <li><strong>Acciones en circulación:</strong> Número total de acciones emitidas.</li>
+                    <li><strong>Dividendos pagados:</strong> Total repartido a accionistas en el periodo.</li>
+                    <li><strong>Capital contable:</strong> Patrimonio de los accionistas (del balance).</li>
+                </ul>
+                <p>EPS = Utilidad/Acciones. P/E = Precio/EPS. ROE = Utilidad/Capital.</p>
+            </InstruccionesSimulador>
             <div className="p-5 grid md:grid-cols-2 gap-6" id="valuacion-form">
                 <div className="space-y-4">
-                    <InputLibre label="Precio de la Acción ($)" value={vars.precioAccion.toString()} onChange={(v: any) => setVar("precioAccion", Number(v))} step="1" suffix=" MXN" />
-                    <InputLibre label="Utilidad Neta Total ($)" value={vars.utilidadNeta.toString()} onChange={(v: any) => setVar("utilidadNeta", Number(v))} step="1000" suffix=" MXN" />
-                    <InputLibre label="Acciones en Circulación" value={vars.accionesEnCirculacion.toString()} onChange={(v: any) => setVar("accionesEnCirculacion", Number(v))} step="100" />
-                    <InputLibre label="Dividendos Totales Pagados ($)" value={vars.dividendosPagados.toString()} onChange={(v: any) => setVar("dividendosPagados", Number(v))} step="1000" suffix=" MXN" />
-                    <InputLibre label="Capital Contable Total ($)" value={vars.capitalContable.toString()} onChange={(v: any) => setVar("capitalContable", Number(v))} step="1000" suffix=" MXN" />
+                    <InputLibre label="Precio de la Acción ($)" value={vars.precioAccion} onChange={(v) => setVar("precioAccion", v)} step="1" suffix=" MXN" tooltip="Cotización actual de la acción en el mercado." />
+                    <InputLibre label="Utilidad Neta Total ($)" value={vars.utilidadNeta} onChange={(v) => setVar("utilidadNeta", v)} step="1000" suffix=" MXN" tooltip="Ganancia neta después de impuestos del periodo (estado de resultados)." />
+                    <InputLibre label="Acciones en Circulación" value={vars.accionesEnCirculacion} onChange={(v) => setVar("accionesEnCirculacion", v)} step="100" tooltip="Número total de acciones emitidas por la empresa." />
+                    <InputLibre label="Dividendos Totales Pagados ($)" value={vars.dividendosPagados} onChange={(v) => setVar("dividendosPagados", v)} step="1000" suffix=" MXN" tooltip="Total repartido a accionistas como dividendos en el periodo." />
+                    <InputLibre label="Capital Contable Total ($)" value={vars.capitalContable} onChange={(v) => setVar("capitalContable", v)} step="1000" suffix=" MXN" tooltip="Patrimonio de los accionistas (balance general)." />
                 </div>
 
                 <div className="flex flex-col gap-4">

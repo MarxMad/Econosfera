@@ -5,6 +5,7 @@ import { FileDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { vpn, tir } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import PricingModal from "../PricingModal";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
@@ -78,9 +79,17 @@ export default function SimuladorVPNTIR() {
           {exportando ? "Generando..." : "Reporte PDF"}
         </button>
       </div>
+      <InstruccionesSimulador>
+        <p>Evalúa proyectos de inversión con VPN (valor presente neto) y TIR (tasa interna de retorno).</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Tasa de descuento:</strong> Costo de oportunidad del capital (WACC o tasa mínima requerida).</li>
+          <li><strong>Flujos:</strong> Año 0 = inversión inicial (negativo). Años 1, 2, 3... = entradas de efectivo. Separa por coma.</li>
+          <li>VPN &gt; 0: el proyecto crea valor. TIR &gt; tasa descuento: rentable.</li>
+        </ul>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Tasa de descuento %" value={tasaDescuentoPct} onChange={setTasaDescuentoPct} suffix="%" step="0.1" />
+          <InputLibre label="Tasa de descuento %" value={tasaDescuentoPct} onChange={setTasaDescuentoPct} suffix="%" step="0.1" tooltip="Costo de oportunidad del capital. Usa WACC o tu tasa mínima de retorno." />
           <div>
             <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Flujos de caja (separados por coma; año 0 = inversión)</label>
             <input

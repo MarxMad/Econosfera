@@ -4,6 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { ahorroPeriodicoVF, ahorroEvolucion } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { FileDown, Save } from "lucide-react";
 import { useSession } from "next-auth/react";
 
@@ -120,11 +121,20 @@ export default function SimuladorAhorro({ initialData }: { initialData?: any }) 
           )}
         </div>
       </div>
+      <InstruccionesSimulador>
+        <p>Calcula cuánto acumularás si ahorras una cantidad fija cada mes con interés compuesto.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Aportación mensual:</strong> Cantidad que depositas al final de cada mes.</li>
+          <li><strong>Tasa anual:</strong> Rendimiento que paga la cuenta (ej. 10% anual).</li>
+          <li><strong>Años:</strong> Plazo del ahorro. El interés compuesto hace crecer el total con el tiempo.</li>
+        </ul>
+        <p>Fórmula: VF = A × [((1+r)^n − 1) / r], donde A=aportación, r=tasa mensual, n=meses.</p>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Aportación mensual $" value={aportacion} onChange={setAportacion} step="0.01" />
-          <InputLibre label="Tasa anual %" value={tasaPct} onChange={setTasaPct} suffix="%" step="0.01" />
-          <InputLibre label="Años" value={anos} onChange={setAnos} step="0.1" />
+          <InputLibre label="Aportación mensual $" value={aportacion} onChange={setAportacion} step="0.01" tooltip="Cantidad que depositas cada mes. Se asume aportación al final del periodo." />
+          <InputLibre label="Tasa anual %" value={tasaPct} onChange={setTasaPct} suffix="%" step="0.01" tooltip="Rendimiento anual de la inversión. Se capitaliza mensualmente." />
+          <InputLibre label="Años" value={anos} onChange={setAnos} step="0.1" tooltip="Años que mantendrás el ahorro. Más años = mayor efecto del interés compuesto." />
         </div>
         <div className="space-y-3">
           <div className="rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-900/30 p-4">

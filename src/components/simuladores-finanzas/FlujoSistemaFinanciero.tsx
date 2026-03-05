@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight, Users, Building2, Landmark, Briefcase } from "lucide-react";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 
 const NODOS = [
   {
@@ -44,6 +45,16 @@ export default function FlujoSistemaFinanciero() {
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         Haz clic en cada caja para ver su papel. El ahorro se canaliza hacia la inversión a través de bancos y del mercado de valores.
       </p>
+
+      <InstruccionesSimulador>
+        <p>Visualiza cómo fluye el dinero en el sistema financiero: desde los ahorradores hasta los demandantes de capital.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Ahorradores:</strong> Familias y empresas con excedentes que depositan o invierten.</li>
+          <li><strong>Bancos:</strong> Intermedian captando depósitos y otorgando créditos.</li>
+          <li><strong>Mercado de valores:</strong> Donde se emiten y negocian acciones y bonos.</li>
+          <li><strong>Empresas y gobierno:</strong> Demandantes que emiten deuda o capital para financiarse.</li>
+        </ul>
+      </InstruccionesSimulador>
 
       <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 flex-wrap">
         {NODOS.map((nodo, i) => {

@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { TrendingUp, Info, HelpCircle, Save, Layers, Zap, ArrowRight, Activity } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, AreaChart, Area, Label } from "recharts";
 import { useSession } from "next-auth/react";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
 import { saveScenario } from "@/lib/actions/scenarioActions";
@@ -169,6 +170,17 @@ export default function SimuladorBlackScholes() {
                     </div>
                 </div>
             </div>
+
+            <InstruccionesSimulador>
+                <p>Valúa opciones europeas call y put con el modelo Black-Scholes. Las griegas miden la sensibilidad de la prima.</p>
+                <ul className="list-disc list-inside space-y-1 ml-1">
+                    <li><strong>S (Spot):</strong> Precio actual del activo subyacente.</li>
+                    <li><strong>K (Strike):</strong> Precio de ejercicio de la opción.</li>
+                    <li><strong>T:</strong> Tiempo al vencimiento en años.</li>
+                    <li><strong>r:</strong> Tasa libre de riesgo anual.</li>
+                    <li><strong>σ (Volatilidad):</strong> Desviación estándar de los rendimientos. Mayor volatilidad = mayor prima.</li>
+                </ul>
+            </InstruccionesSimulador>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Controles */}

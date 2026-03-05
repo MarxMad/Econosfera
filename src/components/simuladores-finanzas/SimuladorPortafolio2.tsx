@@ -5,6 +5,7 @@ import { FileDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { portafolio2 } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import PricingModal from "../PricingModal";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
@@ -80,6 +81,14 @@ export default function SimuladorPortafolio2() {
           {exportando ? "Generando..." : "Reporte PDF"}
         </button>
       </div>
+      <InstruccionesSimulador>
+        <p>Calcula el retorno y la volatilidad de un portafolio con dos activos, dados sus pesos, retornos, volatilidades y correlación.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Peso Activo 1:</strong> Porcentaje invertido en el activo 1 (el resto va al activo 2).</li>
+          <li><strong>Retorno/Volatilidad:</strong> Esperados de cada activo en %.</li>
+          <li><strong>Correlación ρ:</strong> -1 a +1. Negativa reduce el riesgo del portafolio (diversificación).</li>
+        </ul>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
           <InputLibre label="Peso Activo 1 (0-1)" value={w1} onChange={setW1} step="0.05" />

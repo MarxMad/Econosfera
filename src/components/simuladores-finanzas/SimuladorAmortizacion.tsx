@@ -5,6 +5,7 @@ import { FileDown } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { tablaAmortizacion } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import PricingModal from "../PricingModal";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
@@ -81,11 +82,20 @@ export default function SimuladorAmortizacion() {
           {exportando ? "Generando..." : "Reporte PDF"}
         </button>
       </div>
+      <InstruccionesSimulador>
+        <p>Simula un crédito con cuota fija (sistema francés). Cada pago incluye intereses + amortización del principal.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Monto del crédito:</strong> Cantidad total que te prestan.</li>
+          <li><strong>Tasa anual:</strong> Tasa de interés que cobra el banco (CAT aproximado).</li>
+          <li><strong>Plazo (meses):</strong> Número de meses para pagar (ej. 60 = 5 años).</li>
+        </ul>
+        <p>La tabla muestra periodo a periodo: cuánto va a intereses, cuánto al principal y el saldo restante.</p>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-4">
-          <InputLibre label="Monto del crédito $" value={monto} onChange={setMonto} step="100" />
-          <InputLibre label="Tasa anual %" value={tasaPct} onChange={setTasaPct} suffix="%" step="0.01" />
-          <InputLibre label="Plazo (meses)" value={plazoMeses} onChange={setPlazoMeses} step="1" />
+          <InputLibre label="Monto del crédito $" value={monto} onChange={setMonto} step="100" tooltip="Cantidad total del préstamo que solicitas. Es el principal a amortizar." />
+          <InputLibre label="Tasa anual %" value={tasaPct} onChange={setTasaPct} suffix="%" step="0.01" tooltip="Tasa de interés anual que cobra la institución. Se convierte a mensual para el cálculo." />
+          <InputLibre label="Plazo (meses)" value={plazoMeses} onChange={setPlazoMeses} step="1" tooltip="Número de meses para pagar el crédito. 12=1 año, 60=5 años, 240=20 años." />
         </div>
         <div className="space-y-3">
           <div className="rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/30 p-4">

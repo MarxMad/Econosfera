@@ -5,6 +5,7 @@ import { TrendingUp, DollarSign, ArrowRight, Info, Calculator, Lock, Save } from
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from "recharts";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarFinanzasAPdf } from "@/lib/exportarFinanzasPdf";
 import { saveScenario } from "@/lib/actions/scenarioActions";
@@ -163,6 +164,19 @@ export default function SimuladorDCF() {
                     </div>
                 </div>
                 <p className="text-sm text-slate-400">El estándar de oro para la valuación intrínseca de activos y empresas.</p>
+            </div>
+
+            <div className="px-6 pb-4">
+                <InstruccionesSimulador>
+                    <p>Valúa una empresa descontando sus flujos de caja futuros al valor presente.</p>
+                    <ul className="list-disc list-inside space-y-1 ml-1">
+                        <li><strong>Flujo Año 0:</strong> Flujo de caja libre actual (FCL).</li>
+                        <li><strong>Crecimiento:</strong> Tasa de crecimiento anual de los flujos en la fase explícita.</li>
+                        <li><strong>WACC:</strong> Costo de capital para descontar (tasa de descuento).</li>
+                        <li><strong>Crecimiento perpetuo:</strong> Tasa a la que crecerán los flujos después del horizonte (típicamente 2-3%).</li>
+                        <li><strong>Años:</strong> Horizonte de proyección explícita antes del valor terminal.</li>
+                    </ul>
+                </InstruccionesSimulador>
             </div>
 
             <div className="p-6 grid lg:grid-cols-3 gap-8">

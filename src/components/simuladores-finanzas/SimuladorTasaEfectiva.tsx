@@ -1,7 +1,9 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { HelpCircle } from "lucide-react";
 import { tasaEfectivaAnual } from "@/lib/finanzas";
+import { InstruccionesSimulador, LabelConAyuda } from "../InstruccionesSimulador";
 
 const CAPITALIZACIONES = [
   { id: 1, label: "Anual" },
@@ -33,9 +35,19 @@ export default function SimuladorTasaEfectiva() {
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         Tasa efectiva anual: (1 + i/n)ⁿ − 1. Cuanto más frecuente la capitalización, mayor la tasa efectiva para una misma nominal.
       </p>
+      <InstruccionesSimulador>
+        <p>Convierte una tasa nominal (la que anuncia el banco) a tasa efectiva anual (lo que realmente ganas o pagas).</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Nominal:</strong> Tasa anunciada (ej. 10% anual capitalizable mensualmente).</li>
+          <li><strong>Capitalizaciones:</strong> Cuántas veces al año se aplica el interés (mensual=12, trimestral=4).</li>
+          <li>Más capitalizaciones = mayor tasa efectiva para la misma nominal.</li>
+        </ul>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-4 mb-6">
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Tasa nominal anual (%)</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">
+            <LabelConAyuda label="Tasa nominal anual (%)" tooltip="La tasa que anuncia la institución. No incluye el efecto de la capitalización." />
+          </label>
           <input
             type="number"
             min="0"
@@ -47,7 +59,9 @@ export default function SimuladorTasaEfectiva() {
           />
         </div>
         <div>
-          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">Capitalizaciones por año</label>
+          <label className="block text-xs font-bold text-slate-500 dark:text-slate-400 uppercase mb-2">
+            <LabelConAyuda label="Capitalizaciones por año" tooltip="Frecuencia con que se aplica el interés: Anual=1, Semestral=2, Trimestral=4, Mensual=12, Diaria=365." />
+          </label>
           <select
             value={capitalizaciones}
             onChange={(e) => setCapitalizaciones(Number(e.target.value))}
@@ -60,7 +74,12 @@ export default function SimuladorTasaEfectiva() {
         </div>
       </div>
       <div className="p-6 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800">
-        <p className="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1">Tasa efectiva anual</p>
+        <p className="text-xs font-bold text-indigo-700 dark:text-indigo-400 uppercase mb-1 flex items-center gap-1">
+          Tasa efectiva anual
+          <span title="Lo que realmente ganas o pagas al año, considerando la capitalización." className="cursor-help">
+            <HelpCircle className="w-3.5 h-3.5 text-indigo-400" />
+          </span>
+        </p>
         <p className="text-3xl font-black text-slate-900 dark:text-white">{tasaEfectivaPct.toFixed(2)}%</p>
       </div>
       <div className="mt-6">

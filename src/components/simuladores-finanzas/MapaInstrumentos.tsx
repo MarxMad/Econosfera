@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ChevronDown, ChevronRight, Wallet, FileText, TrendingUp, Layers } from "lucide-react";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 
 interface NodoMapa {
   id: string;
@@ -106,6 +107,16 @@ export default function MapaInstrumentos() {
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         Clasificación por tipo de flujo y emisor. Expande cada rama para ver ejemplos y definiciones.
       </p>
+      <InstruccionesSimulador>
+        <p>Clasificación jerárquica de los instrumentos financieros según su tipo de flujo y riesgo.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Renta fija:</strong> Flujos predecibles (cupones, principal). Cetes, bonos, pagarés.</li>
+          <li><strong>Renta variable:</strong> Acciones, ETF. Rendimiento no garantizado.</li>
+          <li><strong>Híbridos:</strong> Preferentes, convertibles. Combinan deuda y capital.</li>
+          <li><strong>Derivados:</strong> Futuros, opciones. Valor derivado de un subyacente.</li>
+        </ul>
+        <p>Haz clic en cada categoría para expandir y ver ejemplos.</p>
+      </InstruccionesSimulador>
       <div className="space-y-2">
         {ARBOL.map((nodo) => (
           <NodoArbol key={nodo.id} nodo={nodo} />

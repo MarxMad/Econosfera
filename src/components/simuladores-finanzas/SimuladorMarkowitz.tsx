@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { TrendingUp, PieChart, Info, HelpCircle, Save, Target, Activity } from "lucide-react";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ZAxis, Cell, ReferenceLine, Label } from "recharts";
 
 export default function SimuladorMarkowitz() {
@@ -55,10 +56,19 @@ export default function SimuladorMarkowitz() {
                         Teoría de Portafolio (Markowitz)
                     </h2>
                     <p className="text-slate-500 dark:text-slate-400 max-w-2xl">
-                        Encuentra la combinación óptima de activos. Entiende cómo la **diversificación** reduce el riesgo total del portafolio mediante la correlación.
+                        Encuentra la combinación óptima de activos. Entiende cómo la diversificación reduce el riesgo total del portafolio mediante la correlación.
                     </p>
                 </div>
             </div>
+
+            <InstruccionesSimulador>
+                <p>La teoría de Markowitz muestra cómo combinar activos para minimizar riesgo dado un retorno, o maximizar retorno dado un nivel de riesgo.</p>
+                <ul className="list-disc list-inside space-y-1 ml-1">
+                    <li><strong>Activo A/B:</strong> Retorno esperado y volatilidad (desviación estándar) de cada activo.</li>
+                    <li><strong>Correlación (ρ):</strong> -1 a +1. Correlación negativa = mayor diversificación = menor riesgo del portafolio.</li>
+                    <li>La curva azul es la frontera eficiente: mejores combinaciones riesgo-retorno.</li>
+                </ul>
+            </InstruccionesSimulador>
 
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Controles */}
