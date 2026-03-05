@@ -1,8 +1,9 @@
 "use client";
 
-import { Check, Zap, Star, Shield, HelpCircle } from "lucide-react";
+import { Check, Zap, Star, Shield, HelpCircle, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { useState } from "react";
 
 const tiers = [
     {
@@ -59,6 +60,21 @@ const tiers = [
 
 export default function PricingPage() {
     const { data: session } = useSession();
+    const [portalLoading, setPortalLoading] = useState(false);
+
+    const handleOpenBillingPortal = async () => {
+        setPortalLoading(true);
+        try {
+            const res = await fetch("/api/stripe/create-portal-session", { method: "POST" });
+            const data = await res.json();
+            if (res.ok && data.url) window.location.href = data.url;
+            else alert(data.error || "No se pudo abrir el portal de facturación.");
+        } catch {
+            alert("Error al abrir la galería de pago.");
+        } finally {
+            setPortalLoading(false);
+        }
+    };
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-20 px-4">
@@ -69,6 +85,19 @@ export default function PricingPage() {
                 <p className="text-xl text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
                     Herramientas profesionales diseñadas por economistas para la próxima generación de líderes financieros.
                 </p>
+                {(session?.user?.plan === "PRO" || session?.user?.plan === "RESEARCHER") && (
+                    <div className="mt-6">
+                        <button
+                            type="button"
+                            onClick={handleOpenBillingPortal}
+                            disabled={portalLoading}
+                            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors disabled:opacity-50"
+                        >
+                            <CreditCard className="w-5 h-5" />
+                            {portalLoading ? "Abriendo…" : "Gestionar suscripción y facturación"}
+                        </button>
+                    </div>
+                )}
             </div>
 
             <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-8 mb-20">

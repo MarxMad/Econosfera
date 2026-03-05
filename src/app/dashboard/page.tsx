@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { getScenarios, deleteScenario } from "@/lib/actions/scenarioActions";
 import { getUserStats } from "@/lib/actions/quizActions";
-import { Trash2, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Flame, Sparkles, ArrowRight } from "lucide-react";
+import { Trash2, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Flame, Sparkles, ArrowRight, CreditCard } from "lucide-react";
 import Link from "next/link";
 import ProfileCard from "@/components/ProfileCard";
 import PlanComparador from "@/components/PlanComparador";
@@ -14,6 +14,21 @@ export default function DashboardPage() {
     const [scenarios, setScenarios] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [portalLoading, setPortalLoading] = useState(false);
+
+    const handleOpenBillingPortal = async () => {
+        setPortalLoading(true);
+        try {
+            const res = await fetch("/api/stripe/create-portal-session", { method: "POST" });
+            const data = await res.json();
+            if (res.ok && data.url) window.location.href = data.url;
+            else alert(data.error || "No se pudo abrir el portal de facturación.");
+        } catch {
+            alert("Error al abrir la galería de pago.");
+        } finally {
+            setPortalLoading(false);
+        }
+    };
 
     useEffect(() => {
         if (session) {
@@ -101,6 +116,16 @@ export default function DashboardPage() {
                             <Link href="/pricing" className="block w-full py-3 bg-white text-blue-700 text-center font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm active:scale-[0.98]">
                                 Ver Planes (50 / 100 créditos)
                             </Link>
+                            {(session.user.plan === "PRO" || session.user.plan === "RESEARCHER") && (
+                                <button
+                                    type="button"
+                                    onClick={handleOpenBillingPortal}
+                                    disabled={portalLoading}
+                                    className="w-full py-3 border border-white/30 text-white font-bold rounded-xl hover:bg-white/10 transition-all flex items-center justify-center gap-2 disabled:opacity-50"
+                                >
+                                    {portalLoading ? "Abriendo…" : <><CreditCard className="w-4 h-4" /> Gestionar suscripción</>}
+                                </button>
+                            )}
                         </div>
                     </div>
 

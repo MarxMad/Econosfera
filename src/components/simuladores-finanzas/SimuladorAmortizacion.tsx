@@ -102,30 +102,37 @@ export default function SimuladorAmortizacion() {
           </div>
         </div>
       </div>
-      <div className="mt-4 overflow-x-auto max-h-64 overflow-y-auto">
-        <table className="w-full text-sm border-collapse">
-          <thead className="sticky top-0 bg-slate-100 dark:bg-slate-800">
-            <tr className="border-b border-slate-200 dark:border-slate-600">
-              <th className="text-left py-1.5 px-2 text-slate-600 dark:text-slate-400">#</th>
-              <th className="text-right py-1.5 px-2 text-slate-600 dark:text-slate-400">Pago</th>
-              <th className="text-right py-1.5 px-2 text-slate-600 dark:text-slate-400">Interés</th>
-              <th className="text-right py-1.5 px-2 text-slate-600 dark:text-slate-400">Principal</th>
-              <th className="text-right py-1.5 px-2 text-slate-600 dark:text-slate-400">Saldo</th>
+      <div className="mt-6 overflow-x-auto overflow-y-auto rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50/50 dark:bg-slate-900/30 max-h-80">
+        <table className="w-full text-sm border-collapse min-w-[420px]">
+          <thead className="sticky top-0 z-10 bg-slate-200/90 dark:bg-slate-800/95 backdrop-blur border-b border-slate-300 dark:border-slate-600">
+            <tr>
+              <th className="text-left py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold w-20">#</th>
+              <th className="text-right py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold min-w-[100px]">Pago</th>
+              <th className="text-right py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold min-w-[100px]">Interés</th>
+              <th className="text-right py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold min-w-[100px]">Principal</th>
+              <th className="text-right py-3 px-4 text-slate-700 dark:text-slate-300 font-semibold min-w-[100px]">Saldo</th>
             </tr>
           </thead>
           <tbody>
-            {filas.slice(0, 24).map((f) => (
-              <tr key={f.periodo} className="border-b border-slate-100 dark:border-slate-700/50">
-                <td className="py-1 px-2 font-mono">{f.periodo}</td>
-                <td className="text-right font-mono">${f.pago.toFixed(2)}</td>
-                <td className="text-right font-mono">${f.interes.toFixed(2)}</td>
-                <td className="text-right font-mono">${f.principal.toFixed(2)}</td>
-                <td className="text-right font-mono text-slate-600 dark:text-slate-400">${f.saldo.toFixed(2)}</td>
+            {filas.slice(0, 24).map((f, i) => (
+              <tr
+                key={f.periodo}
+                className={`border-b border-slate-200/80 dark:border-slate-700/50 ${i % 2 === 0 ? "bg-white/60 dark:bg-slate-800/30" : "bg-slate-100/50 dark:bg-slate-800/50"}`}
+              >
+                <td className="py-2.5 px-4 font-mono text-slate-600 dark:text-slate-400">{f.periodo}</td>
+                <td className="text-right py-2.5 px-4 font-mono tabular-nums text-slate-900 dark:text-slate-100">${f.pago.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="text-right py-2.5 px-4 font-mono tabular-nums text-slate-800 dark:text-slate-200">${f.interes.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="text-right py-2.5 px-4 font-mono tabular-nums text-slate-800 dark:text-slate-200">${f.principal.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="text-right py-2.5 px-4 font-mono tabular-nums text-slate-600 dark:text-slate-400">${f.saldo.toLocaleString("es-MX", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
               </tr>
             ))}
           </tbody>
         </table>
-        {filas.length > 24 && <p className="text-xs text-slate-500 mt-1">Mostrando primeros 24 periodos de {filas.length}</p>}
+        {filas.length > 24 && (
+          <p className="text-xs text-slate-500 dark:text-slate-400 py-2 px-4 bg-slate-100/80 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-600">
+            Mostrando los primeros 24 periodos de {filas.length.toLocaleString("es-MX")}.
+          </p>
+        )}
       </div>
       <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </div>

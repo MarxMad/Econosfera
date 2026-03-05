@@ -11,6 +11,7 @@ Sigue estos pasos para lanzar la terminal Econosfera al mundo.
    npx prisma db push
    ```
    Usa `DIRECT_URL` para la conexión (Supabase suele usar pooling en DATABASE_URL; para cambios de esquema hace falta la conexión directa). Si en producción falla con "The column User.phone does not exist", es que la base de prod no tiene las columnas actuales: ejecuta este comando apuntando a prod para crear las columnas que faltan.
+4. **Seguridad (RLS):** Supabase avisa si Row Level Security no está habilitado. Desde el proyecto (con `.env` con `DIRECT_URL` o `DATABASE_URL`) ejecuta una vez: `npm run db:rls`. Ese script usa Prisma para aplicar RLS en todas las tablas; tu app sigue funcionando porque Prisma se conecta con usuario que hace bypass RLS. Alternativamente puedes pegar y ejecutar `scripts/supabase-enable-rls.sql` en el SQL Editor de Supabase.
 
 ## 2. Autenticación (Google Cloud)
 1. En [Google Cloud Console](https://console.cloud.google.com), crea un proyecto.

@@ -63,6 +63,8 @@ model User {
   userBadges    UserBadge[]
   exportsCount  Int       @default(0)
   plan          String    @default("FREE") // 'FREE', 'PRO', 'RESEARCHER'
+  stripeCustomerId     String?   // Stripe Customer para portal de facturación
+  stripeSubscriptionId String?   // Stripe Subscription (suscripción activa)
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 }

@@ -4,30 +4,55 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { Shield, Lock, CreditCard, ChevronLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 import { processPayment } from "@/lib/actions/paymentActions";
 import { Suspense } from "react";
 
 function CheckoutForm() {
     const searchParams = useSearchParams();
-    const plan = searchParams.get("plan");
+    const plan = searchParams.get("plan") || "student";
+    const { data: session, status } = useSession();
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
+    const [useStripe, setUseStripe] = useState<boolean | null>(null);
 
-    const handlePayment = async (e: React.FormEvent) => {
+    // Redirigir a Stripe Checkout si está configurado y el usuario está logueado
+    useEffect(() => {
+        if (status !== "authenticated" || !session?.user) {
+            setUseStripe(false);
+            return;
+        }
+        let cancelled = false;
+        (async () => {
+            try {
+                const res = await fetch("/api/stripe/create-checkout-session", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ plan: plan === "researcher" ? "researcher" : "student" }),
+                });
+                const data = await res.json();
+                if (cancelled) return;
+                if (res.ok && data.url) {
+                    setUseStripe(true);
+                    window.location.href = data.url;
+                    return;
+                }
+                setUseStripe(false);
+            } catch {
+                setUseStripe(false);
+            }
+        })();
+        return () => { cancelled = true; };
+    }, [status, session?.user, plan]);
+
+    const handlePaymentMock = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-        // Simular tiempo de validación bancaria
-        await new Promise(resolve => setTimeout(resolve, 2000));
-
-        const res = await processPayment(plan || "student");
-
-        if (res.success) {
-            setSuccess(true);
-        } else {
-            alert(res.error || "Algo salió mal procesando tu cuenta.");
-        }
-
+        await new Promise((r) => setTimeout(r, 1500));
+        const res = await processPayment(plan);
         setLoading(false);
+        if (res.success) setSuccess(true);
+        else alert(res.error || "Algo salió mal.");
     };
 
     if (success) {
@@ -49,6 +74,22 @@ function CheckoutForm() {
         );
     }
 
+    // Mientras intentamos Stripe o no hay sesión
+    if (useStripe === null || useStripe === true) {
+        return (
+            <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-10">
+                <div className="text-center">
+                    <Loader2 className="w-12 h-12 animate-spin text-blue-600 mx-auto mb-4" />
+                    <p className="text-slate-600 dark:text-slate-400 font-medium">Redirigiendo a la pasarela de pago segura…</p>
+                    {!session && (
+                        <p className="text-sm text-slate-500 mt-2">Si no eres redirigido, <Link href="/auth/signin" className="text-blue-600 font-bold">inicia sesión</Link> primero.</p>
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    // Stripe no configurado o falló: formulario mock (desarrollo)
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-slate-950 py-12 px-4">
             <div className="max-w-4xl mx-auto">
@@ -65,7 +106,7 @@ function CheckoutForm() {
                                 Detalles del Pago
                             </h2>
 
-                            <form onSubmit={handlePayment} className="space-y-6">
+                            <form onSubmit={handlePaymentMock} className="space-y-6">
                                 <div>
                                     <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Nombre en la tarjeta</label>
                                     <input required type="text" className="w-full p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all dark:text-white" placeholder="EJ. JUAN PÉREZ" />
@@ -88,16 +129,13 @@ function CheckoutForm() {
                                     </div>
                                 </div>
 
-                                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-2xl border border-blue-100 dark:border-blue-900/30 flex items-start gap-3">
-                                    <Lock className="w-4 h-4 text-blue-600 mt-1" />
-                                    <p className="text-xs text-blue-700 dark:text-blue-400 leading-relaxed">
-                                        Tus datos están protegidos por encriptación de grado bancario (AES-256). No almacenamos tus datos sensibles.
-                                    </p>
+                                <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-2xl border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-xs">
+                                    Modo desarrollo: el pago no se cobra. Configura Stripe en Vercel para usar la pasarela real.
                                 </div>
 
                                 <button disabled={loading} className="w-full py-4 bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-black rounded-2xl flex items-center justify-center gap-2 hover:shadow-xl transition-all disabled:opacity-50">
                                     {loading && <Loader2 className="w-5 h-5 animate-spin" />}
-                                    {loading ? "Procesando Servidor..." : `Pagar $${plan === 'student' ? '4.99' : '12.99'}`}
+                                    {loading ? "Procesando…" : `Pagar $${plan === "researcher" ? "12.99" : "4.99"}`}
                                 </button>
                             </form>
                         </div>
@@ -109,35 +147,21 @@ function CheckoutForm() {
                             <div className="space-y-4 mb-6">
                                 <div className="flex justify-between items-center pb-4 border-b border-slate-100 dark:border-slate-800">
                                     <div>
-                                        <p className="font-bold text-slate-800 dark:text-slate-200 uppercase text-xs">Plan Seleccionado</p>
-                                        <p className="text-slate-500">{plan === 'student' ? 'Estudiante Pro' : 'Investigador'}</p>
+                                        <p className="font-bold text-slate-800 dark:text-slate-200 uppercase text-xs">Plan</p>
+                                        <p className="text-slate-500">{plan === "researcher" ? "Investigador" : "Estudiante Pro"}</p>
                                     </div>
-                                    <p className="font-bold text-slate-900 dark:text-white">${plan === 'student' ? '4.99' : '12.99'}</p>
-                                </div>
-                                <div className="flex justify-between items-center">
-                                    <p className="text-slate-500">Impuestos (IVA)</p>
-                                    <p className="text-slate-900 dark:text-white">$0.00</p>
+                                    <p className="font-bold text-slate-900 dark:text-white">${plan === "researcher" ? "12.99" : "4.99"}</p>
                                 </div>
                             </div>
                             <div className="flex justify-between items-center mb-8">
-                                <p className="text-xl font-black text-slate-900 dark:text-white">Total a pagar</p>
-                                <p className="text-xl font-black text-blue-600">${plan === 'student' ? '4.99' : '12.99'}</p>
+                                <p className="text-xl font-black text-slate-900 dark:text-white">Total</p>
+                                <p className="text-xl font-black text-blue-600">${plan === "researcher" ? "12.99" : "4.99"}/mes</p>
                             </div>
-
-                            <div className="space-y-4">
-                                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Incluye:</p>
-                                <ul className="space-y-2">
-                                    <li className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                                        <Shield className="w-3 h-3 text-emerald-500" /> Exportaciones Ilimitadas
-                                    </li>
-                                    <li className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                                        <Shield className="w-3 h-3 text-emerald-500" /> {plan === 'student' ? '50 Créditos IA Mensuales' : '100 Créditos IA Mensuales'}
-                                    </li>
-                                    <li className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-400">
-                                        <Shield className="w-3 h-3 text-emerald-500" /> Modelos Premium (Blockchain + Finanzas)
-                                    </li>
-                                </ul>
-                            </div>
+                            <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
+                                <li className="flex items-center gap-2"><Shield className="w-3 h-3 text-emerald-500" /> Exportaciones ilimitadas</li>
+                                <li className="flex items-center gap-2"><Shield className="w-3 h-3 text-emerald-500" /> {plan === "researcher" ? "100" : "50"} créditos IA/mes</li>
+                                <li className="flex items-center gap-2"><Shield className="w-3 h-3 text-emerald-500" /> Modelos premium</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
@@ -148,7 +172,7 @@ function CheckoutForm() {
 
 export default function CheckoutPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-10">Cargando pasarela...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex items-center justify-center p-10">Cargando…</div>}>
             <CheckoutForm />
         </Suspense>
     );
