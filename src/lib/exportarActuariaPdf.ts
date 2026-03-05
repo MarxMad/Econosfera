@@ -4,7 +4,7 @@ import autoTable from "jspdf-autotable";
 const MARGIN = 15;
 
 export type ActuariaExportData = {
-  tipo: "Mortalidad" | "Ruina" | "PoderAdquisitivo";
+  tipo: "Mortalidad" | "Ruina";
   titulo: string;
   variables: Array<{ label: string; valor: string }>;
   resultados: Array<{ label: string; valor: string }>;

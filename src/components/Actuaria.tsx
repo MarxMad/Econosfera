@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, Heart, Coins, TrendingUp, Info, Lock } from "lucide-react";
-import { SimuladorMortalidad, SimuladorRuina, CalculadoraPoderAdquisitivo } from "./simuladores-actuaria";
+import { Shield, Heart, Info, Lock } from "lucide-react";
+import { SimuladorMortalidad, SimuladorRuina } from "./simuladores-actuaria";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
 
 export default function Actuaria() {
     const { data: session } = useSession();
-    const [activeTab, setActiveTab] = useState<"mortalidad" | "ruina" | "poder">("mortalidad");
+    const [activeTab, setActiveTab] = useState<"mortalidad" | "ruina">("mortalidad");
 
     return (
         <div className="space-y-6 animate-in fade-in duration-700">
@@ -24,15 +24,14 @@ export default function Actuaria() {
                         Actuaría y Riesgos
                     </h2>
                     <p className="text-slate-600 dark:text-slate-400 text-sm max-w-2xl italic">
-                        Proyecta el riesgo de arruinarse a largo plazo, visualiza tablas de mortalidad para pensiones y analiza el verdadero poder adquisitivo de tu ahorro tras el impacto inflacionario.
+                        Proyecta el riesgo de arruinarse a largo plazo y visualiza tablas de mortalidad para pensiones.
                     </p>
                 </div>
             </div>
             <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
                 {[
                     { id: 'mortalidad', label: 'Tablas de Mortalidad', icon: Heart },
-                    { id: 'ruina', label: 'Modelo de Ruina', icon: Shield },
-                    { id: 'poder', label: 'Poder Adquisitivo', icon: Coins }
+                    { id: 'ruina', label: 'Modelo de Ruina', icon: Shield }
                 ].map((tab) => {
                     const locked = !canAccess(session?.user?.plan, "actuaria", tab.id);
                     return (
@@ -58,7 +57,6 @@ export default function Actuaria() {
                 )}
                 {canAccess(session?.user?.plan, "actuaria", activeTab) && activeTab === 'mortalidad' && <SimuladorMortalidad />}
                 {canAccess(session?.user?.plan, "actuaria", activeTab) && activeTab === 'ruina' && <SimuladorRuina />}
-                {canAccess(session?.user?.plan, "actuaria", activeTab) && activeTab === 'poder' && <CalculadoraPoderAdquisitivo />}
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">

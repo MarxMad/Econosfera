@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Percent, Scale, Wallet, Info, Lock } from "lucide-react";
+import { Percent, Scale, Wallet, Target, History, Info, Lock } from "lucide-react";
 import ComparadorEscenarios from "@/components/ComparadorEscenarios";
 import FuentesOficialesMexico from "@/components/FuentesOficialesMexico";
 import ReferenciasAcademicas from "@/components/ReferenciasAcademicas";
 import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
-import { SimuladorTasaRealNominal, SimuladorPoderAdquisitivo } from "@/components/simuladores-inflacion";
+import { SimuladorTasaRealNominal, SimuladorPoderAdquisitivo, SimuladorBrechaInflacion, SimuladorTasaRealExPost } from "@/components/simuladores-inflacion";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "@/components/SimulatorLocked";
@@ -19,7 +19,7 @@ export default function Inflacion({
     setVariables: any;
 }) {
     const { data: session } = useSession();
-    const [activeTab, setActiveTab] = useState<"tasaReal" | "comparador" | "poderAdquisitivo">("tasaReal");
+    const [activeTab, setActiveTab] = useState<"tasaReal" | "poderAdquisitivo" | "brecha" | "tasaRealExPost" | "comparador">("tasaReal");
 
     return (
         <div className="space-y-6">
@@ -34,6 +34,8 @@ export default function Inflacion({
                 {[
                     { id: 'tasaReal', label: 'Tasa real vs nominal', icon: Percent },
                     { id: 'poderAdquisitivo', label: 'Poder adquisitivo', icon: Wallet },
+                    { id: 'brecha', label: 'Brecha de inflación', icon: Target },
+                    { id: 'tasaRealExPost', label: 'Tasa real ex post', icon: History },
                     { id: 'comparador', label: 'Comparar escenarios', icon: Scale },
                 ].map((tab) => {
                     const locked = !canAccess(session?.user?.plan, "inflacion", tab.id);
@@ -63,6 +65,12 @@ export default function Inflacion({
                 )}
                 {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'poderAdquisitivo' && (
                     <SimuladorPoderAdquisitivo />
+                )}
+                {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'brecha' && (
+                    <SimuladorBrechaInflacion />
+                )}
+                {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'tasaRealExPost' && (
+                    <SimuladorTasaRealExPost />
                 )}
                 {canAccess(session?.user?.plan, "inflacion", activeTab) && activeTab === 'comparador' && (
                     <div className="space-y-6">

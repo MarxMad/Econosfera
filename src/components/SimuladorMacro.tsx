@@ -41,7 +41,7 @@ import { SimuladorSolow, SimuladorPhillips, SimuladorISLMBP } from "@/components
 export default function SimuladorMacro({ initialData }: { initialData?: any }) {
   const { data: session } = useSession();
   const isPro = session?.user?.plan === 'PRO' || session?.user?.plan === 'RESEARCHER';
-  const [activeTab, setActiveTab] = useState<"standard" | "solow" | "phillips" | "mundell">("standard");
+  const [activeTab, setActiveTab] = useState<"multiplier" | "islm" | "solow" | "phillips" | "mundell">("multiplier");
   const [v, setV] = useState<VariablesMacro>(INICIAL);
   const [vISLM, setVISLM] = useState<VariablesISLM>(INICIAL_ISLM);
   const [baselineISLM, setBaselineISLM] = useState<VariablesISLM>(INICIAL_ISLM);
@@ -141,9 +141,10 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
       {/* Tab Navigation */}
       <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
         {[
-          { id: 'standard', label: 'Modelos Básicos' },
-          { id: 'solow', label: 'Crecimiento (Solow)' },
-          { id: 'phillips', label: 'Curva Phillips' },
+          { id: 'multiplier', label: 'Multiplicador 45°' },
+          { id: 'islm', label: 'IS-LM' },
+          { id: 'solow', label: 'Solow' },
+          { id: 'phillips', label: 'Phillips' },
           { id: 'mundell', label: 'Mundell-Fleming' }
         ].map((tab) => {
           const locked = !canAccess(session?.user?.plan, "macro", tab.id);
@@ -170,9 +171,7 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
       {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'phillips' && <SimuladorPhillips />}
       {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'mundell' && <SimuladorISLMBP />}
 
-      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'standard' && (
-        <>
-          {/* Multiplicador keynesiano */}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'multiplier' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
             <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
               <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -259,8 +258,10 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
               </div>
             )}
           </div>
+      )}
 
-          {/* IS-LM */}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'islm' && (
+          <div className="space-y-8">
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
             <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
               <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
@@ -353,7 +354,6 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
             )}
           </div>
 
-          {/* Conceptos */}
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
             <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
               <BookOpen className="w-5 h-5 text-slate-600 dark:text-slate-400" />
@@ -366,7 +366,7 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
               <li><strong>Política Monetaria (M/P↑):</strong> Desplaza LM a la derecha. r↓, Y↑.</li>
             </ul>
           </div>
-        </>
+          </div>
       )}
     </div>
   );

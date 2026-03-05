@@ -1,21 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Building2,
   Wallet,
-  TrendingUp,
   Landmark,
   Calculator,
   BarChart2,
   Layers,
   PieChart,
-  Zap,
-  LineChart,
   BookOpen,
   Info,
   Lock,
-  Newspaper
+  Newspaper,
+  Percent,
+  Coins,
+  TrendingUp,
+  FileText,
+  Target,
+  Zap
 } from "lucide-react";
 import type { ModuloSimulador } from "./NavSimuladores";
 import { useSession } from "next-auth/react";
@@ -50,13 +53,52 @@ import {
   SimuladorDuracionBono
 } from "./simuladores-finanzas";
 
+const TABS_FINANZAS = [
+  { id: "vpvf", label: "VP/VF", icon: Calculator, plan: "FREE" as const },
+  { id: "amortizacion", label: "Amortización", icon: FileText, plan: "FREE" as const },
+  { id: "anualidad", label: "Anualidad", icon: Percent, plan: "FREE" as const },
+  { id: "interesSimpleCompuesto", label: "Interés simple/compuesto", icon: Percent, plan: "FREE" as const },
+  { id: "regla72", label: "Regla del 72", icon: Percent, plan: "FREE" as const },
+  { id: "tasaEfectiva", label: "Tasa efectiva", icon: Percent, plan: "FREE" as const },
+  { id: "bono", label: "Bono", icon: Coins, plan: "FREE" as const },
+  { id: "cetes", label: "CETES", icon: Coins, plan: "FREE" as const },
+  { id: "ahorro", label: "Ahorro", icon: Wallet, plan: "FREE" as const },
+  { id: "impactoNoticias", label: "Impacto noticias", icon: Newspaper, plan: "FREE" as const },
+  { id: "correlacionFundamental", label: "Correlación", icon: TrendingUp, plan: "FREE" as const },
+  { id: "capm", label: "CAPM", icon: BarChart2, plan: "FREE" as const },
+  { id: "valuacion", label: "Valuación", icon: Target, plan: "PRO" as const },
+  { id: "dcf", label: "DCF", icon: BarChart2, plan: "PRO" as const },
+  { id: "vpntir", label: "VPN/TIR", icon: BarChart2, plan: "PRO" as const },
+  { id: "wacc", label: "WACC", icon: BarChart2, plan: "PRO" as const },
+  { id: "duracionBono", label: "Duración bono", icon: Coins, plan: "PRO" as const },
+  { id: "markowitz", label: "Markowitz", icon: PieChart, plan: "PRO" as const },
+  { id: "portafolio2", label: "Portafolio", icon: PieChart, plan: "PRO" as const },
+  { id: "blackScholes", label: "Black-Scholes", icon: Zap, plan: "PRO" as const },
+  { id: "yieldCurve", label: "Yield Curve", icon: TrendingUp, plan: "PRO" as const },
+  { id: "forward", label: "Forward", icon: TrendingUp, plan: "PRO" as const },
+  { id: "breakEven", label: "Break-even", icon: Target, plan: "PRO" as const },
+  { id: "flujoFinanciero", label: "Flujo sistema", icon: Layers, plan: "FREE" as const },
+  { id: "mapaInstrumentos", label: "Mapa instrumentos", icon: Layers, plan: "FREE" as const },
+  { id: "mapaEstructuraCapital", label: "Mapa estructura", icon: Layers, plan: "FREE" as const },
+];
+
+const SUBTYPE_TO_TAB: Record<string, string> = {
+  VPVF: "vpvf", BONO: "bono", CETES: "cetes", AHORRO: "ahorro", VALUACION: "valuacion",
+};
+
 export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (m: ModuloSimulador) => void; initialData?: any }) {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState<"basico" | "fundamental" | "valuacion" | "pro" | "mapas">("basico");
+  const [activeTab, setActiveTab] = useState<string>(TABS_FINANZAS[0].id);
+
+  useEffect(() => {
+    const subType = initialData?.subType;
+    if (subType && SUBTYPE_TO_TAB[subType]) {
+      setActiveTab(SUBTYPE_TO_TAB[subType]);
+    }
+  }, [initialData?.subType]);
 
   return (
     <div className="space-y-6">
-      {/* Hero Section */}
       <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 p-8 shadow-sm">
         <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-3">Finanzas y Mercados de Capital</h2>
         <p className="text-slate-600 dark:text-slate-400 text-sm max-w-2xl">
@@ -64,27 +106,21 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
         </p>
       </div>
 
-      {/* Standard Tabbed Menu */}
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
-        {[
-          { id: 'basico', label: 'Básico (VP/VF/Bonos)', icon: Calculator },
-          { id: 'fundamental', label: 'Análisis Fundamental', icon: Newspaper },
-          { id: 'valuacion', label: 'Valuación y DCF', icon: BarChart2 },
-          { id: 'pro', label: 'Portafolios y Derivados', icon: PieChart },
-          { id: 'mapas', label: 'Estructura y Flujos', icon: Layers },
-        ].map((tab) => {
+      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit max-w-full overflow-x-auto">
+        {TABS_FINANZAS.map((tab) => {
           const locked = !canAccess(session?.user?.plan, "finanzas", tab.id);
+          const TabIcon = tab.icon;
           return (
             <button
               key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                } ${locked ? 'opacity-80' : ''}`}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${activeTab === tab.id
+                ? "bg-white dark:bg-slate-700 text-blue-600 shadow-sm"
+                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
+                } ${locked ? "opacity-80" : ""}`}
             >
               {locked && <Lock className="w-3 h-3" />}
-              <tab.icon className="w-3.5 h-3.5" />
+              <TabIcon className="w-3.5 h-3.5" />
               {tab.label}
             </button>
           );
@@ -95,63 +131,44 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
         {!canAccess(session?.user?.plan, "finanzas", activeTab) && getRequiredPlan("finanzas", activeTab) && (
           <SimulatorLocked requiredPlan={getRequiredPlan("finanzas", activeTab)!} moduleName="Finanzas" />
         )}
-        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'basico' && (
-          <div className="grid gap-6">
-            <SimuladorVPVF initialData={initialData?.subType === "VPVF" ? initialData : undefined} />
-            <SimuladorAmortizacion />
-            <SimuladorAnualidad />
-            <SimuladorInteresSimpleCompuesto />
-            <SimuladorRegla72 />
-            <SimuladorTasaEfectiva />
-            <div className="grid md:grid-cols-2 gap-6">
-              <SimuladorBono initialData={initialData?.subType === "BONO" ? initialData : undefined} />
-              <SimuladorCetes initialData={initialData?.subType === "CETES" ? initialData : undefined} />
-            </div>
-            <SimuladorAhorro initialData={initialData?.subType === "AHORRO" ? initialData : undefined} />
-          </div>
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "vpvf" && (
+          <SimuladorVPVF initialData={initialData?.subType === "VPVF" ? initialData : undefined} />
         )}
-
-        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'fundamental' && (
-          <div className="grid gap-6">
-            <SimuladorImpactoNoticias />
-            <SimuladorCorrelacionFundamental />
-            <SimuladorCAPM />
-          </div>
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "amortizacion" && <SimuladorAmortizacion />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "anualidad" && <SimuladorAnualidad />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "interesSimpleCompuesto" && <SimuladorInteresSimpleCompuesto />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "regla72" && <SimuladorRegla72 />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "tasaEfectiva" && <SimuladorTasaEfectiva />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "bono" && (
+          <SimuladorBono initialData={initialData?.subType === "BONO" ? initialData : undefined} />
         )}
-
-        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'valuacion' && (
-          <div className="grid gap-6">
-            <SimuladorValuacion initialData={initialData?.subType === "VALUACION" ? initialData : undefined} />
-            <SimuladorDCF />
-            <SimuladorVPNTIR />
-            <SimuladorWACC />
-            <SimuladorDuracionBono />
-          </div>
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "cetes" && (
+          <SimuladorCetes initialData={initialData?.subType === "CETES" ? initialData : undefined} />
         )}
-
-        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'pro' && (
-          <div className="grid gap-6">
-            <SimuladorMarkowitz />
-            <SimuladorPortafolio2 />
-            <SimuladorBlackScholes />
-            <SimuladorYieldCurve />
-            <SimuladorForward />
-            <SimuladorBreakEven />
-          </div>
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "ahorro" && (
+          <SimuladorAhorro initialData={initialData?.subType === "AHORRO" ? initialData : undefined} />
         )}
-
-        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'mapas' && (
-          <div className="space-y-8">
-            <FlujoSistemaFinanciero />
-            <div className="grid lg:grid-cols-2 gap-6">
-              <MapaInstrumentos />
-              <MapaEstructuraCapital />
-            </div>
-          </div>
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "impactoNoticias" && <SimuladorImpactoNoticias />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "correlacionFundamental" && <SimuladorCorrelacionFundamental />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "capm" && <SimuladorCAPM />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "valuacion" && (
+          <SimuladorValuacion initialData={initialData?.subType === "VALUACION" ? initialData : undefined} />
         )}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "dcf" && <SimuladorDCF />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "vpntir" && <SimuladorVPNTIR />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "wacc" && <SimuladorWACC />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "duracionBono" && <SimuladorDuracionBono />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "markowitz" && <SimuladorMarkowitz />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "portafolio2" && <SimuladorPortafolio2 />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "blackScholes" && <SimuladorBlackScholes />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "yieldCurve" && <SimuladorYieldCurve />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "forward" && <SimuladorForward />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "breakEven" && <SimuladorBreakEven />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "flujoFinanciero" && <FlujoSistemaFinanciero />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "mapaInstrumentos" && <MapaInstrumentos />}
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "mapaEstructuraCapital" && <MapaEstructuraCapital />}
       </div>
 
-      {/* Knowledge Section */}
       <section className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 p-8 shadow-lg">
         <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
           <BookOpen className="w-5 h-5 text-blue-600" />

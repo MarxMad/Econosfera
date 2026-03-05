@@ -469,6 +469,195 @@ export async function exportarTasaRealNominalPdf(
   doc.save(`econosfera-tasa-real-nominal-${new Date().toISOString().split("T")[0]}.pdf`);
 }
 
+/** PDF Poder adquisitivo (Fisher: nominal vs real). */
+export async function exportarPoderAdquisitivoPdf(
+  principal: number,
+  tasaNominal: number,
+  inflacion: number,
+  years: number,
+  finalNominal: number,
+  finalReal: number,
+  erosionPct: number,
+  graficoDataUrl?: string | null
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("PODER ADQUISITIVO – ECUACIÓN DE FISHER", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros y resultados", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["Capital inicial", `$${principal.toLocaleString("es-MX")}`],
+      ["Tasa nominal (i)", `${tasaNominal}%`],
+      ["Inflación (π)", `${inflacion}%`],
+      ["Horizonte (años)", String(years)],
+      ["Valor nominal final", `$${finalNominal.toLocaleString("es-MX")}`],
+      ["Valor real final", `$${finalReal.toLocaleString("es-MX")}`],
+      ["Erosión acumulada", `${erosionPct.toFixed(1)}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [245, 158, 11], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+  currentY = doc.lastAutoTable.finalY + 12;
+
+  if (graficoDataUrl && currentY < 200) {
+    try {
+      doc.addImage(graficoDataUrl, "PNG", MARGIN, currentY, 180, 55);
+    } catch (e) {
+      console.warn("Gráfico Poder adquisitivo no añadido:", e);
+    }
+  }
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Inflación | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-poder-adquisitivo-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Brecha de inflación. */
+export async function exportarBrechaInflacionPdf(
+  inflacionObservada: number,
+  metaInflacion: number,
+  brecha: number
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("BRECHA DE INFLACIÓN", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros y resultado", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["Inflación observada", `${inflacionObservada}%`],
+      ["Meta de inflación", `${metaInflacion}%`],
+      ["Brecha (pp)", `${brecha > 0 ? "+" : ""}${brecha.toFixed(2)} pp`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [245, 158, 11], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Inflación | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-brecha-inflacion-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Tasa real ex post. */
+export async function exportarTasaRealExPostPdf(
+  tasaNominal: number,
+  inflacionObservada: number,
+  tasaRealExPost: number
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("TASA REAL EX POST", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Fórmula: r_ex_post = i − π_observada", MARGIN, currentY);
+  currentY += 12;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["Tasa nominal (i)", `${tasaNominal}%`],
+      ["Inflación observada (π)", `${inflacionObservada}%`],
+      ["Tasa real ex post", `${tasaRealExPost.toFixed(2)}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [99, 102, 241], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Inflación | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-tasa-real-ex-post-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
 /** PDF Curva de Phillips (inflación–desempleo). */
 export async function exportarPhillipsPdf(vars: {
   expectedInflation: number;

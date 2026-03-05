@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import { FileDown, Save, Percent, TrendingUp } from "lucide-react";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { useSession } from "next-auth/react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import PricingModal from "@/components/PricingModal";
@@ -123,6 +124,15 @@ export default function SimuladorTasaRealNominal() {
                     </div>
                 </div>
             </div>
+
+            <InstruccionesSimulador>
+                <p>La ecuación de Fisher relaciona la tasa nominal (i), la inflación esperada (πᵉ) y la tasa real (r): r ≈ i − πᵉ.</p>
+                <ul className="list-disc list-inside space-y-1 ml-1">
+                    <li><strong>Tasa nominal:</strong> La que anuncia el banco o paga el bono (sin ajustar inflación).</li>
+                    <li><strong>Inflación esperada:</strong> La que anticipas para el periodo (suele usarse inflación subyacente como proxy).</li>
+                    <li><strong>Tasa real:</strong> El rendimiento en términos de poder adquisitivo. Es la que importa para decisiones de inversión.</li>
+                </ul>
+            </InstruccionesSimulador>
 
             <div className="grid lg:grid-cols-2 gap-6">
                 <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 p-6 shadow-sm">
