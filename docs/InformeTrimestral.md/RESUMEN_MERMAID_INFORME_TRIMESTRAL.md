@@ -116,18 +116,15 @@ flowchart LR
 ## 4. Política monetaria: ciclo de recortes y pausa
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Tasa_alta: Ciclo restrictivo previo
-    Tasa_alta --> Recorte_Nov: Nov 2025: -25 pb
-    Recorte_Nov --> Recorte_Dic: Dic 2025: -25 pb
-    Recorte_Dic --> Pausa_7: Tasa en 7.00%
-    Pausa_7 --> Pausa_Feb: Feb 2026: mantener 7.00%
-    Pausa_Feb --> Valorar_adelante: Valoración futura de ajustes
+flowchart LR
+    A[Ciclo restrictivo previo] --> B[Nov 2025: -25 pb]
+    B --> C[Dic 2025: -25 pb]
+    C --> D[Tasa 7.00%]
+    D --> E[Feb 2026: pausa<br/>mantener 7.00%]
+    E --> F[Valorar ajustes futuros]
 
-    note right of Pausa_Feb
-        Objetivo: Tasa de Interés
-        Interbancaria a 1 día = 7.00%
-    end note
+    style D fill:#c8e6c9
+    style E fill:#fff9c4
 ```
 
 ---
@@ -137,10 +134,10 @@ stateDiagram-v2
 ```mermaid
 flowchart TB
     subgraph global["Entorno global"]
-        G1[Tensiones comerciales<br/>EUA–China, aranceles]
+        G1[Tensiones comerciales EUA-China, aranceles]
         G2[Conflictos geopolíticos]
-        G3[Actividad mundial: ritmo<br/>ligeramente menor]
-        G4[Fed: pausa tras recortes<br/>Expectativa 3.4% cierre 2026]
+        G3[Actividad mundial: ritmo menor]
+        G4[Fed: pausa tras recortes, expectativa 3.4% 2026]
     end
 
     subgraph canales["Canales hacia México"]
@@ -151,13 +148,19 @@ flowchart TB
 
     subgraph mx["México"]
         M1[PIB 4T: mayor ritmo que 3T]
-        M2[2025 completo: +0.6%<br/>2023: 3.1% | 2024: 1.4%]
+        M2[2025: +0.6% | 2023: 3.1% | 2024: 1.4%]
         M3[Empleo: atonía; desocupación baja]
-        M4[Mercados ordenados; tasas corto plazo ↓]
+        M4[Mercados ordenados; tasas corto plazo a la baja]
     end
 
-    G1 & G2 & G3 & G4 --> CH1 & CH2 & CH3
-    CH1 & CH2 & CH3 --> M1 & M2 & M3 & M4
+    G1 --> CH1
+    G2 --> CH2
+    G3 --> CH3
+    G4 --> CH1
+    CH1 --> M1
+    CH2 --> M2
+    CH3 --> M3
+    CH1 --> M4
 
     style global fill:#2d2d2d,color:#fff
     style mx fill:#0d47a1,color:#fff
