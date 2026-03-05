@@ -58,6 +58,7 @@ export const exportarContabilidadAPdf = async (data: ContabilidadExportData) => 
         theme: 'striped',
         headStyles: { fillColor: [20, 118, 110] },
         margin: { left: MARGIN, right: MARGIN },
+        styles: { overflow: 'linebreak' },
     });
 
     // @ts-ignore
@@ -78,6 +79,7 @@ export const exportarContabilidadAPdf = async (data: ContabilidadExportData) => 
             theme: 'grid',
             headStyles: { fillColor: [15, 23, 42] },
             margin: { left: MARGIN, right: MARGIN },
+            styles: { overflow: 'linebreak', cellWidth: 'wrap' },
         });
     }
 

@@ -54,6 +54,7 @@ export const exportarBlockchainAPdf = async (data: BlockchainExportData) => {
         theme: 'striped',
         headStyles: { fillColor: [124, 58, 237] }, // violet-600
         margin: { left: MARGIN, right: 60 },
+        styles: { overflow: 'linebreak' },
     });
 
     // @ts-ignore
@@ -72,6 +73,7 @@ export const exportarBlockchainAPdf = async (data: BlockchainExportData) => {
             theme: 'grid',
             headStyles: { fillColor: [30, 41, 59] },
             margin: { left: MARGIN, right: MARGIN },
+            styles: { overflow: 'linebreak' },
         });
         // @ts-ignore
         currentY = doc.lastAutoTable.finalY + 15;
@@ -93,7 +95,7 @@ export const exportarBlockchainAPdf = async (data: BlockchainExportData) => {
             theme: 'striped',
             headStyles: { fillColor: [76, 29, 149] }, // purple-900
             margin: { left: MARGIN, right: MARGIN },
-            styles: { fontSize: 8 }
+            styles: { fontSize: 8, overflow: 'linebreak' }
         });
         // @ts-ignore
         currentY = doc.lastAutoTable.finalY + 15;

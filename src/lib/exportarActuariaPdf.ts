@@ -50,6 +50,7 @@ export async function exportarActuariaAPdf(data: ActuariaExportData) {
     theme: "striped",
     headStyles: { fillColor: [190, 18, 60] },
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
   });
 
   // @ts-ignore

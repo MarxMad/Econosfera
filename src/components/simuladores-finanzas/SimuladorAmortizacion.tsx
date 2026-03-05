@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { FileDown } from "lucide-react";
+import { FileDown, Save } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { tablaAmortizacion } from "@/lib/finanzas";
 import { InputLibre } from "./InputLibre";
@@ -14,6 +14,7 @@ export default function SimuladorAmortizacion() {
   const { data: session } = useSession();
   const [showPricing, setShowPricing] = useState(false);
   const [exportando, setExportando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
   const [monto, setMonto] = useState(100000);
   const [tasaPct, setTasaPct] = useState(10);
   const [plazoMeses, setPlazoMeses] = useState(60);
@@ -65,6 +66,23 @@ export default function SimuladorAmortizacion() {
     }
   };
 
+  const handleSave = async () => {
+    if ((session?.user?.credits ?? 0) < 1) { setShowPricing(true); return; }
+    setGuardando(true);
+    try {
+      const { saveScenario } = await import("@/lib/actions/scenarioActions");
+      const res = await saveScenario({
+        type: "FINANZAS",
+        subType: "AMORTIZACION",
+        name: `Amortización ${new Date().toLocaleDateString()}`,
+        variables: { monto, tasaPct, plazoMeses },
+        results: { cuota, totalInteres },
+      });
+      if (res.success) alert("Escenario guardado");
+      else alert(res.error);
+    } catch (e) { alert("Error al guardar"); } finally { setGuardando(false); }
+  };
+
   return (
     <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 shadow-lg p-5">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
@@ -72,15 +90,18 @@ export default function SimuladorAmortizacion() {
           <h3 className="text-base font-bold text-slate-800 dark:text-slate-100">Amortización de un crédito</h3>
           <p className="text-xs text-slate-600 dark:text-slate-400">Cuota fija (sistema francés). Tabla de capital e intereses.</p>
         </div>
-        <button
-          type="button"
-          onClick={exportarReporte}
-          disabled={exportando}
-          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50"
-        >
-          <FileDown className="w-3.5 h-3.5" />
-          {exportando ? "Generando..." : "Reporte PDF"}
-        </button>
+        <div className="flex gap-2">
+          <button type="button" onClick={exportarReporte} disabled={exportando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 transition-all shadow-md active:scale-95 disabled:opacity-50">
+            <FileDown className="w-3.5 h-3.5" />
+            {exportando ? "Generando..." : "Reporte PDF"}
+          </button>
+          {session && (
+            <button type="button" onClick={handleSave} disabled={guardando} className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-md active:scale-95 disabled:opacity-50">
+              <Save className="w-3.5 h-3.5" />
+              {guardando ? "Guardando..." : "Guardar"}
+            </button>
+          )}
+        </div>
       </div>
       <InstruccionesSimulador>
         <p>Simula un crédito con cuota fija (sistema francés). Cada pago incluye intereses + amortización del principal.</p>

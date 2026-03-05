@@ -46,8 +46,11 @@ export default function SimuladorCostosInventario() {
         tipo: "CostosInventario",
         titulo: "Costo de ventas e inventario (FIFO, LIFO, Promedio)",
         variables: [
-          { label: "Entradas", valor: `E1:${e1u}@$${e1c} E2:${e2u}@$${e2c} E3:${e3u}@$${e3c}` },
-          { label: "Salidas", valor: `${s1u} + ${s2u} unid.` },
+          { label: "Entrada 1", valor: `${e1u} unid. @ $${e1c}` },
+          { label: "Entrada 2", valor: `${e2u} unid. @ $${e2c}` },
+          { label: "Entrada 3", valor: `${e3u} unid. @ $${e3c}` },
+          { label: "Salida 1", valor: `${s1u} unid.` },
+          { label: "Salida 2", valor: `${s2u} unid.` },
         ],
         resultados: [
           { label: "FIFO costo ventas", valor: `$${fifo.costoVentas.toLocaleString("es-MX", { minimumFractionDigits: 2 })}` },

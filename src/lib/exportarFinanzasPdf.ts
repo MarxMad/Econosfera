@@ -4,7 +4,7 @@ import autoTable from 'jspdf-autotable';
 const MARGIN = 15;
 
 export type FinanzasExportData = {
-    tipo: 'VPVF' | 'Bono' | 'Cetes' | 'Ahorro' | 'DCF' | 'BlackScholes' | 'Amortizacion' | 'VPNTIR' | 'WACC' | 'Forward' | 'BreakEven' | 'Portafolio2' | 'InteresSimpleCompuesto' | 'Regla72' | 'TasaEfectiva' | 'ImpactoNoticias' | 'CorrelacionFundamental';
+    tipo: 'VPVF' | 'Bono' | 'Cetes' | 'Ahorro' | 'DCF' | 'BlackScholes' | 'Amortizacion' | 'VPNTIR' | 'WACC' | 'Forward' | 'BreakEven' | 'Portafolio2' | 'InteresSimpleCompuesto' | 'Regla72' | 'TasaEfectiva' | 'ImpactoNoticias' | 'CorrelacionFundamental' | 'Anualidad' | 'CAPM' | 'DuracionBono';
     titulo: string;
     variables: Array<{ label: string; valor: string }>;
     resultados: Array<{ label: string; valor: string }>;
@@ -59,6 +59,7 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
         theme: 'striped',
         headStyles: { fillColor: [37, 99, 235] },
         margin: { left: MARGIN, right: MARGIN },
+        styles: { overflow: 'linebreak' },
     });
 
     // @ts-ignore
@@ -143,6 +144,26 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
                 `${(baseCall / sigma / 100).toFixed(2)}`
             ];
         });
+    } else if (data.tipo === 'DuracionBono') {
+        const nominal = parseFloat(data.variables.find(v => v.label.includes('Valor nominal') || v.label.includes('nominal'))?.valor.replace('$', '').replace(',', '') || '100');
+        const c = parseFloat(data.variables.find(v => v.label.includes('cupón') || v.label.includes('Cupón'))?.valor.replace('%', '') || '0') / 100;
+        const ytm = parseFloat(data.variables.find(v => v.label.includes('YTM'))?.valor.replace('%', '') || '0') / 100;
+        const t = parseFloat(data.variables.find(v => v.label.includes('Años'))?.valor || '0');
+        const { duracionMacaulay } = await import('./finanzas');
+        sensitivityHead = ['Var. YTM', 'Nuevo YTM', 'Precio Bono', 'Duración Macaulay'];
+        sensitivityBody = [-0.01, -0.005, 0, 0.005, 0.01].map(v => {
+            const newY = Math.max(0.001, ytm + v);
+            let p = 0;
+            const cupon = nominal * c;
+            for (let i = 1; i <= t; i++) p += (i === t ? cupon + nominal : cupon) / Math.pow(1 + newY, i);
+            const dur = duracionMacaulay(nominal, c, newY, t);
+            return [
+                v === 0 ? 'Base' : v > 0 ? `+${(v * 100).toFixed(1)}%` : `${(v * 100).toFixed(1)}%`,
+                `${(newY * 100).toFixed(2)}%`,
+                `$${p.toFixed(2)}`,
+                dur.toFixed(2)
+            ];
+        });
     }
 
     if (sensitivityBody.length > 0) {
@@ -153,6 +174,7 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
             theme: 'grid',
             headStyles: { fillColor: [51, 65, 85] },
             margin: { left: MARGIN, right: MARGIN },
+            styles: { overflow: 'linebreak' },
         });
         // @ts-ignore
         currentY = doc.lastAutoTable.finalY + 15;
@@ -185,6 +207,7 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
             theme: 'grid',
             headStyles: { fillColor: [15, 23, 42] },
             margin: { left: MARGIN, right: MARGIN },
+            styles: { overflow: 'linebreak' },
         });
     }
 
@@ -205,6 +228,9 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
         ['Black-Scholes', 'Modelo matemático para valuar primas de opciones financieras europeas.'],
         ['Griegas (Delta/Vega)', 'Medidas de sensibilidad del precio de una opción ante cambios en el activo o volatilidad.'],
         ['Valor Terminal', 'Valor estimado de una empresa más allá del periodo de proyección explícito.'],
+        ['YTM (Rendimiento al vencimiento)', 'Tasa que iguala el precio del bono con el valor presente de cupones y principal. Relación inversa con el precio.'],
+        ['Duración de Macaulay', 'Promedio ponderado del tiempo hasta recibir los flujos del bono. Mide sensibilidad del precio a cambios en la tasa.'],
+        ['Duración modificada', 'Macaulay / (1 + YTM). Aproximación: si YTM sube 1%, el precio baja ~Modificada %.'],
     ];
 
     autoTable(doc, {

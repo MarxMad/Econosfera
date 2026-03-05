@@ -44,7 +44,10 @@ import {
   SimuladorRegla72,
   SimuladorTasaEfectiva,
   SimuladorImpactoNoticias,
-  SimuladorCorrelacionFundamental
+  SimuladorCorrelacionFundamental,
+  SimuladorAnualidad,
+  SimuladorCAPM,
+  SimuladorDuracionBono
 } from "./simuladores-finanzas";
 
 export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (m: ModuloSimulador) => void; initialData?: any }) {
@@ -96,6 +99,7 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
           <div className="grid gap-6">
             <SimuladorVPVF initialData={initialData?.subType === "VPVF" ? initialData : undefined} />
             <SimuladorAmortizacion />
+            <SimuladorAnualidad />
             <SimuladorInteresSimpleCompuesto />
             <SimuladorRegla72 />
             <SimuladorTasaEfectiva />
@@ -111,6 +115,7 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
           <div className="grid gap-6">
             <SimuladorImpactoNoticias />
             <SimuladorCorrelacionFundamental />
+            <SimuladorCAPM />
           </div>
         )}
 
@@ -120,6 +125,7 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
             <SimuladorDCF />
             <SimuladorVPNTIR />
             <SimuladorWACC />
+            <SimuladorDuracionBono />
           </div>
         )}
 

@@ -43,6 +43,7 @@ export const exportarMacroAPdf = async (
         autoTable(doc, {
             startY: currentY,
             head: [['Variable Control', 'Valor', 'Métrica de Equilibrio', 'Resultado']],
+            styles: { overflow: 'linebreak' },
             body: [
                 ['Consumo Autónomo (C0)', data.multiplier.v.consumoAutonomo.toString(), 'Gasto Autónomo', data.multiplier.res.gastoAutonomo.toString()],
                 ['PMC', data.multiplier.v.propensionMarginalConsumo.toString(), 'Renta de Equilibrio (Y*)', data.multiplier.res.rentaEquilibrio.toString()],
@@ -86,6 +87,7 @@ export const exportarMacroAPdf = async (
         autoTable(doc, {
             startY: currentY,
             head: [['Variable IS-LM', 'Valor', 'Equilibrio r-Y', 'Resultado']],
+            styles: { overflow: 'linebreak' },
             body: [
                 ['Gasto Público (G)', data.islm.v.gastoPublico.toString(), 'Renta Equilibrio (Y*)', data.islm.res.rentaEquilibrio.toString()],
                 ['Impuestos (T)', data.islm.v.impuestos.toString(), 'Tasa Interés (r*)', `${data.islm.res.tasaEquilibrio}%`],

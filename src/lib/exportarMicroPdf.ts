@@ -43,6 +43,7 @@ export const exportarMicroAPdf = async (
         autoTable(doc, {
             startY: currentY,
             head: [['Ecuación / Parámetro', 'Valor', 'Resultado Equilibrio', 'Valor']],
+            styles: { overflow: 'linebreak' },
             body: [
                 ['Intercepto Demanda (a)', data.mercado.v.demandaIntercepto.toString(), 'Precio Equilibrio (P*)', data.mercado.res.precioEquilibrio.toString()],
                 ['Pendiente Demanda (b)', data.mercado.v.demandaPendiente.toString(), 'Cantidad Equilibrio (Q*)', data.mercado.res.cantidadEquilibrio.toString()],
@@ -117,6 +118,7 @@ export const exportarMicroAPdf = async (
         autoTable(doc, {
             startY: currentY,
             head: [['Demanda', 'Pendiente (b)', 'Nuevo P*', 'Nuevo Q*']],
+            styles: { overflow: 'linebreak' },
             body: variations.map(v => {
                 const newB = b * v;
                 const d = data.mercado.v.ofertaPendiente;

@@ -64,6 +64,7 @@ export async function exportarEscenarioPdf(
     theme: 'striped',
     headStyles: { fillColor: [37, 99, 235], textColor: 255 }, // blue-600
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: 'linebreak' },
   });
 
   // @ts-ignore
@@ -87,6 +88,7 @@ export async function exportarEscenarioPdf(
     theme: 'grid',
     headStyles: { fillColor: [15, 23, 42] }, // slate-900
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: 'linebreak' },
   });
 
   // @ts-ignore
@@ -238,6 +240,7 @@ export async function exportarComparadorEscenariosPdf(
     theme: "striped",
     headStyles: { fillColor: [37, 99, 235], textColor: 255 },
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
   });
   currentY = doc.lastAutoTable.finalY + 12;
 
@@ -264,6 +267,7 @@ export async function exportarComparadorEscenariosPdf(
     theme: "striped",
     headStyles: { fillColor: [220, 38, 38], textColor: 255 },
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
   });
   currentY = doc.lastAutoTable.finalY + 12;
 
@@ -291,6 +295,7 @@ export async function exportarComparadorEscenariosPdf(
     theme: "grid",
     headStyles: { fillColor: [15, 23, 42], textColor: 255 },
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
   });
   currentY = doc.lastAutoTable.finalY + 12;
 
@@ -370,6 +375,7 @@ export async function exportarTaylorPdf(vars: {
     theme: "striped",
     headStyles: { fillColor: [37, 99, 235], textColor: 255 },
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
   });
   currentY = doc.lastAutoTable.finalY + 12;
 
@@ -436,6 +442,7 @@ export async function exportarTasaRealNominalPdf(
     theme: "striped",
     headStyles: { fillColor: [37, 99, 235], textColor: 255 },
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
   });
   currentY = doc.lastAutoTable.finalY + 12;
 
@@ -505,6 +512,7 @@ export async function exportarPhillipsPdf(vars: {
     theme: "striped",
     headStyles: { fillColor: [220, 38, 38], textColor: 255 },
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
   });
   currentY = doc.lastAutoTable.finalY + 12;
 

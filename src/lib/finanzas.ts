@@ -254,6 +254,44 @@ export function serieFundamental(
   return out;
 }
 
+/** VP de anualidad ordinaria (pagos al final del periodo): A * [1 - (1+r)^-n] / r */
+export function vpAnualidad(pagoPeriodico: number, tasaPorPeriodo: number, numPeriodos: number): number {
+  if (numPeriodos <= 0) return 0;
+  if (Math.abs(tasaPorPeriodo) < 1e-10) return pagoPeriodico * numPeriodos;
+  return pagoPeriodico * (1 - Math.pow(1 + tasaPorPeriodo, -numPeriodos)) / tasaPorPeriodo;
+}
+
+/** VF de anualidad ordinaria: A * [(1+r)^n - 1] / r */
+export function vfAnualidad(pagoPeriodico: number, tasaPorPeriodo: number, numPeriodos: number): number {
+  if (numPeriodos <= 0) return 0;
+  if (Math.abs(tasaPorPeriodo) < 1e-10) return pagoPeriodico * numPeriodos;
+  return pagoPeriodico * (Math.pow(1 + tasaPorPeriodo, numPeriodos) - 1) / tasaPorPeriodo;
+}
+
+/** CAPM: rendimiento esperado E[R] = Rf + β(Rm - Rf). Rf, Rm en decimal (ej. 0.05 = 5%). */
+export function capm(tasaLibreRiesgo: number, rendimientoMercado: number, beta: number): number {
+  return tasaLibreRiesgo + beta * (rendimientoMercado - tasaLibreRiesgo);
+}
+
+/** Duración de Macaulay (años) para bono con cupones. Aproximación: sensibilidad del precio a cambios en YTM. */
+export function duracionMacaulay(
+  valorNominal: number,
+  tasaCupon: number,
+  ytm: number,
+  anos: number
+): number {
+  const cupon = valorNominal * tasaCupon;
+  let numerador = 0;
+  let denominador = 0;
+  for (let t = 1; t <= anos; t++) {
+    const cf = t === anos ? cupon + valorNominal : cupon;
+    const factor = Math.pow(1 + ytm, t);
+    numerador += t * (cf / factor);
+    denominador += cf / factor;
+  }
+  return denominador > 0 ? numerador / denominador : 0;
+}
+
 /** Genera serie de precios correlacionada con fundamental. correlacion 0-1. */
 export function seriePrecioCorrelacionada(
   fundamental: number[],

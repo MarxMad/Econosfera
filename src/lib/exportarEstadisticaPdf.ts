@@ -50,6 +50,7 @@ export async function exportarEstadisticaAPdf(data: EstadisticaExportData) {
     theme: "striped",
     headStyles: { fillColor: [67, 56, 202] },
     margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
   });
 
   // @ts-ignore
