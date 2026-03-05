@@ -9,7 +9,7 @@ interface InstruccionesSimuladorProps {
   defaultOpen?: boolean;
 }
 
-export function InstruccionesSimulador({ titulo = "Cómo usar este simulador", children, defaultOpen = true }: InstruccionesSimuladorProps) {
+export function InstruccionesSimulador({ titulo = "Cómo usar este simulador", children, defaultOpen = false }: InstruccionesSimuladorProps) {
   const [open, setOpen] = useState(defaultOpen);
   return (
     <div className="mb-6 rounded-xl border border-slate-200 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 overflow-hidden">

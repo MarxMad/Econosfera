@@ -57,6 +57,11 @@ export const SIMULATOR_ACCESS: Record<string, Record<string, PlanLevel>> = {
     depreciacion: "FREE",
     costos: "FREE",
     razones: "FREE",
+    estadoResultados: "FREE",
+    ecuacion: "FREE",
+    prorrateo: "FREE",
+    costoProduccion: "FREE",
+    puntoEquilibrio: "FREE",
   },
   blockchain: {
     halving: "FREE",

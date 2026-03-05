@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { InputLibre } from "../simuladores-finanzas/InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { costoFIFO, costoLIFO, costoPromedioPonderado, type MovimientoInventario } from "@/lib/contabilidad";
 
 export default function SimuladorCostosInventario() {
@@ -35,6 +36,14 @@ export default function SimuladorCostosInventario() {
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         Compara FIFO, LIFO y promedio ponderado con el mismo flujo de movimientos.
       </p>
+      <InstruccionesSimulador>
+        <p>Valuación de inventarios y costo de ventas. El método afecta utilidad e inventario final.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>FIFO:</strong> Primeras entradas, primeras salidas. Inventario final a costos recientes.</li>
+          <li><strong>LIFO:</strong> Últimas entradas, primeras salidas. Costo de ventas a costos recientes.</li>
+          <li><strong>Promedio:</strong> Costo unitario ponderado de todas las entradas disponibles.</li>
+        </ul>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6 mb-6">
         <div>
           <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Entradas</p>

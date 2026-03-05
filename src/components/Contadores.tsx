@@ -1,15 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, Package, BarChart3, Info } from "lucide-react";
-import { SimuladorDepreciacion, SimuladorCostosInventario, SimuladorRazonesFinancieras } from "./simuladores-contadores";
+import { Calculator, Package, BarChart3, Info, FileText, Scale, PieChart, Target } from "lucide-react";
+import {
+  SimuladorDepreciacion,
+  SimuladorCostosInventario,
+  SimuladorRazonesFinancieras,
+  SimuladorEstadoResultados,
+  SimuladorEcuacionContable,
+  SimuladorProrrateo,
+  SimuladorCostoProduccion,
+  SimuladorPuntoEquilibrio,
+} from "./simuladores-contadores";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
 
+type TabContadores = "depreciacion" | "costos" | "razones" | "estadoResultados" | "ecuacion" | "prorrateo" | "costoProduccion" | "puntoEquilibrio";
+
 export default function Contadores() {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState<"depreciacion" | "costos" | "razones">("depreciacion");
+  const [activeTab, setActiveTab] = useState<TabContadores>("depreciacion");
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
@@ -23,16 +34,21 @@ export default function Contadores() {
             Contabilidad
           </h2>
           <p className="text-slate-600 dark:text-slate-400 text-sm max-w-2xl italic">
-            Depreciación de activos, costos de inventario (FIFO, LIFO, promedio) y razones financieras. Herramientas para contadores y estudiantes de contaduría.
+            Depreciación, inventarios, razones financieras, estado de resultados, ecuación contable, prorrateo, costo de producción y punto de equilibrio. Herramientas para contadores y estudiantes de contaduría.
           </p>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
+      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl">
         {[
           { id: "depreciacion" as const, label: "Depreciación", icon: Calculator },
-          { id: "costos" as const, label: "Costos e inventario", icon: Package },
+          { id: "costos" as const, label: "Inventario (FIFO/LIFO)", icon: Package },
           { id: "razones" as const, label: "Razones financieras", icon: BarChart3 },
+          { id: "estadoResultados" as const, label: "Estado de resultados", icon: FileText },
+          { id: "ecuacion" as const, label: "Ecuación contable", icon: Scale },
+          { id: "prorrateo" as const, label: "Prorrateo", icon: PieChart },
+          { id: "costoProduccion" as const, label: "Costo producción", icon: Package },
+          { id: "puntoEquilibrio" as const, label: "Punto equilibrio", icon: Target },
         ].map((tab) => {
           const locked = !canAccess(session?.user?.plan, "contadores", tab.id);
           return (
@@ -59,6 +75,11 @@ export default function Contadores() {
         {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "depreciacion" && <SimuladorDepreciacion />}
         {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "costos" && <SimuladorCostosInventario />}
         {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "razones" && <SimuladorRazonesFinancieras />}
+        {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "estadoResultados" && <SimuladorEstadoResultados />}
+        {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "ecuacion" && <SimuladorEcuacionContable />}
+        {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "prorrateo" && <SimuladorProrrateo />}
+        {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "costoProduccion" && <SimuladorCostoProduccion />}
+        {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "puntoEquilibrio" && <SimuladorPuntoEquilibrio />}
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
@@ -67,9 +88,14 @@ export default function Contadores() {
           Conceptos contables
         </h3>
         <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-3">
-          <li><strong>Depreciación:</strong> Asignación sistemática del costo de un activo fijo a lo largo de su vida útil. Línea recta distribuye igual cada año; suma de dígitos carga más en los primeros años.</li>
-          <li><strong>FIFO / LIFO / Promedio:</strong> Métodos para valuar inventarios y costo de ventas. FIFO asume que lo primero que entra sale primero; LIFO lo último; promedio usa el costo unitario ponderado.</li>
-          <li><strong>Razones financieras:</strong> Indicadores de liquidez (capacidad de pago a corto plazo), solvencia (estructura de capital) y rentabilidad (retorno sobre ventas, activos y patrimonio).</li>
+          <li><strong>Depreciación:</strong> Línea recta, suma de dígitos o unidades de producción. Asignación del costo del activo a lo largo de su vida útil.</li>
+          <li><strong>FIFO / LIFO / Promedio:</strong> Métodos para valuar inventarios y costo de ventas.</li>
+          <li><strong>Razones financieras:</strong> Liquidez, solvencia y rentabilidad a partir del balance y estado de resultados.</li>
+          <li><strong>Estado de resultados:</strong> Ventas − Costo ventas = Utilidad bruta − Gastos = Utilidad neta.</li>
+          <li><strong>Ecuación contable:</strong> Activo = Pasivo + Capital. Base de la partida doble.</li>
+          <li><strong>Prorrateo:</strong> Distribución de costos indirectos entre departamentos según base (horas, unidades).</li>
+          <li><strong>Costo de producción:</strong> MP + MOD + CIF. Costo unitario = Costo total / Unidades.</li>
+          <li><strong>Punto de equilibrio:</strong> Cantidad donde ingresos = costos. Q = CF / (P − CVu).</li>
         </ul>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { InputLibre } from "../simuladores-finanzas/InputLibre";
+import { InstruccionesSimulador } from "../InstruccionesSimulador";
 import { calcularRazones } from "@/lib/contabilidad";
 
 export default function SimuladorRazonesFinancieras() {
@@ -56,6 +57,14 @@ export default function SimuladorRazonesFinancieras() {
       <p className="text-xs text-slate-600 dark:text-slate-400 mb-4">
         Liquidez, solvencia y rentabilidad a partir de estados financieros simplificados.
       </p>
+      <InstruccionesSimulador>
+        <p>Indicadores para analizar la salud financiera de una empresa.</p>
+        <ul className="list-disc list-inside space-y-1 ml-1">
+          <li><strong>Liquidez:</strong> Capacidad de pago a corto plazo. Liquidez corriente, prueba ácida.</li>
+          <li><strong>Solvencia:</strong> Estructura de capital. Endeudamiento = Pasivo / Activo.</li>
+          <li><strong>Rentabilidad:</strong> Retorno sobre ventas, activos y patrimonio.</li>
+        </ul>
+      </InstruccionesSimulador>
       <div className="grid md:grid-cols-2 gap-6 mb-6">
         <div>
           <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">Balance (simplificado)</p>

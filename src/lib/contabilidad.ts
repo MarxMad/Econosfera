@@ -204,6 +204,88 @@ export interface RazonesFinancieras {
   rentabilidadPatrimonio: number;
 }
 
+/** Depreciación por unidades de producción: (Costo - Residual) × (Unidades periodo / Unidades totales vida útil). */
+export function depreciacionUnidadesProduccion(
+  costo: number,
+  valorResidual: number,
+  unidadesTotalesVidaUtil: number,
+  unidadesPeriodo: number
+): { depreciacionPeriodo: number; porcentajeUsado: number } {
+  const base = costo - valorResidual;
+  if (unidadesTotalesVidaUtil <= 0) return { depreciacionPeriodo: 0, porcentajeUsado: 0 };
+  const depreciacionPeriodo = base * (unidadesPeriodo / unidadesTotalesVidaUtil);
+  const porcentajeUsado = (unidadesPeriodo / unidadesTotalesVidaUtil) * 100;
+  return { depreciacionPeriodo, porcentajeUsado };
+}
+
+/** Estado de resultados: estructura básica. */
+export interface EstadoResultados {
+  ventasNetas: number;
+  costoVentas: number;
+  utilidadBruta: number;
+  gastosOperacion: number;
+  utilidadOperacion: number;
+  otrosGastos: number;
+  utilidadAntesImpuestos: number;
+  impuestos: number;
+  utilidadNeta: number;
+  margenBruto: number;
+  margenOperativo: number;
+  margenNeto: number;
+}
+
+export function calcularEstadoResultados(
+  ventasNetas: number,
+  costoVentas: number,
+  gastosOperacion: number,
+  otrosGastos: number,
+  tasaImpuestos: number
+): EstadoResultados {
+  const utilidadBruta = ventasNetas - costoVentas;
+  const utilidadOperacion = utilidadBruta - gastosOperacion;
+  const utilidadAntesImpuestos = utilidadOperacion - otrosGastos;
+  const impuestos = Math.max(0, utilidadAntesImpuestos * tasaImpuestos);
+  const utilidadNeta = utilidadAntesImpuestos - impuestos;
+  return {
+    ventasNetas,
+    costoVentas,
+    utilidadBruta,
+    gastosOperacion,
+    utilidadOperacion,
+    otrosGastos,
+    utilidadAntesImpuestos,
+    impuestos,
+    utilidadNeta,
+    margenBruto: ventasNetas > 0 ? utilidadBruta / ventasNetas : 0,
+    margenOperativo: ventasNetas > 0 ? utilidadOperacion / ventasNetas : 0,
+    margenNeto: ventasNetas > 0 ? utilidadNeta / ventasNetas : 0,
+  };
+}
+
+/** Prorrateo de gastos: distribuir costos indirectos según base (horas, unidades, etc.). */
+export function prorrateoGastos(
+  costoTotal: number,
+  bases: number[]
+): { asignado: number[]; porcentaje: number[] } {
+  const totalBase = bases.reduce((s, b) => s + b, 0);
+  if (totalBase <= 0) return { asignado: bases.map(() => 0), porcentaje: bases.map(() => 0) };
+  const asignado = bases.map((b) => (b / totalBase) * costoTotal);
+  const porcentaje = bases.map((b) => (b / totalBase) * 100);
+  return { asignado, porcentaje };
+}
+
+/** Costo de producción: MP + MOD + CIF. Costo unitario = Costo total / Unidades producidas. */
+export function costoProduccion(
+  materiaPrima: number,
+  manoObraDirecta: number,
+  costosIndirectos: number,
+  unidadesProducidas: number
+): { costoTotal: number; costoUnitario: number } {
+  const costoTotal = materiaPrima + manoObraDirecta + costosIndirectos;
+  const costoUnitario = unidadesProducidas > 0 ? costoTotal / unidadesProducidas : 0;
+  return { costoTotal, costoUnitario };
+}
+
 /** Calcula razones financieras básicas a partir de estados simplificados. */
 export function calcularRazones(ef: EstadosFinancieros): RazonesFinancieras {
   const activoCorriente = ef.activoCorriente || 0;
