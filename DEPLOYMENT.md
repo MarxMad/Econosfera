@@ -32,8 +32,10 @@ Sigue estos pasos para lanzar la terminal Econosfera al mundo.
 
 ## 4. Pagos (Stripe)
 1. Entra al Dashboard de [Stripe](https://stripe.com).
-2. Crea tus productos (Estudiante Pro, etc.) como suscripciones recurrentes.
-3. Obtén las claves de API `STRIPE_SECRET_KEY` y `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
+2. Obtén las claves de API en Developers → API keys: `STRIPE_SECRET_KEY` y `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
+3. Crea tus productos (Estudiante Pro, Researcher) como suscripciones recurrentes y copia los **Price IDs** (`price_...`).
+4. Configura el webhook en Developers → Webhooks: URL `https://tudominio.com/api/stripe/webhook`, eventos `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, `invoice.paid`. Copia el **Signing secret**.
+5. **Guía completa:** Ver [docs/STRIPE_SETUP.md](docs/STRIPE_SETUP.md) para paso a paso detallado.
 
 ## 5. Hosting (Vercel)
 1. Conecta tu repositorio de GitHub a Vercel.
@@ -51,6 +53,8 @@ Sigue estos pasos para lanzar la terminal Econosfera al mundo.
    - `OPENAI_API_KEY`
    - `RESEND_API_KEY`
    - `STRIPE_SECRET_KEY`
+   - `STRIPE_PRICE_PRO` y `STRIPE_PRICE_RESEARCHER` (Price IDs de tus productos)
+   - `STRIPE_WEBHOOK_SECRET` (Signing secret del webhook)
 
 ## 6. Siguiente Nivel (Producción Real)
 - **Monitoreo**: Instala Sentry para capturar errores de usuarios reales.

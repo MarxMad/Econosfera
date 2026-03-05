@@ -49,6 +49,11 @@ export const SIMULATOR_ACCESS: Record<string, Record<string, PlanLevel>> = {
     regresion: "FREE",
     tcl: "PRO",
   },
+  contadores: {
+    depreciacion: "FREE",
+    costos: "FREE",
+    razones: "FREE",
+  },
   blockchain: {
     halving: "FREE",
     cadenabloques: "FREE",

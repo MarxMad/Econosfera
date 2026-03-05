@@ -3,10 +3,11 @@
 import { useState, useRef, useEffect } from "react";
 import { Menu, ChevronDown, Check } from "lucide-react";
 
-export type ModuloSimulador = "inflacion" | "macro" | "micro" | "finanzas" | "actuaria" | "estadistica" | "blockchain" | "glosario" | "formulas";
+export type ModuloSimulador = "inflacion" | "macro" | "micro" | "finanzas" | "contadores" | "actuaria" | "estadistica" | "blockchain" | "glosario" | "formulas";
 
 const TABS: { id: ModuloSimulador; label: string; short: string }[] = [
   { id: "finanzas", label: "Finanzas", short: "Finanzas" },
+  { id: "contadores", label: "Contadores", short: "Contadores" },
   { id: "inflacion", label: "Inflación y política monetaria", short: "Monetaria" },
   { id: "macro", label: "Macroeconomía", short: "Macro" },
   { id: "micro", label: "Microeconomía", short: "Micro" },

@@ -132,38 +132,12 @@ flowchart LR
 ## 5. Entorno global → México (flujo de riesgos)
 
 ```mermaid
-flowchart TB
-    subgraph global["Entorno global"]
-        G1[Tensiones comerciales EUA-China, aranceles]
-        G2[Conflictos geopolíticos]
-        G3[Actividad mundial: ritmo menor]
-        G4[Fed: pausa tras recortes, expectativa 3.4% 2026]
-    end
+flowchart LR
+    G[Entorno global:<br/>tensiones comerciales, geopolítica,<br/>actividad menor, Fed en pausa]
+    C[Canales:<br/>tipo de cambio, financiamiento,<br/>comercio e inversión]
+    M[México:<br/>PIB 4T mejor que 3T, 2025 0.6%,<br/>empleo atónico, mercados ordenados]
 
-    subgraph canales["Canales hacia México"]
-        CH1[Tipo de cambio: peso apreciado]
-        CH2[Financiamiento externo]
-        CH3[Comercio e inversión]
-    end
-
-    subgraph mx["México"]
-        M1[PIB 4T: mayor ritmo que 3T]
-        M2[2025: +0.6% | 2023: 3.1% | 2024: 1.4%]
-        M3[Empleo: atonía; desocupación baja]
-        M4[Mercados ordenados; tasas corto plazo a la baja]
-    end
-
-    G1 --> CH1
-    G2 --> CH2
-    G3 --> CH3
-    G4 --> CH1
-    CH1 --> M1
-    CH2 --> M2
-    CH3 --> M3
-    CH1 --> M4
-
-    style global fill:#2d2d2d,color:#fff
-    style mx fill:#0d47a1,color:#fff
+    G --> C --> M
 ```
 
 ---

@@ -69,15 +69,16 @@ export async function registerUser(formData: FormData) {
         const phone = (formData.get("phone") as string) || undefined;
         const occupation = (formData.get("occupation") as string) || undefined;
         const educationLevel = (formData.get("educationLevel") as string) || undefined;
-        const password = formData.get("password") as string;
+        const password = (formData.get("password") as string) || "";
+        const emailNorm = (formData.get("email") as string)?.trim().toLowerCase() || "";
 
-        if (!email || !password || !name) {
+        if (!emailNorm || !password || !name) {
             return { error: "Faltan campos obligatorios" };
         }
 
         // Verificar si existe
         const existingUser = await prisma.user.findUnique({
-            where: { email },
+            where: { email: emailNorm },
         });
 
         if (existingUser) {
@@ -87,12 +88,12 @@ export async function registerUser(formData: FormData) {
         // Hashing
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Crear usuario
+        // Crear usuario (email normalizado para login consistente)
         const user = await prisma.user.create({
             data: {
                 name,
                 lastName,
-                email,
+                email: emailNorm,
                 institution,
                 phone: phone || undefined,
                 occupation: occupation || undefined,
@@ -107,7 +108,7 @@ export async function registerUser(formData: FormData) {
 
         await prisma.verificationToken.create({
             data: {
-                identifier: email,
+                identifier: emailNorm,
                 token,
                 expires,
             },

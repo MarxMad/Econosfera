@@ -64,9 +64,12 @@ function SignInContent() {
 
         if (res?.error) {
             const isConfigError = /configuration|server|config/i.test(res.error);
+            const isGoogleAccount = res.error === "GoogleAccount";
             setError(isConfigError
                 ? "Error del servidor. Si eres el administrador, revisa en Vercel que NEXTAUTH_SECRET y NEXTAUTH_URL estén definidos y que la base de datos sea accesible."
-                : "Email o contraseña incorrectos");
+                : isGoogleAccount
+                    ? "Esta cuenta se creó con Google. Inicia sesión con el botón de Google."
+                    : "Email o contraseña incorrectos");
             setLoading(false);
         } else {
             router.push("/simulador");

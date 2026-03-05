@@ -79,31 +79,24 @@ flowchart LR
 ## 4. Ejemplo numérico (conceptual)
 
 ```mermaid
-flowchart TB
-    subgraph bono["Bono: valor nominal 100, cupón 5% anual"]
-        F[Flujos fijos: 5 cada año + 100 al vencimiento]
-    end
-
-    subgraph escenario1["Tasa mercado = 5%"]
-        E1[Precio ≈ 100<br/>Rendimiento = 5%]
-    end
-
-    subgraph escenario2["Tasa mercado = 7%"]
-        E2[Precio menor que 100<br/>Rendimiento sube a 7%]
-    end
-
-    subgraph escenario3["Tasa mercado = 3%"]
-        E3[Precio mayor que 100<br/>Rendimiento baja a 3%]
-    end
+flowchart LR
+    F[Bono: nominal 100, cupón 5%]
+    E1[Tasa 5%: precio cerca 100]
+    E2[Tasa 7%: precio bajo 100]
+    E3[Tasa 3%: precio sobre 100]
 
     F --> E1
     F --> E2
     F --> E3
+
+    style E1 fill:#e8f5e9
+    style E2 fill:#ffebee
+    style E3 fill:#e3f2fd
 ```
 
-- **Tasa = cupón:** precio cerca del valor nominal.
-- **Tasa > cupón:** precio por debajo del nominal (descuento).
-- **Tasa < cupón:** precio por encima del nominal (prima).
+- **Tasa = cupón (5%):** precio cerca del valor nominal.
+- **Tasa mayor al cupón (7%):** precio por debajo del nominal (descuento).
+- **Tasa menor al cupón (3%):** precio por encima del nominal (prima).
 
 ---
 

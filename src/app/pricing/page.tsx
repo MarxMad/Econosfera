@@ -24,7 +24,7 @@ const tiers = [
     },
     {
         name: "Estudiante Pro",
-        price: "$4.99",
+        price: "MXN 99",
         description: "Análisis avanzado para trabajos universitarios y tesis.",
         features: [
             "Exportaciones PDF ilimitadas",
@@ -41,7 +41,7 @@ const tiers = [
     },
     {
         name: "Investigador / Full",
-        price: "$12.99",
+        price: "MXN 199",
         description: "Para profesionales que requieren todas las herramientas institucionales.",
         features: [
             "Simulador Cripto: Hacking Smart Contracts",
@@ -51,8 +51,8 @@ const tiers = [
             "Personalización de marca en PDF",
             "Consultoría 1-on-1 Trimestral"
         ],
-        buttonText: "Contactar Ventas",
-        buttonHref: "mailto:pro@econosfera.com",
+        buttonText: "Suscribirse",
+        buttonHref: "/checkout?plan=researcher",
         mostPopular: false,
         highlight: false,
     }

@@ -15,6 +15,7 @@ import BlockchainEcon from "@/components/BlockchainEcon";
 import Glosario from "@/components/Glosario";
 import Formulas from "@/components/Formulas";
 import Actuaria from "@/components/Actuaria";
+import Contadores from "@/components/Contadores";
 import Estadistica from "@/components/Estadistica";
 import Inflacion from "@/components/Inflacion";
 import type { VariablesSimulacion } from "@/lib/types";
@@ -120,6 +121,16 @@ export default function SimuladorApp() {
           </>
         )}
 
+        {modulo === "contadores" && (
+          <>
+            <Contadores />
+            <div className="mt-6">
+              <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
+                <ReferenciasAcademicas modulo="finanzas" />
+              </SeccionFuentesColapsable>
+            </div>
+          </>
+        )}
         {modulo === "actuaria" && (
           <>
             <Actuaria />

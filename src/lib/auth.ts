@@ -53,12 +53,18 @@ export const authOptions: NextAuthOptions = {
                     throw new Error("Invalid credentials");
                 }
 
-                const user = await prisma.user.findUnique({
-                    where: { email: credentials.email },
+                const emailNorm = String(credentials.email).trim().toLowerCase();
+                const user = await prisma.user.findFirst({
+                    where: {
+                        email: { equals: emailNorm, mode: "insensitive" },
+                    },
                 });
 
-                if (!user || !user.password) {
+                if (!user) {
                     throw new Error("User not found");
+                }
+                if (!user.password) {
+                    throw new Error("GoogleAccount");
                 }
 
                 const isValid = await bcrypt.compare(credentials.password, user.password);
