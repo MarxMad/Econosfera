@@ -15,7 +15,7 @@ interface GlosarioProps {
 }
 
 const MODULO_LABEL: Record<string, string> = {
-  inflacion: "Inflación", monetaria: "Teoría monetaria", macro: "Macro", micro: "Micro", finanzas: "Finanzas", general: "General",
+  inflacion: "Inflación", monetaria: "Teoría monetaria", macro: "Macro", micro: "Micro", finanzas: "Finanzas", contadores: "Contabilidad", general: "General",
   blockchain: "Blockchain", actuaria: "Actuaria", estadistica: "Estadística",
 };
 

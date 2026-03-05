@@ -20,7 +20,7 @@ export default function Contadores() {
         <div className="relative z-10">
           <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-3 flex items-center gap-3">
             <Calculator className="w-8 h-8 text-teal-600 dark:text-teal-400" />
-            Contadores
+            Contabilidad
           </h2>
           <p className="text-slate-600 dark:text-slate-400 text-sm max-w-2xl italic">
             Depreciación de activos, costos de inventario (FIFO, LIFO, promedio) y razones financieras. Herramientas para contadores y estudiantes de contaduría.
@@ -54,7 +54,7 @@ export default function Contadores() {
 
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
         {!canAccess(session?.user?.plan, "contadores", activeTab) && getRequiredPlan("contadores", activeTab) && (
-          <SimulatorLocked requiredPlan={getRequiredPlan("contadores", activeTab)!} moduleName="Contadores" />
+          <SimulatorLocked requiredPlan={getRequiredPlan("contadores", activeTab)!} moduleName="Contabilidad" />
         )}
         {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "depreciacion" && <SimuladorDepreciacion />}
         {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "costos" && <SimuladorCostosInventario />}

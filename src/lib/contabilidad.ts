@@ -1,5 +1,5 @@
 /**
- * Cálculos para el módulo Contadores:
+ * Cálculos para el módulo Contabilidad:
  * Depreciación (línea recta, suma de dígitos), costos de inventario (FIFO, LIFO, promedio), razones financieras.
  */
 

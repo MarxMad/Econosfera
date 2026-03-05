@@ -181,3 +181,99 @@ export function portafolio2(
   const volatilidad = Math.sqrt(Math.max(0, varianza));
   return { retorno, volatilidad };
 }
+
+/** Interés simple: VF = VP(1 + r*n). Interés compuesto: VF = VP(1+r)^n. */
+export function valorFuturoSimple(VP: number, tasaDecimal: number, anos: number): number {
+  return VP * (1 + tasaDecimal * anos);
+}
+
+/** Regla del 72: años para duplicar ≈ 72 / tasa (en %). */
+export function regla72(tasaPct: number): number {
+  if (tasaPct <= 0) return Infinity;
+  return 72 / tasaPct;
+}
+
+/** Tasa efectiva anual: (1 + i/n)^n - 1. i = tasa nominal anual decimal, n = capitalizaciones por año. */
+export function tasaEfectivaAnual(tasaNominalDecimal: number, capitalizacionesPorAno: number): number {
+  if (capitalizacionesPorAno <= 0) return 0;
+  return Math.pow(1 + tasaNominalDecimal / capitalizacionesPorAno, capitalizacionesPorAno) - 1;
+}
+
+/** Impacto de noticias: surprise = resultado - expectativa. Impacto % en precio ≈ sensibilidad × surprise.
+ * sensibilidad: cuántos % cambia el precio por cada unidad de surprise (ej. 2 = 2% por cada 1 de surprise).
+ * Retorna: surprise, impactoPct, precioNuevo */
+export function impactoNoticias(
+  precioAnterior: number,
+  expectativa: number,
+  resultadoReal: number,
+  sensibilidad: number
+): { surprise: number; impactoPct: number; precioNuevo: number } {
+  const surprise = resultadoReal - expectativa;
+  const impactoPct = sensibilidad * surprise;
+  const precioNuevo = precioAnterior * (1 + impactoPct / 100);
+  return { surprise, impactoPct, precioNuevo };
+}
+
+/** Correlación de Pearson entre dos series. */
+export function correlacionPearson(x: number[], y: number[]): number {
+  const n = Math.min(x.length, y.length);
+  if (n < 2) return 0;
+  const mx = x.slice(0, n).reduce((a, b) => a + b, 0) / n;
+  const my = y.slice(0, n).reduce((a, b) => a + b, 0) / n;
+  let num = 0, dx2 = 0, dy2 = 0;
+  for (let i = 0; i < n; i++) {
+    const dx = x[i] - mx, dy = y[i] - my;
+    num += dx * dy;
+    dx2 += dx * dx;
+    dy2 += dy * dy;
+  }
+  const den = Math.sqrt(dx2 * dy2);
+  return den < 1e-12 ? 0 : num / den;
+}
+
+/** Pseudo-aleatorio determinista para gráficos reproducibles. */
+function pseudoRandom(seed: number): number {
+  const x = Math.sin(seed * 9999) * 10000;
+  return x - Math.floor(x);
+}
+
+/** Genera serie fundamental con tendencia + ruido. base, crecimiento anual %, ruido %. */
+export function serieFundamental(
+  base: number,
+  crecimientoPct: number,
+  ruidoPct: number,
+  periodos: number,
+  seed = 42
+): number[] {
+  const out: number[] = [];
+  for (let t = 0; t < periodos; t++) {
+    const tendencia = base * Math.pow(1 + crecimientoPct / 100, t);
+    const ruido = (pseudoRandom(seed + t * 7) - 0.5) * 2 * (ruidoPct / 100) * tendencia;
+    out.push(Math.max(0.01, tendencia + ruido));
+  }
+  return out;
+}
+
+/** Genera serie de precios correlacionada con fundamental. correlacion 0-1. */
+export function seriePrecioCorrelacionada(
+  fundamental: number[],
+  precioBase: number,
+  correlacion: number,
+  ruidoPct: number,
+  seed = 123
+): number[] {
+  const n = fundamental.length;
+  const fMin = Math.min(...fundamental);
+  const fMax = Math.max(...fundamental);
+  const fRange = fMax - fMin || 1;
+  const fNorm = fundamental.map((f) => (f - fMin) / fRange);
+  const out: number[] = [];
+  let prev = precioBase;
+  for (let i = 0; i < n; i++) {
+    const compFund = correlacion * (fNorm[i] - 0.5) * 0.15;
+    const compRuido = (1 - correlacion) * (pseudoRandom(seed + i * 13) - 0.5) * (ruidoPct / 100);
+    prev = Math.max(1, prev * (1 + compFund + compRuido));
+    out.push(prev);
+  }
+  return out;
+}

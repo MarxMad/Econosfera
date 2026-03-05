@@ -7,7 +7,7 @@ export type ModuloSimulador = "inflacion" | "monetaria" | "macro" | "micro" | "f
 
 const TABS: { id: ModuloSimulador; label: string; short: string }[] = [
   { id: "finanzas", label: "Finanzas", short: "Finanzas" },
-  { id: "contadores", label: "Contadores", short: "Contadores" },
+  { id: "contadores", label: "Contabilidad", short: "Contab." },
   { id: "inflacion", label: "Inflación", short: "Inflación" },
   { id: "monetaria", label: "Teoría monetaria", short: "Monetaria" },
   { id: "macro", label: "Macroeconomía", short: "Macro" },

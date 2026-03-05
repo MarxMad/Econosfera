@@ -13,11 +13,14 @@ export async function analizarMinutaBanxico(formData: FormData) {
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { credits: true, emailVerified: true }
+    select: { credits: true, emailVerified: true, plan: true }
   });
 
   if (!user) {
     throw new Error("Usuario no encontrado.");
+  }
+  if ((user.plan ?? "FREE").toUpperCase() !== "RESEARCHER") {
+    throw new Error("El análisis de minutas con IA está disponible solo para el plan Researcher. Actualiza tu suscripción para acceder.");
   }
   if (!user.emailVerified) {
     throw new Error("Verifica tu correo electrónico para usar el análisis con IA. Revisa tu bandeja de entrada.");

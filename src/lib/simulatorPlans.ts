@@ -40,6 +40,7 @@ export const SIMULATOR_ACCESS: Record<string, Record<string, PlanLevel>> = {
   finanzas: {
     basico: "FREE",
     mapas: "FREE",
+    fundamental: "FREE",
     valuacion: "PRO",
     pro: "PRO",
   },

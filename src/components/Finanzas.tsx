@@ -14,7 +14,8 @@ import {
   LineChart,
   BookOpen,
   Info,
-  Lock
+  Lock,
+  Newspaper
 } from "lucide-react";
 import type { ModuloSimulador } from "./NavSimuladores";
 import { useSession } from "next-auth/react";
@@ -38,12 +39,17 @@ import {
   SimuladorDCF,
   SimuladorMarkowitz,
   SimuladorBlackScholes,
-  SimuladorYieldCurve
+  SimuladorYieldCurve,
+  SimuladorInteresSimpleCompuesto,
+  SimuladorRegla72,
+  SimuladorTasaEfectiva,
+  SimuladorImpactoNoticias,
+  SimuladorCorrelacionFundamental
 } from "./simuladores-finanzas";
 
 export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (m: ModuloSimulador) => void; initialData?: any }) {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState<"basico" | "valuacion" | "pro" | "mapas">("basico");
+  const [activeTab, setActiveTab] = useState<"basico" | "fundamental" | "valuacion" | "pro" | "mapas">("basico");
 
   return (
     <div className="space-y-6">
@@ -59,6 +65,7 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
       <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
         {[
           { id: 'basico', label: 'Básico (VP/VF/Bonos)', icon: Calculator },
+          { id: 'fundamental', label: 'Análisis Fundamental', icon: Newspaper },
           { id: 'valuacion', label: 'Valuación y DCF', icon: BarChart2 },
           { id: 'pro', label: 'Portafolios y Derivados', icon: PieChart },
           { id: 'mapas', label: 'Estructura y Flujos', icon: Layers },
@@ -89,11 +96,21 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
           <div className="grid gap-6">
             <SimuladorVPVF initialData={initialData?.subType === "VPVF" ? initialData : undefined} />
             <SimuladorAmortizacion />
+            <SimuladorInteresSimpleCompuesto />
+            <SimuladorRegla72 />
+            <SimuladorTasaEfectiva />
             <div className="grid md:grid-cols-2 gap-6">
               <SimuladorBono initialData={initialData?.subType === "BONO" ? initialData : undefined} />
               <SimuladorCetes initialData={initialData?.subType === "CETES" ? initialData : undefined} />
             </div>
             <SimuladorAhorro initialData={initialData?.subType === "AHORRO" ? initialData : undefined} />
+          </div>
+        )}
+
+        {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === 'fundamental' && (
+          <div className="grid gap-6">
+            <SimuladorImpactoNoticias />
+            <SimuladorCorrelacionFundamental />
           </div>
         )}
 
@@ -110,10 +127,8 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
           <div className="grid gap-6">
             <SimuladorMarkowitz />
             <SimuladorPortafolio2 />
-            <div className="grid md:grid-cols-2 gap-6">
-              <SimuladorBlackScholes />
-              <SimuladorYieldCurve />
-            </div>
+            <SimuladorBlackScholes />
+            <SimuladorYieldCurve />
             <SimuladorForward />
             <SimuladorBreakEven />
           </div>
