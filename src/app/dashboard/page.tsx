@@ -83,8 +83,8 @@ export default function DashboardPage() {
             <div className="grid lg:grid-cols-3 gap-8">
                 {/* Left Column: Stats, Profile & Credits */}
                 <div className="space-y-6">
-                    {/* Tarjeta de Perfil (foto, datos, verificación) */}
-                    <ProfileCard />
+                    {/* Tarjeta de Perfil (datos, verificación) */}
+                    <ProfileCard onCreditsClaimed={loadData} />
 
                     {/* Tarjeta de Créditos e IA */}
                     <div className="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
@@ -93,7 +93,7 @@ export default function DashboardPage() {
                         </div>
                         <h3 className="text-sm font-semibold uppercase tracking-wider opacity-80 mb-1 relative z-10">IA & Análisis</h3>
                         <div className="flex items-end gap-2 mb-4 relative z-10">
-                            <p className="text-5xl font-black">{stats?.credits !== undefined ? stats.credits : session.user.credits}</p>
+                            <p className="text-5xl font-black">{session.user.credits ?? stats?.credits ?? 0}</p>
                             <span className="text-blue-200 mb-1">créditos</span>
                         </div>
 

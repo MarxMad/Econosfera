@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 import {
     CheckCircle2,
@@ -12,14 +12,13 @@ import {
     Phone,
     Briefcase,
     GraduationCap,
-    Camera,
     Save,
     ChevronUp,
     Pencil,
     MailCheck,
     Gift,
 } from "lucide-react";
-import { getProfile, updateProfile, uploadProfileImage, resendVerification } from "@/lib/actions/authActions";
+import { getProfile, updateProfile, resendVerification } from "@/lib/actions/authActions";
 
 const NIVELES_ESTUDIOS = [
     { value: "", label: "Seleccionar" },
@@ -44,17 +43,20 @@ type ProfileData = {
     unamCreditsClaimedAt: Date | null;
 } | null;
 
-export default function ProfileCard() {
+type ProfileCardProps = {
+    onCreditsClaimed?: () => void;
+};
+
+export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
     const { data: session, status, update } = useSession();
     const [profile, setProfile] = useState<ProfileData>(null);
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const [uploadingPhoto, setUploadingPhoto] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
     const [emailLoading, setEmailLoading] = useState(false);
     const [editingProfile, setEditingProfile] = useState(false);
     const [claimingUnam, setClaimingUnam] = useState(false);
-    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     const [form, setForm] = useState({
         name: "",
@@ -106,35 +108,6 @@ export default function ProfileCard() {
         }
     };
 
-    const handlePhotoChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        const userId = session?.user?.id;
-        if (!file || !userId) return;
-        if (!file.type.startsWith("image/")) {
-            alert("Selecciona una imagen (JPG, PNG, etc.).");
-            return;
-        }
-        setUploadingPhoto(true);
-        const formData = new FormData();
-        formData.set("userId", userId);
-        formData.set("file", file);
-        const uploadRes = await uploadProfileImage(formData);
-        if ("error" in uploadRes) {
-            alert(uploadRes.error);
-            setUploadingPhoto(false);
-            return;
-        }
-        const updateRes = await updateProfile(userId, { image: uploadRes.url });
-        if (updateRes.success) {
-            setProfile((prev) => (prev ? { ...prev, image: uploadRes.url } : null));
-            await update();
-        } else {
-            alert(updateRes.error);
-        }
-        setUploadingPhoto(false);
-        e.target.value = "";
-    };
-
     const handleResendEmail = async () => {
         setEmailLoading(true);
         const res = await resendVerification();
@@ -163,6 +136,15 @@ export default function ProfileCard() {
 
     return (
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg relative overflow-hidden">
+            {/* Toast coqueto: recompensa reclamada */}
+            {toastMessage && (
+                <div
+                    className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-white text-sm font-bold shadow-lg shadow-amber-500/30 ring-2 ring-amber-300/50"
+                    role="status"
+                >
+                    {toastMessage}
+                </div>
+            )}
             <div className="absolute top-0 right-0 p-4">
                 {isVerified ? (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-500 border border-emerald-200 dark:border-emerald-800">
@@ -179,31 +161,15 @@ export default function ProfileCard() {
 
             {/* Vista compacta: avatar + nombre + correo + botón editar */}
             <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <div
-                    className="relative group shrink-0"
-                    onClick={() => fileInputRef.current?.click()}
-                >
-                    <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        className="hidden"
-                        onChange={handlePhotoChange}
-                        disabled={uploadingPhoto}
-                    />
+                <div className="shrink-0">
                     <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 p-0.5 shadow-md overflow-hidden">
                         <div className="w-full h-full rounded-2xl bg-slate-900 flex items-center justify-center text-xl sm:text-2xl font-black text-white overflow-hidden">
-                            {uploadingPhoto ? (
-                                <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 animate-spin text-white" />
-                            ) : avatarUrl ? (
+                            {avatarUrl ? (
                                 <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
                             ) : (
                                 displayName.charAt(0).toUpperCase()
                             )}
                         </div>
-                    </div>
-                    <div className="absolute inset-0 rounded-2xl bg-slate-900/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                        <Camera className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
                 </div>
 
@@ -362,6 +328,12 @@ export default function ProfileCard() {
                                                         p ? { ...p, unamCreditsClaimedAt: new Date() } : null
                                                     );
                                                     await update();
+                                                    onCreditsClaimed?.();
+                                                    setToastMessage("¡10 créditos extra añadidos! 🎉");
+                                                    setTimeout(() => setToastMessage(null), 3500);
+                                                } else if (data.error?.includes("Ya reclamaste")) {
+                                                    setToastMessage("¡Ya reclamaste esta recompensa! 😊");
+                                                    setTimeout(() => setToastMessage(null), 3500);
                                                 } else {
                                                     alert(data.error || "No se pudo reclamar");
                                                 }
