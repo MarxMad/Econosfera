@@ -30,7 +30,7 @@ function SignOutButton({ variant = "icon", onClose }: { variant?: "icon" | "full
     }
 
     return (
-        <form action="/api/auth/signout" method="POST" className={variant === "full" ? "w-full" : "inline"} onSubmit={onClose}>
+        <form action="/api/auth/signout" method="POST" className={variant === "full" ? "w-full" : "inline"}>
             <input type="hidden" name="callbackUrl" value="/" />
             <input type="hidden" name="csrfToken" value={csrfToken} />
             <button
