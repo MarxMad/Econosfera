@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { checkAuthRateLimit } from "@/lib/rateLimit";
 import bcrypt from "bcryptjs";
 
 export async function POST(request: Request) {
+    const rateLimitRes = await checkAuthRateLimit(request);
+    if (rateLimitRes) return rateLimitRes;
+
     try {
         const body = await request.json();
         const email = String(body.email || "").trim().toLowerCase();

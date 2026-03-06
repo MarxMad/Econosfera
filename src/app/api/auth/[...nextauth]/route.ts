@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import { authOptions } from "@/lib/auth";
+import { checkAuthRateLimit } from "@/lib/rateLimit";
 
 if (process.env.NODE_ENV === "production" && !process.env.NEXTAUTH_SECRET) {
   console.error(
@@ -9,4 +10,10 @@ if (process.env.NODE_ENV === "production" && !process.env.NEXTAUTH_SECRET) {
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export async function POST(req: Request) {
+  const rateLimitRes = await checkAuthRateLimit(req);
+  if (rateLimitRes) return rateLimitRes;
+  return handler(req);
+}
+
+export { handler as GET };

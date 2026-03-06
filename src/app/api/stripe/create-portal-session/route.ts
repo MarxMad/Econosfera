@@ -3,9 +3,13 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { stripe, isStripeConfigured } from "@/lib/stripe";
+import { checkStripeRateLimit } from "@/lib/rateLimit";
 
 /** Crea una sesión del Stripe Customer Portal (galería de pago: gestionar método de pago, facturas, cancelar). */
-export async function POST() {
+export async function POST(request: Request) {
+    const rateLimitRes = await checkStripeRateLimit(request);
+    if (rateLimitRes) return rateLimitRes;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
         return NextResponse.json({ error: "Debes iniciar sesión" }, { status: 401 });

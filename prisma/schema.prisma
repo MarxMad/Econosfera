@@ -65,8 +65,23 @@ model User {
   plan          String    @default("FREE") // 'FREE', 'PRO', 'RESEARCHER'
   stripeCustomerId     String?   // Stripe Customer para portal de facturación
   stripeSubscriptionId String?   // Stripe Subscription (suscripción activa)
+  emailMarketingOptIn Boolean   @default(false)  // Recibir recordatorios, blog, promociones
+  emailCampaignLogs   EmailCampaignLog[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+// Registro de correos enviados (evita duplicados y permite throttling)
+model EmailCampaignLog {
+  id           String   @id @default(cuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campaignType String   // 'reminder' | 'blog' | 'promo'
+  slugOrId     String?  // Para blog: slug del post. Para promo: id de campaña
+  sentAt       DateTime @default(now())
+
+  @@index([userId, campaignType])
+  @@index([userId, campaignType, slugOrId])
 }
 
 model Quiz {
@@ -187,4 +202,22 @@ model ExportLog {
   type      String   // 'PDF', 'LINK', 'PRINT'
   module    String   // 'VALUACION', 'VPVF', etc.
   createdAt DateTime @default(now())
+}
+
+// Idempotencia: evita procesar el mismo evento Stripe dos veces
+model StripeWebhookEvent {
+  id        String   @id @default(cuid())
+  eventId   String   @unique  // evt_xxx de Stripe
+  type      String   // checkout.session.completed, invoice.paid, etc.
+  createdAt DateTime @default(now())
+}
+
+// Rate limiting (usa Supabase/PostgreSQL existente)
+model RateLimit {
+  id         String   @id @default(cuid())
+  key        String   @unique  // "ip:auth" o "ip:stripe"
+  count      Int      @default(0)
+  windowStart DateTime @default(now())
+
+  @@index([key])
 }

@@ -16,6 +16,7 @@ import {
     Save,
     ChevronUp,
     Pencil,
+    MailCheck,
 } from "lucide-react";
 import { getProfile, updateProfile, uploadProfileImage, resendVerification } from "@/lib/actions/authActions";
 
@@ -38,6 +39,7 @@ type ProfileData = {
     occupation: string | null;
     educationLevel: string | null;
     emailVerified: Date | null;
+    emailMarketingOptIn: boolean;
 } | null;
 
 export default function ProfileCard() {
@@ -323,6 +325,43 @@ export default function ProfileCard() {
                     </button>
                 </div>
             )}
+
+            {/* Preferencias de correo: recordatorios, blog, promociones */}
+            <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                <div className="flex items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                        <MailCheck className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                        <div>
+                            <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Notificaciones por correo</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Recordatorios, nuevos artículos del blog y promociones</p>
+                        </div>
+                    </div>
+                    <button
+                        type="button"
+                        role="switch"
+                        aria-checked={profile?.emailMarketingOptIn ?? false}
+                        onClick={async () => {
+                            if (!session?.user?.id) return;
+                            const next = !(profile?.emailMarketingOptIn ?? false);
+                            const res = await updateProfile(session.user.id, { emailMarketingOptIn: next });
+                            if (res.success) {
+                                setProfile((p) => (p ? { ...p, emailMarketingOptIn: next } : null));
+                            } else {
+                                alert(res.error);
+                            }
+                        }}
+                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                            profile?.emailMarketingOptIn ? "bg-blue-600" : "bg-slate-200 dark:bg-slate-700"
+                        }`}
+                    >
+                        <span
+                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition ${
+                                profile?.emailMarketingOptIn ? "translate-x-5" : "translate-x-1"
+                            }`}
+                        />
+                    </button>
+                </div>
+            </div>
 
             {!isVerified && (
                 <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-100 dark:border-amber-900/50">

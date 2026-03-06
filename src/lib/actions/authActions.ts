@@ -138,6 +138,7 @@ export async function getProfile(userId: string) {
                 occupation: true,
                 educationLevel: true,
                 emailVerified: true,
+                emailMarketingOptIn: true,
             },
         });
         return user;
@@ -155,6 +156,7 @@ export async function updateProfile(userId: string, data: {
     occupation?: string;
     educationLevel?: string;
     image?: string | null;
+    emailMarketingOptIn?: boolean;
 }) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.id || session.user.id !== userId) {
@@ -171,6 +173,7 @@ export async function updateProfile(userId: string, data: {
                 ...(data.occupation !== undefined && { occupation: data.occupation }),
                 ...(data.educationLevel !== undefined && { educationLevel: data.educationLevel }),
                 ...(data.image !== undefined && { image: data.image }),
+                ...(data.emailMarketingOptIn !== undefined && { emailMarketingOptIn: data.emailMarketingOptIn }),
             },
         });
         return { success: true };

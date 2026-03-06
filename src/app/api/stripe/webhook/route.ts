@@ -28,6 +28,14 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Firma inválida" }, { status: 400 });
     }
 
+    // Idempotencia: si ya procesamos este evento, retornar 200 sin hacer nada
+    const existing = await prisma.stripeWebhookEvent.findUnique({
+        where: { eventId: event.id },
+    });
+    if (existing) {
+        return NextResponse.json({ received: true });
+    }
+
     try {
         switch (event.type) {
             case "checkout.session.completed": {
@@ -35,14 +43,23 @@ export async function POST(request: Request) {
                 const userId = session.metadata?.userId;
                 const plan = (session.metadata?.plan || "PRO") as string;
                 if (userId && (plan === "PRO" || plan === "RESEARCHER")) {
-                    const credits = CREDITS_PER_MONTH[plan];
-                    await prisma.user.update({
-                        where: { id: userId },
-                        data: {
-                            plan,
-                            credits: { increment: credits },
-                            stripeSubscriptionId: session.subscription as string | null,
-                        },
+                    const credits = CREDITS_PER_MONTH[plan as keyof typeof CREDITS_PER_MONTH];
+                    await prisma.$transaction([
+                        prisma.user.update({
+                            where: { id: userId },
+                            data: {
+                                plan,
+                                credits: { increment: credits },
+                                stripeSubscriptionId: session.subscription as string | null,
+                            },
+                        }),
+                        prisma.stripeWebhookEvent.create({
+                            data: { eventId: event.id, type: event.type },
+                        }),
+                    ]);
+                } else {
+                    await prisma.stripeWebhookEvent.create({
+                        data: { eventId: event.id, type: event.type },
                     });
                 }
                 break;
@@ -58,12 +75,21 @@ export async function POST(request: Request) {
                 if (user) {
                     const isActive = sub.status === "active" || sub.status === "trialing";
                     const planFromMetadata = (sub.metadata?.plan as string) || "PRO";
-                    await prisma.user.update({
-                        where: { id: user.id },
-                        data: {
-                            plan: isActive ? planFromMetadata : "FREE",
-                            stripeSubscriptionId: isActive ? sub.id : null,
-                        },
+                    await prisma.$transaction([
+                        prisma.user.update({
+                            where: { id: user.id },
+                            data: {
+                                plan: isActive ? planFromMetadata : "FREE",
+                                stripeSubscriptionId: isActive ? sub.id : null,
+                            },
+                        }),
+                        prisma.stripeWebhookEvent.create({
+                            data: { eventId: event.id, type: event.type },
+                        }),
+                    ]);
+                } else {
+                    await prisma.stripeWebhookEvent.create({
+                        data: { eventId: event.id, type: event.type },
                     });
                 }
                 break;
@@ -74,15 +100,26 @@ export async function POST(request: Request) {
                 if (!subId) break;
                 const sub = await stripe.subscriptions.retrieve(subId as string);
                 const customerId = sub.customer as string;
+                const plan = (sub.metadata?.plan as string) || "PRO";
+                if (plan !== "PRO" && plan !== "RESEARCHER") break;
                 const user = await prisma.user.findFirst({
                     where: { stripeCustomerId: customerId },
-                    select: { id: true, plan: true },
+                    select: { id: true },
                 });
-                if (user && (user.plan === "PRO" || user.plan === "RESEARCHER")) {
-                    const creditsToAdd = CREDITS_PER_MONTH[user.plan];
-                    await prisma.user.update({
-                        where: { id: user.id },
-                        data: { credits: { increment: creditsToAdd } },
+                if (user) {
+                    const creditsToAdd = CREDITS_PER_MONTH[plan as keyof typeof CREDITS_PER_MONTH];
+                    await prisma.$transaction([
+                        prisma.user.update({
+                            where: { id: user.id },
+                            data: { credits: { increment: creditsToAdd } },
+                        }),
+                        prisma.stripeWebhookEvent.create({
+                            data: { eventId: event.id, type: event.type },
+                        }),
+                    ]);
+                } else {
+                    await prisma.stripeWebhookEvent.create({
+                        data: { eventId: event.id, type: event.type },
                     });
                 }
                 break;

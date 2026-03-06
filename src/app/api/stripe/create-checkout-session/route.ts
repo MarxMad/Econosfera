@@ -3,8 +3,12 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { stripe, STRIPE_PRICE_PRO, STRIPE_PRICE_RESEARCHER, isStripeConfigured } from "@/lib/stripe";
+import { checkStripeRateLimit } from "@/lib/rateLimit";
 
 export async function POST(request: Request) {
+    const rateLimitRes = await checkStripeRateLimit(request);
+    if (rateLimitRes) return rateLimitRes;
+
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) {
         return NextResponse.json({ error: "Debes iniciar sesión" }, { status: 401 });
