@@ -26,17 +26,54 @@ export const authOptions: NextAuthOptions = {
                 loginToken: { label: "Login Token", type: "text" },
             },
             async authorize(credentials) {
-                // Inicio de sesión con token de un solo uso (tras verificar correo)
-                if (credentials?.loginToken) {
-                    const tokenRecord = await prisma.verificationToken.findUnique({
-                        where: { token: credentials.loginToken },
+                try {
+                    // Inicio de sesión con token de un solo uso (tras verificar correo)
+                    if (credentials?.loginToken) {
+                        const tokenRecord = await prisma.verificationToken.findUnique({
+                            where: { token: credentials.loginToken },
+                        });
+                        if (!tokenRecord || tokenRecord.expires < new Date()) return null;
+                        const user = await prisma.user.findUnique({
+                            where: { email: tokenRecord.identifier },
+                        });
+                        await prisma.verificationToken.delete({ where: { token: credentials.loginToken } }).catch(() => {});
+                        if (!user) return null;
+                        return {
+                            id: user.id,
+                            email: user.email,
+                            name: user.name,
+                            image: user.image,
+                            credits: user.credits,
+                            exportsCount: (user as any).exportsCount,
+                            plan: (user as any).plan,
+                            emailVerified: user.emailVerified,
+                        };
+                    }
+
+                    if (!credentials?.email || !credentials?.password) {
+                        throw new Error("Invalid credentials");
+                    }
+
+                    const emailNorm = String(credentials.email).trim().toLowerCase();
+                    const user = await prisma.user.findFirst({
+                        where: {
+                            email: { equals: emailNorm, mode: "insensitive" },
+                        },
                     });
-                    if (!tokenRecord || tokenRecord.expires < new Date()) return null;
-                    const user = await prisma.user.findUnique({
-                        where: { email: tokenRecord.identifier },
-                    });
-                    await prisma.verificationToken.delete({ where: { token: credentials.loginToken } }).catch(() => {});
-                    if (!user) return null;
+
+                    if (!user) {
+                        throw new Error("User not found");
+                    }
+                    if (!user.password) {
+                        throw new Error("GoogleAccount");
+                    }
+
+                    const isValid = await bcrypt.compare(credentials.password, user.password);
+
+                    if (!isValid) {
+                        throw new Error("Invalid password");
+                    }
+
                     return {
                         id: user.id,
                         email: user.email,
@@ -47,42 +84,13 @@ export const authOptions: NextAuthOptions = {
                         plan: (user as any).plan,
                         emailVerified: user.emailVerified,
                     };
+                } catch (e) {
+                    if (e instanceof Error && (e.message === "Invalid credentials" || e.message === "User not found" || e.message === "GoogleAccount" || e.message === "Invalid password")) {
+                        throw e;
+                    }
+                    console.error("[NextAuth] authorize error:", e);
+                    throw new Error("CredentialsSignin");
                 }
-
-                if (!credentials?.email || !credentials?.password) {
-                    throw new Error("Invalid credentials");
-                }
-
-                const emailNorm = String(credentials.email).trim().toLowerCase();
-                const user = await prisma.user.findFirst({
-                    where: {
-                        email: { equals: emailNorm, mode: "insensitive" },
-                    },
-                });
-
-                if (!user) {
-                    throw new Error("User not found");
-                }
-                if (!user.password) {
-                    throw new Error("GoogleAccount");
-                }
-
-                const isValid = await bcrypt.compare(credentials.password, user.password);
-
-                if (!isValid) {
-                    throw new Error("Invalid password");
-                }
-
-                return {
-                    id: user.id,
-                    email: user.email,
-                    name: user.name,
-                    image: user.image,
-                    credits: user.credits,
-                    exportsCount: (user as any).exportsCount,
-                    plan: (user as any).plan,
-                    emailVerified: user.emailVerified,
-                };
             },
         }),
     ],
@@ -101,27 +109,35 @@ export const authOptions: NextAuthOptions = {
             return session;
         },
         async jwt({ token, user }) {
-            const dbUser = await prisma.user.findFirst({
-                where: { email: token.email },
-            });
+            try {
+                const dbUser = await prisma.user.findFirst({
+                    where: { email: token.email },
+                });
 
-            if (!dbUser) {
+                if (!dbUser) {
+                    if (user) {
+                        token.id = user.id;
+                    }
+                    return token;
+                }
+
+                return {
+                    id: dbUser.id,
+                    name: dbUser.name,
+                    email: dbUser.email,
+                    picture: dbUser.image,
+                    credits: dbUser.emailVerified ? dbUser.credits : 0,
+                    exportsCount: (dbUser as any).exportsCount,
+                    plan: (dbUser as any).plan,
+                    emailVerified: dbUser.emailVerified,
+                };
+            } catch (e) {
+                console.error("[NextAuth] jwt callback error:", e);
                 if (user) {
                     token.id = user.id;
                 }
                 return token;
             }
-
-            return {
-                id: dbUser.id,
-                name: dbUser.name,
-                email: dbUser.email,
-                picture: dbUser.image,
-                credits: dbUser.emailVerified ? dbUser.credits : 0,
-                exportsCount: (dbUser as any).exportsCount,
-                plan: (dbUser as any).plan,
-                emailVerified: dbUser.emailVerified,
-            };
         },
     },
 };

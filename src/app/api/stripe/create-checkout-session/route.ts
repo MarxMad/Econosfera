@@ -42,7 +42,30 @@ export async function POST(request: Request) {
         });
         if (!user?.email) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
 
+        const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://econosfera.xyz").replace(/\/$/, "");
+        const trialDaysRaw = process.env.STRIPE_TRIAL_DAYS;
+        const trialDays = trialDaysRaw ? parseInt(trialDaysRaw, 10) : undefined;
+        const trialPeriodDays = trialDays && !isNaN(trialDays) && trialDays > 0 ? trialDays : undefined;
+
         let customerId = user.stripeCustomerId;
+
+        const createCheckoutSession = async (custId: string) => {
+            return stripe!.checkout.sessions.create({
+                customer: custId,
+                mode: "subscription",
+                payment_method_types: ["card"],
+                line_items: [{ price: priceId, quantity: 1 }],
+                success_url: `${baseUrl}/dashboard?subscription=success`,
+                cancel_url: `${baseUrl}/pricing`,
+                metadata: { userId: user!.id, plan: plan === "researcher" ? "RESEARCHER" : "PRO" },
+                subscription_data: {
+                    metadata: { userId: user!.id, plan: plan === "researcher" ? "RESEARCHER" : "PRO" },
+                    trial_period_days: trialPeriodDays,
+                },
+            });
+        };
+
+        let sessionStripe;
         if (!customerId) {
             const customer = await stripe.customers.create({
                 email: user.email,
@@ -54,26 +77,29 @@ export async function POST(request: Request) {
                 where: { id: user.id },
                 data: { stripeCustomerId: customerId },
             });
+            sessionStripe = await createCheckoutSession(customerId);
+        } else {
+            try {
+                sessionStripe = await createCheckoutSession(customerId);
+            } catch (err) {
+                const msg = getErrorMessage(err);
+                if (msg.includes("No such customer") || msg.includes("No such customer:")) {
+                    const customer = await stripe.customers.create({
+                        email: user.email,
+                        name: user.name || undefined,
+                        metadata: { userId: user.id },
+                    });
+                    customerId = customer.id;
+                    await prisma.user.update({
+                        where: { id: user.id },
+                        data: { stripeCustomerId: customerId },
+                    });
+                    sessionStripe = await createCheckoutSession(customerId);
+                } else {
+                    throw err;
+                }
+            }
         }
-
-        const baseUrl = (process.env.NEXT_PUBLIC_SITE_URL || "https://econosfera.xyz").replace(/\/$/, "");
-        const trialDaysRaw = process.env.STRIPE_TRIAL_DAYS;
-        const trialDays = trialDaysRaw ? parseInt(trialDaysRaw, 10) : undefined;
-        const trialPeriodDays = trialDays && !isNaN(trialDays) && trialDays > 0 ? trialDays : undefined;
-
-        const sessionStripe = await stripe.checkout.sessions.create({
-            customer: customerId,
-            mode: "subscription",
-            payment_method_types: ["card"],
-            line_items: [{ price: priceId, quantity: 1 }],
-            success_url: `${baseUrl}/dashboard?subscription=success`,
-            cancel_url: `${baseUrl}/pricing`,
-            metadata: { userId: user.id, plan: plan === "researcher" ? "RESEARCHER" : "PRO" },
-            subscription_data: {
-                metadata: { userId: user.id, plan: plan === "researcher" ? "RESEARCHER" : "PRO" },
-                trial_period_days: trialPeriodDays,
-            },
-        });
 
         const url = sessionStripe.url;
         if (!url) {
