@@ -3,11 +3,12 @@
 import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Area } from "recharts";
 import type { VariablesMercado, VariablesElasticidad } from "@/lib/micro";
-import { TrendingDown, Download, Ruler, BookOpen, Lock } from "lucide-react";
+import { TrendingDown, Download, Ruler, Lock } from "lucide-react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "@/components/SimulatorLocked";
 import { calcularMercado, calcularElasticidadArco } from "@/lib/micro";
 import { exportarGraficoComoPNG } from "@/lib/exportarGrafico";
+import BannerCuestionarios from "@/components/BannerCuestionarios";
 
 const INICIAL_MERCADO: VariablesMercado = {
   demandaIntercepto: 100,
@@ -436,16 +437,7 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
         </div>
       )}
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-slate-600 dark:text-slate-400" aria-hidden /> Conceptos Fundamentales
-        </h3>
-        <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
-          <li><strong className="text-slate-700 dark:text-slate-300">Eficiencia Paretiana:</strong> Situación donde no se puede mejorar a nadie sin perjudicar a otro. En Monopolio no se cumple por la Pérdida Social.</li>
-          <li><strong className="text-slate-700 dark:text-slate-300">Equilibrio de Nash:</strong> Estrategia óptima dada la estrategia de los demás.</li>
-          <li><strong className="text-slate-700 dark:text-slate-300">Elasticidad Unitaria:</strong> Punto donde el ingreso total es máximo.</li>
-        </ul>
-      </div>
+      <BannerCuestionarios />
     </div>
   );
 }

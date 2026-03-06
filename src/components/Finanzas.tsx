@@ -2,15 +2,11 @@
 
 import { useState, useEffect } from "react";
 import {
-  Building2,
   Wallet,
-  Landmark,
   Calculator,
   BarChart2,
   Layers,
   PieChart,
-  BookOpen,
-  Info,
   Lock,
   Newspaper,
   Percent,
@@ -24,6 +20,7 @@ import type { ModuloSimulador } from "./NavSimuladores";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
+import BannerCuestionarios from "./BannerCuestionarios";
 import {
   SimuladorVPVF,
   SimuladorBono,
@@ -169,35 +166,7 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
         {canAccess(session?.user?.plan, "finanzas", activeTab) && activeTab === "mapaEstructuraCapital" && <MapaEstructuraCapital />}
       </div>
 
-      <section className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 p-8 shadow-lg">
-        <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6 flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-blue-600" />
-          Fundamentos del Sistema Financiero
-        </h3>
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="space-y-3">
-            <div className="h-10 w-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-              <Building2 className="w-5 h-5 text-blue-600" />
-            </div>
-            <h4 className="font-bold">Intermediación</h4>
-            <p className="text-xs text-slate-500 leading-relaxed">Los bancos conectan a los ahorradores con los inversionistas, transformando plazos y riesgos según la regulación de la CNBV y Banxico.</p>
-          </div>
-          <div className="space-y-3">
-            <div className="h-10 w-10 bg-emerald-100 dark:bg-emerald-900/30 rounded-xl flex items-center justify-center">
-              <Wallet className="w-5 h-5 text-emerald-600" />
-            </div>
-            <h4 className="font-bold">Instrumentos</h4>
-            <p className="text-xs text-slate-500 leading-relaxed">Contratos que representan derechos de flujo. Se dividen en Deuda (CETES, Bonos) y Capital (Acciones), con perfiles de riesgo distintos.</p>
-          </div>
-          <div className="space-y-3">
-            <div className="h-10 w-10 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl flex items-center justify-center">
-              <Landmark className="w-5 h-5 text-indigo-600" />
-            </div>
-            <h4 className="font-bold">Mercado de Valores</h4>
-            <p className="text-xs text-slate-500 leading-relaxed">Espacio institucional (BMV, BIVA) donde se negocian títulos bajo supervisión, permitiendo a las empresas financiarse y a las personas crecer su capital.</p>
-          </div>
-        </div>
-      </section>
+      <BannerCuestionarios />
     </div>
   );
 }

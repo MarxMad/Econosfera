@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Shield, Heart, Info, Lock } from "lucide-react";
+import { Shield, Heart, Lock } from "lucide-react";
 import { SimuladorMortalidad, SimuladorRuina } from "./simuladores-actuaria";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
+import BannerCuestionarios from "./BannerCuestionarios";
 
 export default function Actuaria() {
     const { data: session } = useSession();
@@ -59,17 +60,7 @@ export default function Actuaria() {
                 {canAccess(session?.user?.plan, "actuaria", activeTab) && activeTab === 'ruina' && <SimuladorRuina />}
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                    <Info className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                    Conceptos Actuariales
-                </h3>
-                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-3">
-                    <li><strong>Longevidad:</strong> Riesgo de que los pensionados vivan más de lo esperado.</li>
-                    <li><strong>Solvencia:</strong> Capacidad de una entidad para cumplir con sus obligaciones a largo plazo.</li>
-                    <li><strong>Interés Real vs Nominal:</strong> El rendimiento descontado de la inflación (Ecuación de Fisher).</li>
-                </ul>
-            </div>
+            <BannerCuestionarios />
         </div>
     );
 }

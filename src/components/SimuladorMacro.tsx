@@ -3,7 +3,7 @@
 import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Area } from "recharts";
 import {
-  Calculator, TrendingUp, Info, ArrowRight, Download, Save, FileDown, Activity, BookOpen, Lock
+  Calculator, TrendingUp, ArrowRight, Download, Save, FileDown, Activity, Lock
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
@@ -14,6 +14,7 @@ import { saveScenario } from "@/lib/actions/scenarioActions";
 import type { VariablesMacro, ResultadosMacro, VariablesISLM, ResultadosISLM } from "@/lib/macro";
 import { calcularEquilibrioMacro, calcularISLM, datosGraficoISLM } from "@/lib/macro";
 import { InputPremium } from "./common/InputPremium";
+import BannerCuestionarios from "./BannerCuestionarios";
 
 const INICIAL: VariablesMacro = {
   consumoAutonomo: 100,
@@ -370,20 +371,9 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
             )}
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-              Conceptos Clave
-            </h3>
-            <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-3">
-              <li><strong>Curva IS:</strong> Equilibrio mercado de bienes. R↑ → I↓ → Y↓.</li>
-              <li><strong>Curva LM:</strong> Equilibrio mercado de dinero. Y↑ → Md↑ → r↑.</li>
-              <li><strong>Política Fiscal (G↑):</strong> Desplaza IS a la derecha. Y↑, r↑.</li>
-              <li><strong>Política Monetaria (M/P↑):</strong> Desplaza LM a la derecha. r↓, Y↑.</li>
-            </ul>
-          </div>
           </div>
       )}
+      <BannerCuestionarios />
     </div>
   );
 }

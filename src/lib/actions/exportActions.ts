@@ -13,7 +13,7 @@ export async function registrarExportacion(modulo: string, type: string = "PDF")
 
     const user = await prisma.user.findUnique({
         where: { id: session.user.id },
-        select: { credits: true, emailVerified: true }
+        select: { credits: true, emailVerified: true, plan: true }
     });
 
     if (!user) {
@@ -22,16 +22,20 @@ export async function registrarExportacion(modulo: string, type: string = "PDF")
     if (!user.emailVerified) {
         throw new Error("Verifica tu correo electrónico para exportar. Revisa tu bandeja de entrada.");
     }
-    if (user.credits < 1) {
-        throw new Error("No tienes créditos suficientes para exportar. Por favor, adquiere más créditos.");
+
+    const plan = (user.plan ?? "FREE").toUpperCase();
+    const exportacionesIlimitadas = plan === "PRO" || plan === "RESEARCHER";
+
+    if (!exportacionesIlimitadas && user.credits < 1) {
+        throw new Error("No tienes créditos suficientes para exportar. Por favor, adquiere más créditos o actualiza a Pro.");
     }
 
-    // Descontar 1 crédito y registrar la exportación
+    // PRO y RESEARCHER: exportaciones ilimitadas (no consumen créditos). FREE: descuenta 1 crédito.
     await prisma.$transaction([
         prisma.user.update({
             where: { id: session.user.id },
             data: {
-                credits: { decrement: 1 },
+                ...(exportacionesIlimitadas ? {} : { credits: { decrement: 1 } }),
                 exportsCount: { increment: 1 }
             }
         }),

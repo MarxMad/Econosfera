@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, BarChart, BookOpen, Layers, Activity, Lock, Table2, Grid3X3, BarChart2 } from "lucide-react";
+import { TrendingUp, BarChart, Layers, Activity, Lock, Table2, Grid3X3, BarChart2 } from "lucide-react";
 import { SimuladorRegresion, SimuladorTCL, SimuladorRegresionMultiple, SimuladorMatrizCorrelacion, SimuladorEstadisticasDescriptivas } from "./simuladores-stats";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
+import BannerCuestionarios from "./BannerCuestionarios";
 
 export default function Estadistica() {
     const { data: session } = useSession();
@@ -65,22 +66,7 @@ export default function Estadistica() {
                 {canAccess(session?.user?.plan, "estadistica", activeTab) && activeTab === 'estadisticasDescriptivas' && <SimuladorEstadisticasDescriptivas />}
             </div>
 
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                    Conceptos Econométricos
-                </h3>
-                <div className="grid md:grid-cols-2 gap-8 text-sm text-slate-600 dark:text-slate-400">
-                    <div className="space-y-3">
-                        <p><strong>Insesgadez (Unbiasedness):</strong> Un estimador es insesgado si su valor esperado es igual al parámetro poblacional real. En MCO, esto requiere que el error no sea correlacionado con X.</p>
-                        <p><strong>Hipótesis de Gauss-Markov:</strong> Bajo ciertas condiciones, MCO es el Mejor Estimador Lineal Insesgado (MELI / BLUE).</p>
-                    </div>
-                    <div className="space-y-3">
-                        <p><strong>Convergencia:</strong> A medida que aumenta la muestra, los estimadores deberían acercarse al valor real (Consistencia).</p>
-                        <p><strong>Normalidad Asintótica:</strong> La mayoría de los fenómenos agregados siguen la curva de Gauss gracias al TLC.</p>
-                    </div>
-                </div>
-            </div>
+            <BannerCuestionarios />
         </div>
     );
 }

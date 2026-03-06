@@ -1,11 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { Percent, Scale, Wallet, Target, History, Info, Lock } from "lucide-react";
+import { Percent, Scale, Wallet, Target, History, Lock } from "lucide-react";
 import ComparadorEscenarios from "@/components/ComparadorEscenarios";
 import FuentesOficialesMexico from "@/components/FuentesOficialesMexico";
 import ReferenciasAcademicas from "@/components/ReferenciasAcademicas";
 import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
+import BannerCuestionarios from "@/components/BannerCuestionarios";
 import { SimuladorTasaRealNominal, SimuladorPoderAdquisitivo, SimuladorBrechaInflacion, SimuladorTasaRealExPost } from "@/components/simuladores-inflacion";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
@@ -85,17 +86,7 @@ export default function Inflacion({
                 )}
             </div>
 
-            <section className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 p-6">
-                <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-2 flex items-center gap-2">
-                    <Info className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                    Conceptos de inflación
-                </h3>
-                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
-                    <li><strong>Inflación general:</strong> Aumento sostenido y generalizado de precios, medido por el INPC.</li>
-                    <li><strong>Inflación subyacente:</strong> Excluye componentes volátiles (agropecuarios, energéticos); indica la tendencia de mediano plazo.</li>
-                    <li><strong>Poder adquisitivo:</strong> Cantidad de bienes y servicios que una unidad monetaria puede comprar; la inflación lo reduce con el tiempo.</li>
-                </ul>
-            </section>
+            <BannerCuestionarios />
 
             <div className="mt-6">
                 <SeccionFuentesColapsable titulo="Fuentes oficiales y referencias" defaultAbierto={false}>

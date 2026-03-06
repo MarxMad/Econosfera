@@ -15,6 +15,7 @@ import { registrarExportacion } from "@/lib/actions/exportActions";
 import { exportarBlockchainAPdf } from "@/lib/exportarBlockchainPdf";
 import { saveScenario } from "@/lib/actions/scenarioActions";
 import PricingModal from "./PricingModal";
+import BannerCuestionarios from "./BannerCuestionarios";
 import {
   SimuladorTrading, SimuladorStaking, SimuladorAMM, SimuladorCadenaBloques,
   SimuladorLlaves, SimuladorMerkle, SimuladorConsenso, SimuladorSmartContracts, SimuladorRedP2P
@@ -356,31 +357,7 @@ export default function BlockchainEcon() {
         )}
       </div>
 
-      <SeccionBlockchain id="conceptos" titulo="Conceptos y Teoría Blockchain" icono={BookOpen} defaultAbierto={false}>
-        <div className="pt-4 space-y-8 text-sm text-slate-700 dark:text-slate-300">
-
-          <div className="space-y-3">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Link2 className="w-5 h-5 text-violet-500" /> Intro a Economía Blockchain</h3>
-            <p>La <strong>economía blockchain</strong> analiza incentivos, oferta monetaria y comportamiento de actores en redes descentralizadas. Las cadenas de bloques usan <strong>consenso</strong> (Proof of Work, Proof of Stake) para validar transacciones sin un intermediario central. La <strong>emisión</strong> de nuevos unidades (p. ej. por minería) y su programación en el tiempo (halving, tope fijo) afectan la oferta y las expectativas de valor.</p>
-          </div>
-
-          <div className="space-y-3">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Cpu className="w-5 h-5 text-blue-500" /> Minería y Consenso</h3>
-            <p>En <strong>Proof of Work (PoW)</strong>, los mineros compiten resolviendo problemas criptográficos; quien resuelve primero propone el siguiente bloque y recibe una recompensa. En <strong>Proof of Stake (PoS)</strong>, validadores bloquean garantía (stake) y reciben recompensas por proponer/validar bloques.</p>
-          </div>
-
-          <div className="space-y-3">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Coins className="w-5 h-5 text-emerald-500" /> Tokens y Oferta Monetaria</h3>
-            <p>Los <strong>tokens</strong> pueden ser la moneda nativa de la cadena (p. ej. BTC, ETH) o activos emitidos sobre ella. La <strong>oferta</strong> puede ser fija (tope máximo), con emisión decreciente (halving) o con reglas de emisión definidas por gobernanza.</p>
-          </div>
-
-          <div className="space-y-3">
-            <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2"><Wallet className="w-5 h-5 text-indigo-500" /> Finanzas descentralizadas (DeFi)</h3>
-            <p><strong>DeFi</strong> agrupa aplicaciones (préstamos, intercambios, derivados) construidas sobre blockchain, sin intermediarios tradicionales. Muchos protocolos emiten <strong>tokens de gobernanza</strong> que reparten derechos y a veces parte de los ingresos.</p>
-          </div>
-
-        </div>
-      </SeccionBlockchain>
+      <BannerCuestionarios />
     </div>
     <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
     </>

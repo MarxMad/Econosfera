@@ -27,10 +27,10 @@ const tiers = [
         price: "MXN 99",
         description: "Análisis avanzado para trabajos universitarios y tesis.",
         features: [
-            "Exportaciones PDF ilimitadas",
-            "Modelos: DCF y Black-Scholes",
-            "Simulador Cripto: Árboles de Merkle",
-            "50 Créditos IA/mes (5 Análisis)",
+            "Exportaciones PDF ilimitadas (sin consumir créditos)",
+            "Simuladores: Markowitz, VPN/TIR, WACC, Phillips",
+            "Blockchain: Merkle, Llaves, P2P, Consenso, Smart Contracts",
+            "50 Créditos IA/mes",
             "Acceso a la academia (Quizzes)",
             "Soporte prioritario"
         ],
@@ -44,12 +44,12 @@ const tiers = [
         price: "MXN 199",
         description: "Para profesionales que requieren todas las herramientas institucionales.",
         features: [
-            "Simulador Cripto: Hacking Smart Contracts",
-            "Simulador Cripto: Redes P2P y Consenso",
-            "100 Créditos IA/mes (10 Análisis)",
-            "Reportes ejecutivos automáticos",
-            "Personalización de marca en PDF",
-            "Consultoría 1-on-1 Trimestral"
+            "200 Créditos IA/mes (el doble que Pro)",
+            "Regla de Taylor, DCF, Black-Scholes",
+            "Análisis AI de Minutas Banxico",
+            "Mundell-Fleming, Teoría de Juegos, AMM",
+            "Exportaciones PDF ilimitadas",
+            "Soporte prioritario 24/7"
         ],
         buttonText: "Suscribirse",
         buttonHref: "/checkout?plan=researcher",

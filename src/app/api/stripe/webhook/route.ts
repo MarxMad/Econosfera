@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { headers } from "next/headers";
 import type Stripe from "stripe";
-import { stripe } from "@/lib/stripe";
+import { stripe, CREDITS_PER_MONTH } from "@/lib/stripe";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
                 const userId = session.metadata?.userId;
                 const plan = (session.metadata?.plan || "PRO") as string;
                 if (userId && (plan === "PRO" || plan === "RESEARCHER")) {
-                    const credits = plan === "RESEARCHER" ? 100 : 50;
+                    const credits = CREDITS_PER_MONTH[plan];
                     await prisma.user.update({
                         where: { id: userId },
                         data: {
@@ -79,7 +79,7 @@ export async function POST(request: Request) {
                     select: { id: true, plan: true },
                 });
                 if (user && (user.plan === "PRO" || user.plan === "RESEARCHER")) {
-                    const creditsToAdd = user.plan === "RESEARCHER" ? 100 : 50;
+                    const creditsToAdd = CREDITS_PER_MONTH[user.plan];
                     await prisma.user.update({
                         where: { id: user.id },
                         data: { credits: { increment: creditsToAdd } },

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Calculator, Package, BarChart3, Info, FileText, Scale, PieChart, Target } from "lucide-react";
+import { Calculator, Package, BarChart3, FileText, Scale, PieChart, Target } from "lucide-react";
 import {
   SimuladorDepreciacion,
   SimuladorCostosInventario,
@@ -15,6 +15,7 @@ import {
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
+import BannerCuestionarios from "./BannerCuestionarios";
 
 type TabContadores = "depreciacion" | "costos" | "razones" | "estadoResultados" | "ecuacion" | "prorrateo" | "costoProduccion" | "puntoEquilibrio";
 
@@ -82,22 +83,7 @@ export default function Contadores() {
         {canAccess(session?.user?.plan, "contadores", activeTab) && activeTab === "puntoEquilibrio" && <SimuladorPuntoEquilibrio />}
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-          <Info className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-          Conceptos contables
-        </h3>
-        <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-3">
-          <li><strong>Depreciación:</strong> Línea recta, suma de dígitos o unidades de producción. Asignación del costo del activo a lo largo de su vida útil.</li>
-          <li><strong>FIFO / LIFO / Promedio:</strong> Métodos para valuar inventarios y costo de ventas.</li>
-          <li><strong>Razones financieras:</strong> Liquidez, solvencia y rentabilidad a partir del balance y estado de resultados.</li>
-          <li><strong>Estado de resultados:</strong> Ventas − Costo ventas = Utilidad bruta − Gastos = Utilidad neta.</li>
-          <li><strong>Ecuación contable:</strong> Activo = Pasivo + Capital. Base de la partida doble.</li>
-          <li><strong>Prorrateo:</strong> Distribución de costos indirectos entre departamentos según base (horas, unidades).</li>
-          <li><strong>Costo de producción:</strong> MP + MOD + CIF. Costo unitario = Costo total / Unidades.</li>
-          <li><strong>Punto de equilibrio:</strong> Cantidad donde ingresos = costos. Q = CF / (P − CVu).</li>
-        </ul>
-      </div>
+      <BannerCuestionarios />
     </div>
   );
 }

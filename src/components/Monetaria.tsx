@@ -11,6 +11,7 @@ import ExportarCompartir from "@/components/ExportarCompartir";
 import FuentesOficialesMexico from "@/components/FuentesOficialesMexico";
 import ReferenciasAcademicas from "@/components/ReferenciasAcademicas";
 import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
+import BannerCuestionarios from "@/components/BannerCuestionarios";
 import TaylorSolver from "@/components/TaylorSolver";
 import { SimuladorParidadUIP, SimuladorCanalesTransmision, SimuladorComparadorPostura } from "@/components/simuladores-monetaria";
 import { useSession } from "next-auth/react";
@@ -138,14 +139,7 @@ export default function Monetaria({
                 {canAccess(session?.user?.plan, "monetaria", activeTab) && activeTab === 'comparadorPostura' && <SimuladorComparadorPostura />}
             </div>
 
-            <section className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 p-6">
-                <h3 className="text-base font-bold text-slate-800 dark:text-slate-100 mb-2">Conceptos de política monetaria</h3>
-                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-2">
-                    <li><strong>Tasa de política:</strong> Referencia que fija el banco central para el mercado interbancario.</li>
-                    <li><strong>Regla de Taylor:</strong> Fórmula que sugiere la tasa óptima según brechas de inflación y producto.</li>
-                    <li><strong>Transmisión:</strong> Canales por los que la tasa afecta crédito, tipo de cambio y demanda.</li>
-                </ul>
-            </section>
+            <BannerCuestionarios />
 
             <div className="mt-6">
                 <SeccionFuentesColapsable titulo="Fuentes oficiales y referencias" defaultAbierto={false}>

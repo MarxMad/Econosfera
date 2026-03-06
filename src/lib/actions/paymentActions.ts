@@ -3,6 +3,7 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { CREDITS_PER_MONTH } from "@/lib/stripe";
 
 export async function processPayment(plan: string) {
     const session = await getServerSession(authOptions);
@@ -19,11 +20,11 @@ export async function processPayment(plan: string) {
         if (!user) return { error: "Usuario no encontrado" };
 
         let planName = 'PRO';
-        let newCredits = user.credits + 50;
+        let newCredits = user.credits + CREDITS_PER_MONTH.PRO;
 
         if (plan === 'researcher') {
             planName = 'RESEARCHER';
-            newCredits = user.credits + 100;
+            newCredits = user.credits + CREDITS_PER_MONTH.RESEARCHER;
         }
 
         await prisma.user.update({
