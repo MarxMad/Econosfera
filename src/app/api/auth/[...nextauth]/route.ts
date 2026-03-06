@@ -40,6 +40,25 @@ export async function POST(req: Request) {
       }
     }
     const res = await handler(req);
+    if (res?.status === 500) {
+      const text = await res.text();
+      try {
+        const parsed = JSON.parse(text);
+        if (parsed?.url && typeof parsed.url === "string") {
+          try {
+            new URL(parsed.url);
+          } catch {
+            delete parsed.url;
+          }
+        }
+        return NextResponse.json(parsed, { status: 500 });
+      } catch {
+        return NextResponse.json(
+          { error: "CredentialsSignin", message: "Error del servidor. Intenta de nuevo más tarde." },
+          { status: 500 }
+        );
+      }
+    }
     return res;
   } catch (e) {
     console.error("[NextAuth] POST error:", e);

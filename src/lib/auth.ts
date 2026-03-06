@@ -5,6 +5,20 @@ import GoogleProvider from "next-auth/providers/google";
 import { prisma } from "./prisma";
 import bcrypt from "bcryptjs";
 
+// Asegurar NEXTAUTH_URL válida antes de que NextAuth la use (evita "Failed to construct URL: Invalid URL")
+(function ensureNextAuthUrl() {
+    const current = process.env.NEXTAUTH_URL?.trim();
+    if (!current) {
+        const fallback =
+            process.env.NEXT_PUBLIC_SITE_URL ||
+            (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+            "https://econosfera.xyz";
+        process.env.NEXTAUTH_URL = (fallback || "https://econosfera.xyz").replace(/\/$/, "");
+    } else if (!current.startsWith("http://") && !current.startsWith("https://")) {
+        process.env.NEXTAUTH_URL = `https://${current.replace(/^\/+/, "")}`;
+    }
+})();
+
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
     session: {
