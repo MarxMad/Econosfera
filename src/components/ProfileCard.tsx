@@ -14,6 +14,8 @@ import {
     GraduationCap,
     Camera,
     Save,
+    ChevronUp,
+    Pencil,
 } from "lucide-react";
 import { getProfile, updateProfile, uploadProfileImage, resendVerification } from "@/lib/actions/authActions";
 
@@ -46,6 +48,7 @@ export default function ProfileCard() {
     const [uploadingPhoto, setUploadingPhoto] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
     const [emailLoading, setEmailLoading] = useState(false);
+    const [editingProfile, setEditingProfile] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [form, setForm] = useState({
@@ -169,7 +172,8 @@ export default function ProfileCard() {
                 )}
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-6 mb-6">
+            {/* Vista compacta: avatar + nombre + correo + botón editar */}
+            <div className="flex flex-col sm:flex-row gap-4 mb-4">
                 <div
                     className="relative group shrink-0"
                     onClick={() => fileInputRef.current?.click()}
@@ -182,10 +186,10 @@ export default function ProfileCard() {
                         onChange={handlePhotoChange}
                         disabled={uploadingPhoto}
                     />
-                    <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 p-0.5 shadow-md overflow-hidden">
-                        <div className="w-full h-full rounded-2xl bg-slate-900 flex items-center justify-center text-2xl font-black text-white overflow-hidden">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 p-0.5 shadow-md overflow-hidden">
+                        <div className="w-full h-full rounded-2xl bg-slate-900 flex items-center justify-center text-xl sm:text-2xl font-black text-white overflow-hidden">
                             {uploadingPhoto ? (
-                                <Loader2 className="w-10 h-10 animate-spin text-white" />
+                                <Loader2 className="w-8 h-8 sm:w-10 sm:h-10 animate-spin text-white" />
                             ) : avatarUrl ? (
                                 <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
                             ) : (
@@ -194,11 +198,27 @@ export default function ProfileCard() {
                         </div>
                     </div>
                     <div className="absolute inset-0 rounded-2xl bg-slate-900/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                        <Camera className="w-8 h-8 text-white" />
+                        <Camera className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
                 </div>
 
-                <div className="flex-1 min-w-0 space-y-4">
+                <div className="flex-1 min-w-0 flex flex-col justify-center">
+                    <p className="font-bold text-slate-900 dark:text-white text-lg truncate">{displayName}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{profile?.email ?? session?.user?.email ?? ""}</p>
+                    <button
+                        type="button"
+                        onClick={() => setEditingProfile((v) => !v)}
+                        className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-fit"
+                    >
+                        {editingProfile ? <ChevronUp className="w-3.5 h-3.5" /> : <Pencil className="w-3.5 h-3.5" />}
+                        {editingProfile ? "Ocultar datos" : "Editar perfil"}
+                    </button>
+                </div>
+            </div>
+
+            {/* Sección colapsable: formulario de datos */}
+            {editingProfile && (
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-700 space-y-4 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
                             <label className="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mb-1">
@@ -302,7 +322,7 @@ export default function ProfileCard() {
                         {saving ? "Guardando..." : "Guardar perfil"}
                     </button>
                 </div>
-            </div>
+            )}
 
             {!isVerified && (
                 <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-100 dark:border-amber-900/50">
