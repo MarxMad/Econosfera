@@ -165,7 +165,7 @@ function SignInContent() {
 
                     <button
                         type="submit"
-                        disabled={loading || !csrfToken}
+                        disabled={loading}
                         className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-600/30 transition-all active:scale-98 disabled:opacity-50"
                     >
                         {loading ? "Entrando..." : <><LogIn className="w-5 h-5" /> Iniciar Sesión</>}
