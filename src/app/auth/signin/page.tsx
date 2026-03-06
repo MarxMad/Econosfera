@@ -20,16 +20,30 @@ function SignInContent() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
+    const [csrfToken, setCsrfToken] = useState("");
     const router = useRouter();
     const verified = searchParams.get("verified") === "1";
     const verifyError = searchParams.get("error");
     const loginToken = searchParams.get("loginToken");
+    const errorFromUrl = searchParams.get("error");
 
     useEffect(() => {
         if (status === "authenticated") {
             router.push("/simulador");
         }
     }, [status, router]);
+
+    useEffect(() => {
+        fetch("/api/auth/csrf")
+            .then((r) => r.json())
+            .then((d) => setCsrfToken(d?.token || ""))
+            .catch(() => {});
+    }, []);
+
+    useEffect(() => {
+        if (errorFromUrl === "CredentialsSignin") setError("Email o contraseña incorrectos");
+        else if (errorFromUrl === "GoogleAccount") setError("Esta cuenta se creó con Google. Inicia sesión con el botón de Google.");
+    }, [errorFromUrl]);
 
     // Tras verificar correo: login con token de un solo uso y redirigir al simulador
     useEffect(() => {
@@ -55,26 +69,8 @@ function SignInContent() {
         e.preventDefault();
         setLoading(true);
         setError("");
-
-        const res = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
-
-        if (res?.error) {
-            const isConfigError = /configuration|server|config/i.test(res.error);
-            const isGoogleAccount = res.error === "GoogleAccount";
-            setError(isConfigError
-                ? "Error del servidor. Si eres el administrador, revisa en Vercel que NEXTAUTH_SECRET y NEXTAUTH_URL estén definidos y que la base de datos sea accesible."
-                : isGoogleAccount
-                    ? "Esta cuenta se creó con Google. Inicia sesión con el botón de Google."
-                    : "Email o contraseña incorrectos");
-            setLoading(false);
-        } else {
-            router.push("/simulador");
-            router.refresh();
-        }
+        const form = e.target as HTMLFormElement;
+        form.submit();
     };
 
     return (
@@ -109,7 +105,14 @@ function SignInContent() {
                 )}
 
                 {!loginToken && (
-                <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+                <form
+                    className="mt-8 space-y-6"
+                    method="POST"
+                    action="/api/auth/callback/credentials"
+                    onSubmit={handleSubmit}
+                >
+                    <input type="hidden" name="csrfToken" value={csrfToken} />
+                    <input type="hidden" name="callbackUrl" value="/simulador" />
                     {error && (
                         <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
                             {error}
@@ -123,6 +126,7 @@ function SignInContent() {
                                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                 <input
                                     type="email"
+                                    name="email"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -138,6 +142,7 @@ function SignInContent() {
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                                 <input
                                     type={showPassword ? "text" : "password"}
+                                    name="password"
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
@@ -160,7 +165,7 @@ function SignInContent() {
 
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={loading || !csrfToken}
                         className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-600/30 transition-all active:scale-98 disabled:opacity-50"
                     >
                         {loading ? "Entrando..." : <><LogIn className="w-5 h-5" /> Iniciar Sesión</>}
