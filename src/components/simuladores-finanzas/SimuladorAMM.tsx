@@ -108,13 +108,13 @@ export function SimuladorAMM() {
         <>
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
             {/* Header / Intro */}
-            <div className="rounded-2xl border border-violet-200 dark:border-violet-900 bg-violet-50/50 dark:bg-violet-900/10 p-6 shadow-sm">
-                <div className="flex items-center justify-between gap-4 mb-3">
-                    <h3 className="text-xl font-bold flex items-center gap-2 text-violet-800 dark:text-violet-300">
-                        <Droplets className="w-5 h-5" />
-                        Automated Market Makers (AMM) y Liquidez
+            <div className="rounded-2xl border border-violet-200 dark:border-violet-900 bg-violet-50/50 dark:bg-violet-900/10 p-6 shadow-sm overflow-hidden">
+                <div className="flex flex-wrap items-center justify-between gap-4 mb-3">
+                    <h3 className="text-xl font-bold flex items-center gap-2 text-violet-800 dark:text-violet-300 min-w-0">
+                        <Droplets className="w-5 h-5 shrink-0" />
+                        <span className="truncate">Automated Market Makers (AMM) y Liquidez</span>
                     </h3>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2 shrink-0">
                         <button
                             type="button"
                             onClick={handleExportAMM}

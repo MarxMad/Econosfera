@@ -201,13 +201,13 @@ export default function BlockchainEcon() {
           <SimulatorLocked requiredPlan={getRequiredPlan("blockchain", activeTab)!} moduleName="Blockchain" />
         )}
         {canAccess(session?.user?.plan, "blockchain", activeTab) && activeTab === 'halving' && (
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-            <div className="flex items-center justify-between gap-4 mb-2">
-              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                <Coins className="w-5 h-5 text-violet-500" />
-                Simulación de Emisión (Halving)
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
+              <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2 min-w-0">
+                <Coins className="w-5 h-5 text-violet-500 shrink-0" />
+                <span className="truncate">Simulación de Emisión (Halving)</span>
               </h3>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 shrink-0">
                 <button
                   type="button"
                   onClick={handleExportHalving}
