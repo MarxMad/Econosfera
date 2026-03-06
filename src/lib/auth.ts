@@ -20,7 +20,8 @@ import bcrypt from "bcryptjs";
 })();
 
 export const authOptions: NextAuthOptions = {
-    adapter: PrismaAdapter(prisma),
+    // PrismaAdapter + CredentialsProvider pueden causar 500. Probar sin adapter para credentials.
+    // Si usas Google OAuth, descomenta: adapter: PrismaAdapter(prisma),
     session: {
         strategy: "jwt",
     },
