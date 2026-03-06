@@ -5,19 +5,23 @@ import { useSession } from "next-auth/react";
 import { User, LogIn, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
 import { useState } from "react";
 
-function SignOutButton({ variant = "icon" }: { variant?: "icon" | "full" }) {
+function SignOutButton({ variant = "icon", onClose }: { variant?: "icon" | "full"; onClose?: () => void }) {
     const className = variant === "full"
         ? "w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10"
         : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors";
     return (
-        <Link
-            href="/api/signout?callbackUrl=%2F"
+        <button
+            type="button"
+            onClick={() => {
+                onClose?.();
+                window.location.href = "/api/signout?callbackUrl=%2F";
+            }}
             className={className}
             title="Cerrar Sesión"
         >
             <LogOut className="w-5 h-5" />
             {variant === "full" && "Cerrar Sesión"}
-        </Link>
+        </button>
     );
 }
 
@@ -118,7 +122,7 @@ export default function Navbar() {
                                 <User className="w-5 h-5" /> Mi Perfil
                             </Link>
                             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-blue-400">Dashboard ({session.user.credits} créditos)</Link>
-                            <SignOutButton variant="full" />
+                            <SignOutButton variant="full" onClose={() => setMenuOpen(false)} />
                         </>
                     ) : (
                         <>

@@ -4,7 +4,6 @@
  */
 
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 
 const SESSION_COOKIES = [
   "next-auth.session-token",
@@ -13,30 +12,29 @@ const SESSION_COOKIES = [
   "__Secure-authjs.session-token",
 ];
 
+function clearSessionCookies(response: NextResponse) {
+  const path = "/";
+  for (const name of SESSION_COOKIES) {
+    response.cookies.set(name, "", { maxAge: 0, path });
+  }
+  response.cookies.set("next-auth.csrf-token", "", { maxAge: 0, path });
+  response.cookies.set("__Host-next-auth.csrf-token", "", { maxAge: 0, path });
+}
+
 export async function GET(request: Request) {
   const callbackUrl =
     new URL(request.url).searchParams.get("callbackUrl") || "/";
 
-  const cookieStore = await cookies();
-  for (const name of SESSION_COOKIES) {
-    cookieStore.delete(name);
-  }
-  cookieStore.delete("next-auth.csrf-token");
-  cookieStore.delete("__Host-next-auth.csrf-token");
-
-  return NextResponse.redirect(new URL(callbackUrl, request.url));
+  const response = NextResponse.redirect(new URL(callbackUrl, request.url));
+  clearSessionCookies(response);
+  return response;
 }
 
 export async function POST(request: Request) {
   const formData = await request.formData().catch(() => new FormData());
   const callbackUrl = (formData.get("callbackUrl") as string) || "/";
 
-  const cookieStore = await cookies();
-  for (const name of SESSION_COOKIES) {
-    cookieStore.delete(name);
-  }
-  cookieStore.delete("next-auth.csrf-token");
-  cookieStore.delete("__Host-next-auth.csrf-token");
-
-  return NextResponse.redirect(new URL(callbackUrl, request.url));
+  const response = NextResponse.redirect(new URL(callbackUrl, request.url));
+  clearSessionCookies(response);
+  return response;
 }
