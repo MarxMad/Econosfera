@@ -32,11 +32,8 @@ export async function POST(req: Request) {
         const rateLimitRes = await checkAuthRateLimit(req);
         if (rateLimitRes) return rateLimitRes;
       } catch (e) {
-        console.error("[NextAuth] Rate limit error:", e);
-        return NextResponse.json(
-          { error: "CredentialsSignin", message: "Error temporal. Intenta de nuevo." },
-          { status: 503 }
-        );
+        console.error("[NextAuth] Rate limit error (continuando sin limit):", e);
+        // Si rate limit falla (ej. DB), continuar sin bloquear el login
       }
     }
     const res = await handler(req);
@@ -53,6 +50,7 @@ export async function POST(req: Request) {
         }
         return NextResponse.json(parsed, { status: 500 });
       } catch {
+        console.error("[NextAuth] 500 body no es JSON:", text?.slice(0, 200));
         return NextResponse.json(
           { error: "CredentialsSignin", message: "Error del servidor. Intenta de nuevo más tarde." },
           { status: 500 }
@@ -61,9 +59,17 @@ export async function POST(req: Request) {
     }
     return res;
   } catch (e) {
-    console.error("[NextAuth] POST error:", e);
+    const err = e instanceof Error ? e : new Error(String(e));
+    console.error("[NextAuth] POST error:", err.message, err.stack);
+    const msg = err.message?.toLowerCase() || "";
+    const userMsg =
+      msg.includes("connect") || msg.includes("econnrefused") || msg.includes("database")
+        ? "Error de conexión con la base de datos. Verifica DATABASE_URL en Vercel."
+        : msg.includes("secret") || msg.includes("nextauth_secret")
+          ? "NEXTAUTH_SECRET no configurado. Añádela en Vercel."
+          : "Error del servidor. Intenta de nuevo más tarde.";
     return NextResponse.json(
-      { error: "CredentialsSignin", message: "Error del servidor. Intenta de nuevo más tarde." },
+      { error: "CredentialsSignin", message: userMsg },
       { status: 500 }
     );
   }
