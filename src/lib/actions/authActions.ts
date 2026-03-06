@@ -70,10 +70,15 @@ export async function registerUser(formData: FormData) {
         const occupation = (formData.get("occupation") as string) || undefined;
         const educationLevel = (formData.get("educationLevel") as string) || undefined;
         const password = (formData.get("password") as string) || "";
+        const termsAccepted = formData.get("termsAccepted") === "true";
+        const privacyAccepted = formData.get("privacyAccepted") === "true";
         const emailNorm = (formData.get("email") as string)?.trim().toLowerCase() || "";
 
         if (!emailNorm || !password || !name) {
             return { error: "Faltan campos obligatorios" };
+        }
+        if (!termsAccepted || !privacyAccepted) {
+            return { error: "Debes aceptar los términos y el aviso de privacidad" };
         }
 
         // Verificar si existe
@@ -88,6 +93,7 @@ export async function registerUser(formData: FormData) {
         // Hashing
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        const now = new Date();
         // Crear usuario (email normalizado para login consistente)
         const user = await prisma.user.create({
             data: {
@@ -99,6 +105,8 @@ export async function registerUser(formData: FormData) {
                 occupation: occupation || undefined,
                 educationLevel: educationLevel || undefined,
                 password: hashedPassword,
+                termsAcceptedAt: now,
+                privacyAcceptedAt: now,
             },
         });
 

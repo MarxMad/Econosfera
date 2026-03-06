@@ -5,6 +5,15 @@ import Link from "next/link";
 
 const COOKIE_CONSENT_KEY = "simulador-economia-cookie-consent";
 
+/** Genera un fingerprint simple para visitantes anónimos (no identificable) */
+function getFingerprint(): string {
+  if (typeof window === "undefined") return "";
+  const ua = navigator.userAgent;
+  const lang = navigator.language;
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+  return btoa(ua + "|" + lang + "|" + tz).slice(0, 32);
+}
+
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false);
 
@@ -15,9 +24,20 @@ export default function CookieConsent() {
     }
   }, []);
 
-  const accept = () => {
+  const accept = async () => {
     localStorage.setItem(COOKIE_CONSENT_KEY, "accepted");
     setVisible(false);
+    try {
+      await fetch("/api/cookie-consent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Consent-Fingerprint": getFingerprint(),
+        },
+      });
+    } catch {
+      // Silencioso: el consentimiento ya está en localStorage
+    }
   };
 
   if (!visible) return null;

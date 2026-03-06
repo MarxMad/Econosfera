@@ -4,11 +4,14 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
-import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap, Phone, Briefcase, Sparkles, Loader2 } from "lucide-react";
+import { User, Mail, Lock, ArrowRight, CheckCircle2, Eye, EyeOff, GraduationCap, Phone, Briefcase, Sparkles, Loader2, FileText, ShieldCheck } from "lucide-react";
 import { registerUser } from "@/lib/actions/authActions";
 
 export default function RegisterPage() {
     const { status } = useSession();
+    const [consentStep, setConsentStep] = useState(true); // true = pantalla de aceptación; false = formulario
+    const [acceptTerms, setAcceptTerms] = useState(false);
+    const [acceptPrivacy, setAcceptPrivacy] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
         lastName: "",
@@ -63,6 +66,8 @@ export default function RegisterPage() {
         data.append("occupation", formData.occupation);
         data.append("educationLevel", formData.educationLevel);
         data.append("password", formData.password);
+        data.append("termsAccepted", "true");
+        data.append("privacyAccepted", "true");
 
         const res = await registerUser(data);
 
@@ -125,10 +130,90 @@ export default function RegisterPage() {
         );
     }
 
+    // Pantalla de aceptación de términos y aviso de privacidad antes del registro
+    if (consentStep) {
+        return (
+            <div className="min-h-[80vh] flex items-center justify-center p-4">
+                <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800">
+                    <div className="text-center">
+                        <img
+                            src="/logos.svg"
+                            alt="Econosfera"
+                            className="w-16 h-16 mx-auto mb-4 object-contain"
+                        />
+                        <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Antes de continuar</h2>
+                        <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Para crear tu cuenta, debes aceptar los siguientes documentos:</p>
+                    </div>
+
+                    <div className="space-y-4">
+                        <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                            <input
+                                type="checkbox"
+                                checked={acceptTerms}
+                                onChange={(e) => setAcceptTerms(e.target.checked)}
+                                className="mt-1 w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <div>
+                                <span className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <FileText className="w-4 h-4" />
+                                    Acepto los Términos y Condiciones
+                                </span>
+                                <Link href="/terminos-condiciones" target="_blank" className="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 block">
+                                    Leer documento
+                                </Link>
+                            </div>
+                        </label>
+
+                        <label className="flex items-start gap-3 p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                            <input
+                                type="checkbox"
+                                checked={acceptPrivacy}
+                                onChange={(e) => setAcceptPrivacy(e.target.checked)}
+                                className="mt-1 w-5 h-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <div>
+                                <span className="font-semibold text-slate-900 dark:text-white flex items-center gap-2">
+                                    <ShieldCheck className="w-4 h-4" />
+                                    Acepto el Aviso de Privacidad
+                                </span>
+                                <Link href="/aviso-privacidad" target="_blank" className="text-xs text-blue-600 dark:text-blue-400 hover:underline mt-1 block">
+                                    Leer documento
+                                </Link>
+                            </div>
+                        </label>
+                    </div>
+
+                    <button
+                        type="button"
+                        onClick={() => setConsentStep(false)}
+                        disabled={!acceptTerms || !acceptPrivacy}
+                        className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold shadow-lg shadow-blue-600/30 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                        Continuar <ArrowRight className="w-5 h-5" />
+                    </button>
+
+                    <p className="text-center text-sm text-slate-600 dark:text-slate-400">
+                        ¿Ya tienes cuenta?{" "}
+                        <Link href="/auth/signin" className="font-bold text-blue-600 hover:text-blue-500">
+                            Inicia sesión
+                        </Link>
+                    </p>
+                </div>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-[80vh] flex items-center justify-center p-4">
             <div className="w-full max-w-md space-y-8 bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800">
                 <div className="text-center">
+                    <button
+                        type="button"
+                        onClick={() => setConsentStep(true)}
+                        className="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 mb-2 -mt-2"
+                    >
+                        ← Volver a términos
+                    </button>
                     <img
                         src="/logos.svg"
                         alt="Econosfera"

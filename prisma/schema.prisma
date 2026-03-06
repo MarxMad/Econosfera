@@ -67,9 +67,22 @@ model User {
   stripeSubscriptionId String?   // Stripe Subscription (suscripción activa)
   emailMarketingOptIn Boolean   @default(false)  // Recibir recordatorios, blog, promociones
   unamCreditsClaimedAt DateTime?  // Si no null, ya reclamó los 10 créditos extra UNAM (una sola vez)
+  termsAcceptedAt      DateTime?  // Fecha de aceptación de términos al registrarse
+  privacyAcceptedAt    DateTime?  // Fecha de aceptación de aviso de privacidad al registrarse
   emailCampaignLogs   EmailCampaignLog[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+}
+
+// Registro de consentimiento de cookies (tracking en Supabase)
+model CookieConsentLog {
+  id         String   @id @default(cuid())
+  userId     String?  // Si el usuario está logueado
+  fingerprint String? // Identificador anónimo (ej. hash de IP + user-agent) para visitantes sin cuenta
+  acceptedAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([acceptedAt])
 }
 
 // Registro de correos enviados (evita duplicados y permite throttling)
