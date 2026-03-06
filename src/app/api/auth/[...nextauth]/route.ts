@@ -23,10 +23,21 @@ if (process.env.NODE_ENV === "production" && !process.env.NEXTAUTH_SECRET) {
 
 const handler = NextAuth(authOptions);
 
-export async function POST(req: Request) {
+function getNextAuthParams(pathname: string): string[] {
+  const match = pathname.match(/^\/api\/auth\/(.+)$/);
+  return match ? match[1].split("/").filter(Boolean) : [];
+}
+
+export async function POST(
+  req: Request,
+  context?: { params?: Promise<Record<string, string | string[]>> | Record<string, string | string[]> }
+) {
   try {
     const url = new URL(req.url);
-    const isSignout = url.pathname.endsWith("/signout");
+    const pathname = url.pathname;
+    const isSignout = pathname.endsWith("/signout");
+    const nextauth = getNextAuthParams(pathname);
+    const ctx = { params: { nextauth }, query: { nextauth } };
     if (!isSignout) {
       try {
         const rateLimitRes = await checkAuthRateLimit(req);
@@ -36,7 +47,7 @@ export async function POST(req: Request) {
         // Si rate limit falla (ej. DB), continuar sin bloquear el login
       }
     }
-    const res = await handler(req);
+    const res = await handler(req, ctx);
     if (res?.status === 500) {
       const text = await res.text();
       try {
@@ -51,10 +62,14 @@ export async function POST(req: Request) {
         return NextResponse.json(parsed, { status: 500 });
       } catch {
         console.error("[NextAuth] 500 body no es JSON:", text?.slice(0, 200));
-        return NextResponse.json(
-          { error: "CredentialsSignin", message: "Error del servidor. Intenta de nuevo más tarde." },
-          { status: 500 }
-        );
+        const body: Record<string, string> = {
+          error: "CredentialsSignin",
+          message: "Error del servidor. Intenta de nuevo más tarde.",
+        };
+        if (process.env.DEBUG_AUTH === "1" || process.env.NODE_ENV !== "production") {
+          body.debug = "Respuesta 500 no-JSON: " + (text?.slice(0, 300) || "");
+        }
+        return NextResponse.json(body, { status: 500 });
       }
     }
     return res;
@@ -68,11 +83,20 @@ export async function POST(req: Request) {
         : msg.includes("secret") || msg.includes("nextauth_secret")
           ? "NEXTAUTH_SECRET no configurado. Añádela en Vercel."
           : "Error del servidor. Intenta de nuevo más tarde.";
-    return NextResponse.json(
-      { error: "CredentialsSignin", message: userMsg },
-      { status: 500 }
-    );
+    const body: Record<string, string> = { error: "CredentialsSignin", message: userMsg };
+    if (process.env.DEBUG_AUTH === "1" || process.env.NODE_ENV !== "production") {
+      body.debug = err.message;
+    }
+    return NextResponse.json(body, { status: 500 });
   }
 }
 
-export { handler as GET };
+export async function GET(
+  req: Request,
+  context?: { params?: Promise<Record<string, string | string[]>> | Record<string, string | string[]> }
+) {
+  const url = new URL(req.url);
+  const nextauth = getNextAuthParams(url.pathname);
+  const ctx = { params: { nextauth }, query: { nextauth } };
+  return handler(req, ctx);
+}
