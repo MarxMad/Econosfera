@@ -116,7 +116,7 @@ import {
 
 export default function SimuladorMicro({ initialData }: { initialData?: any }) {
   const { data: session } = useSession();
-  const [activeTab, setActiveTab] = useState<"mercado" | "estructuras" | "juegos" | "elasticidad">("mercado");
+  const [activeTab, setActiveTab] = useState<"mercado" | "estructuras" | "juegos" | "elasticidad" | "elasticidadArco">("mercado");
   const [mercado, setMercado] = useState<VariablesMercado>(INICIAL_MERCADO);
   const [baselineMercado, setBaselineMercado] = useState<VariablesMercado>(INICIAL_MERCADO);
   const [elasticidad, setElasticidad] = useState<VariablesElasticidad>(INICIAL_ELAST);
@@ -215,6 +215,7 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
           { id: "estructuras", label: "Estructuras de Mercado" },
           { id: "juegos", label: "Teoría de Juegos" },
           { id: "elasticidad", label: "Elasticidad" },
+          { id: "elasticidadArco", label: "Elasticidad Arco" },
         ].map((t) => {
           const locked = !canAccess(session?.user?.plan, "micro", t.id);
           return (
@@ -411,28 +412,25 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
 
       {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "estructuras" && <SimuladorEstructurasMercado />}
       {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "juegos" && <SimuladorTeoriaJuegos />}
-      {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "elasticidad" && (
-        <div className="space-y-6">
-          <SimuladorElasticidad />
-          {/* Conservamos la calculadora de arco original por precision academica */}
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-              <Ruler className="w-5 h-5 text-slate-600 dark:text-slate-400" aria-hidden /> Calculadora de Elasticidad Arco
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-4">
-                <Slider label="Precio inicial" value={elasticidad.precioInicial} min={1} max={50} step={1} onChange={(n) => setElasticidad({ ...elasticidad, precioInicial: n })} />
-                <Slider label="Precio final" value={elasticidad.precioFinal} min={1} max={50} step={1} onChange={(n) => setElasticidad({ ...elasticidad, precioFinal: n })} />
-                <Slider label="Cantidad inicial" value={elasticidad.cantidadInicial} min={10} max={200} step={5} onChange={(n) => setElasticidad({ ...elasticidad, cantidadInicial: n })} />
-                <Slider label="Cantidad final" value={elasticidad.cantidadFinal} min={10} max={200} step={5} onChange={(n) => setElasticidad({ ...elasticidad, cantidadFinal: n })} />
+      {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "elasticidad" && <SimuladorElasticidad />}
+      {canAccess(session?.user?.plan, "micro", activeTab) && activeTab === "elasticidadArco" && (
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
+            <Ruler className="w-5 h-5 text-slate-600 dark:text-slate-400" aria-hidden /> Calculadora de Elasticidad Arco
+          </h2>
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <Slider label="Precio inicial" value={elasticidad.precioInicial} min={1} max={50} step={1} onChange={(n) => setElasticidad({ ...elasticidad, precioInicial: n })} />
+              <Slider label="Precio final" value={elasticidad.precioFinal} min={1} max={50} step={1} onChange={(n) => setElasticidad({ ...elasticidad, precioFinal: n })} />
+              <Slider label="Cantidad inicial" value={elasticidad.cantidadInicial} min={10} max={200} step={5} onChange={(n) => setElasticidad({ ...elasticidad, cantidadInicial: n })} />
+              <Slider label="Cantidad final" value={elasticidad.cantidadFinal} min={10} max={200} step={5} onChange={(n) => setElasticidad({ ...elasticidad, cantidadFinal: n })} />
+            </div>
+            <div className="space-y-3">
+              <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 p-4">
+                <p className="text-xs font-semibold uppercase text-blue-600 dark:text-blue-400">Elasticidad arco</p>
+                <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">{resElast.elasticidadArco}</p>
               </div>
-              <div className="space-y-3">
-                <div className="rounded-xl border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/30 p-4">
-                  <p className="text-xs font-semibold uppercase text-blue-600 dark:text-blue-400">Elasticidad arco</p>
-                  <p className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">{resElast.elasticidadArco}</p>
-                </div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">{resElast.interpretacion}</p>
-              </div>
+              <p className="text-sm text-slate-600 dark:text-slate-400">{resElast.interpretacion}</p>
             </div>
           </div>
         </div>
