@@ -66,6 +66,7 @@ model User {
   stripeCustomerId     String?   // Stripe Customer para portal de facturación
   stripeSubscriptionId String?   // Stripe Subscription (suscripción activa)
   emailMarketingOptIn Boolean   @default(false)  // Recibir recordatorios, blog, promociones
+  unamCreditsClaimedAt DateTime?  // Si no null, ya reclamó los 10 créditos extra UNAM (una sola vez)
   emailCampaignLogs   EmailCampaignLog[]
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt

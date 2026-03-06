@@ -17,6 +17,7 @@ import {
     ChevronUp,
     Pencil,
     MailCheck,
+    Gift,
 } from "lucide-react";
 import { getProfile, updateProfile, uploadProfileImage, resendVerification } from "@/lib/actions/authActions";
 
@@ -40,6 +41,7 @@ type ProfileData = {
     educationLevel: string | null;
     emailVerified: Date | null;
     emailMarketingOptIn: boolean;
+    unamCreditsClaimedAt: Date | null;
 } | null;
 
 export default function ProfileCard() {
@@ -51,6 +53,7 @@ export default function ProfileCard() {
     const [emailSent, setEmailSent] = useState(false);
     const [emailLoading, setEmailLoading] = useState(false);
     const [editingProfile, setEditingProfile] = useState(false);
+    const [claimingUnam, setClaimingUnam] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [form, setForm] = useState({
@@ -325,6 +328,64 @@ export default function ProfileCard() {
                     </button>
                 </div>
             )}
+
+            {/* Banner UNAM: reclamar 10 créditos extra (solo una vez, cuenta verificada) */}
+            {isVerified &&
+                profile?.institution &&
+                profile.institution.toLowerCase().includes("unam") &&
+                !profile.unamCreditsClaimedAt && (
+                    <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 border border-amber-200 dark:border-amber-800/50">
+                            <div className="flex items-start gap-3">
+                                <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/40">
+                                    <Gift className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
+                                        ¡Oferta UNAM!
+                                    </h4>
+                                    <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
+                                        Como estudiante de la UNAM, reclama <strong>10 créditos extra</strong> para análisis IA. Solo una vez por cuenta.
+                                    </p>
+                                    <button
+                                        type="button"
+                                        onClick={async () => {
+                                            if (!session?.user?.id || claimingUnam) return;
+                                            setClaimingUnam(true);
+                                            try {
+                                                const res = await fetch("/api/claim-unam-credits", {
+                                                    method: "POST",
+                                                });
+                                                const data = await res.json();
+                                                if (res.ok && data.success) {
+                                                    setProfile((p) =>
+                                                        p ? { ...p, unamCreditsClaimedAt: new Date() } : null
+                                                    );
+                                                    await update();
+                                                } else {
+                                                    alert(data.error || "No se pudo reclamar");
+                                                }
+                                            } catch {
+                                                alert("Error al reclamar. Intenta de nuevo.");
+                                            } finally {
+                                                setClaimingUnam(false);
+                                            }
+                                        }}
+                                        disabled={claimingUnam}
+                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 text-white text-sm font-bold hover:bg-amber-500 disabled:opacity-50 transition-colors"
+                                    >
+                                        {claimingUnam ? (
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                        ) : (
+                                            <Gift className="w-4 h-4" />
+                                        )}
+                                        {claimingUnam ? "Reclamando…" : "Reclamar 10 créditos"}
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
             {/* Preferencias de correo: recordatorios, blog, promociones */}
             <div className="pt-4 border-t border-slate-200 dark:border-slate-700">

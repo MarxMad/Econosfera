@@ -139,6 +139,7 @@ export async function getProfile(userId: string) {
                 educationLevel: true,
                 emailVerified: true,
                 emailMarketingOptIn: true,
+                unamCreditsClaimedAt: true,
             },
         });
         return user;
