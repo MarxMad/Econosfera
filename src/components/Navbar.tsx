@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { User, LogIn, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
 import { useState } from "react";
 
@@ -9,13 +9,17 @@ function SignOutButton({ variant = "icon", onClose }: { variant?: "icon" | "full
     const className = variant === "full"
         ? "w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10"
         : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors";
+    const handleSignOut = () => {
+        onClose?.();
+        // Limpiar sesión en cliente y redirigir a nuestra ruta que borra cookies
+        signOut({ redirect: false }).catch(() => {}).finally(() => {
+            window.location.href = "/api/signout?callbackUrl=%2F";
+        });
+    };
     return (
         <button
             type="button"
-            onClick={() => {
-                onClose?.();
-                window.location.href = "/api/signout?callbackUrl=%2F";
-            }}
+            onClick={handleSignOut}
             className={className}
             title="Cerrar Sesión"
         >

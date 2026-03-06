@@ -25,7 +25,7 @@ export async function POST(request: Request) {
         });
         if (!user?.stripeCustomerId) {
             return NextResponse.json(
-                { error: "No tienes una suscripción activa para gestionar. Suscríbete desde la página de precios." },
+                { error: "No tienes una suscripción activa en Stripe. Si obtuviste el plan por otro medio, contacta a soporte." },
                 { status: 400 }
             );
         }

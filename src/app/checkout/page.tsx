@@ -15,13 +15,16 @@ function CheckoutForm() {
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState(false);
     const [useStripe, setUseStripe] = useState<boolean | null>(null);
+    const [stripeError, setStripeError] = useState<string | null>(null);
 
     // Redirigir a Stripe Checkout si está configurado y el usuario está logueado
     useEffect(() => {
         if (status !== "authenticated" || !session?.user) {
             setUseStripe(false);
+            setStripeError(null);
             return;
         }
+        setStripeError(null);
         let cancelled = false;
         (async () => {
             try {
@@ -38,8 +41,10 @@ function CheckoutForm() {
                     return;
                 }
                 setUseStripe(false);
+                setStripeError(data?.error || (res.status === 429 ? "Demasiados intentos. Espera un momento." : "No se pudo conectar con la pasarela de pago."));
             } catch {
                 setUseStripe(false);
+                setStripeError("Error de conexión. Revisa tu internet e intenta de nuevo.");
             }
         })();
         return () => { cancelled = true; };
@@ -97,6 +102,45 @@ function CheckoutForm() {
                     <ChevronLeft className="w-4 h-4" />
                     Volver a planes
                 </Link>
+
+                {stripeError && (
+                    <div className="mb-6 p-4 bg-rose-50 dark:bg-rose-900/20 border border-rose-200 dark:border-rose-800 rounded-2xl text-rose-800 dark:text-rose-200 text-sm">
+                        <div className="flex items-start gap-3">
+                            <Shield className="w-5 h-5 shrink-0 mt-0.5" />
+                            <div className="flex-1">
+                                <p className="font-bold mb-1">Error en la pasarela de pago</p>
+                                <p>{stripeError}</p>
+                                {session && (
+                                    <p className="mt-2 text-xs opacity-90">
+                                        Si Stripe está configurado en el servidor, verifica las variables de entorno (STRIPE_SECRET_KEY, STRIPE_PRICE_PRO, etc.).
+                                    </p>
+                                )}
+                            </div>
+                        </div>
+                        {session && (
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setStripeError(null);
+                                    fetch("/api/stripe/create-checkout-session", {
+                                        method: "POST",
+                                        headers: { "Content-Type": "application/json" },
+                                        body: JSON.stringify({ plan: plan === "researcher" ? "researcher" : "student" }),
+                                    })
+                                        .then((r) => r.json())
+                                        .then((d) => {
+                                            if (d?.url) window.location.href = d.url;
+                                            else setStripeError(d?.error || "Error al crear la sesión.");
+                                        })
+                                        .catch(() => setStripeError("Error de conexión."));
+                                }}
+                                className="mt-3 text-xs font-bold text-rose-700 dark:text-rose-300 hover:underline"
+                            >
+                                Reintentar con Stripe
+                            </button>
+                        )}
+                    </div>
+                )}
 
                 <div className="grid md:grid-cols-5 gap-8">
                     <div className="md:col-span-3">
