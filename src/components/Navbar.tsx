@@ -3,7 +3,47 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { User, LogIn, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+function SignOutButton({ variant = "icon", onClose }: { variant?: "icon" | "full"; onClose?: () => void }) {
+    const [csrfToken, setCsrfToken] = useState<string>("");
+
+    useEffect(() => {
+        fetch("/api/auth/csrf")
+            .then((r) => r.json())
+            .then((d) => setCsrfToken(d.csrfToken || ""))
+            .catch(() => {});
+    }, []);
+
+    if (!csrfToken) {
+        return (
+            <button
+                type="button"
+                onClick={() => { onClose?.(); window.location.href = "/api/auth/signout?callbackUrl=%2F"; }}
+                className={variant === "full" ? "w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10" : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"}
+                title="Cerrar Sesión"
+            >
+                <LogOut className="w-5 h-5" />
+                {variant === "full" && "Cerrar Sesión"}
+            </button>
+        );
+    }
+
+    return (
+        <form action="/api/auth/signout" method="POST" className={variant === "full" ? "w-full" : "inline"} onSubmit={onClose}>
+            <input type="hidden" name="callbackUrl" value="/" />
+            <input type="hidden" name="csrfToken" value={csrfToken} />
+            <button
+                type="submit"
+                className={variant === "full" ? "w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10" : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"}
+                title="Cerrar Sesión"
+            >
+                <LogOut className="w-5 h-5" />
+                {variant === "full" && "Cerrar Sesión"}
+            </button>
+        </form>
+    );
+}
 
 export default function Navbar() {
     const { data: session } = useSession();
@@ -56,15 +96,7 @@ export default function Navbar() {
                                         <p className="text-xs font-bold">{session.user.name || session.user.email}</p>
                                         <p className="text-[10px] text-blue-400 font-mono">{session.user.credits} créditos AI</p>
                                     </div>
-                                    <button
-                                        onClick={() => {
-                                            window.location.href = "/api/auth/signout?callbackUrl=%2F";
-                                        }}
-                                        className="p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"
-                                        title="Cerrar Sesión"
-                                    >
-                                        <LogOut className="w-5 h-5" />
-                                    </button>
+                                    <SignOutButton variant="icon" />
                                 </div>
                             </div>
                         ) : (
@@ -110,9 +142,7 @@ export default function Navbar() {
                                 <User className="w-5 h-5" /> Mi Perfil
                             </Link>
                             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-blue-400">Dashboard ({session.user.credits} créditos)</Link>
-                            <button onClick={() => { setMenuOpen(false); window.location.href = "/api/auth/signout?callbackUrl=%2F"; }} className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10">
-                                <LogOut className="w-5 h-5" /> Cerrar Sesión
-                            </button>
+                            <SignOutButton variant="full" onClose={() => setMenuOpen(false)} />
                         </>
                     ) : (
                         <>
