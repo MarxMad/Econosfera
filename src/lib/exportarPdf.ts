@@ -1009,3 +1009,175 @@ export async function exportarUIPPdf(
   }
   doc.save(`econosfera-paridad-uip-${new Date().toISOString().split("T")[0]}.pdf`);
 }
+
+/** PDF Regresión múltiple (estilo EViews). */
+export async function exportarRegresionMultiplePdf(params: {
+  n: number;
+  b0: number;
+  b1: number;
+  b2: number;
+  noise: number;
+  res: import("./econometria").ResultadoMCO;
+}): Promise<void> {
+  const { res } = params;
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("REGRESIÓN MÚLTIPLE (MCO) — ESTILO EVIEWS", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(11);
+  doc.setFont("helvetica", "bold");
+  doc.text("Tabla de coeficientes", MARGIN, currentY);
+  currentY += 6;
+  const body = res.nombres.map((nom, i) => [
+    nom,
+    res.coeficientes[i].toFixed(4),
+    res.erroresEstandar[i].toFixed(4),
+    res.tStats[i].toFixed(3),
+    res.pValores[i].toFixed(4),
+  ]);
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Variable", "Coefficient", "Std. Error", "t-Statistic", "Prob."]],
+    body,
+    theme: "grid",
+    headStyles: { fillColor: [67, 56, 202] },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { fontSize: 9 },
+  });
+  currentY = doc.lastAutoTable.finalY + 10;
+
+  doc.setFontSize(10);
+  doc.text(`R² = ${res.r2.toFixed(4)}  |  R² ajustado = ${res.r2Ajustado.toFixed(4)}  |  Durbin-Watson = ${res.durbinWatson.toFixed(4)}`, MARGIN, currentY);
+  currentY += 8;
+  doc.text(`F-statistic = ${res.fStat.toFixed(2)}  |  Prob(F) = ${res.fPValor.toFixed(4)}`, MARGIN, currentY);
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Estadística | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-regresion-multiple-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Matriz de correlación. */
+export async function exportarMatrizCorrelacionPdf(nombres: string[], corr: number[][]): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("MATRIZ DE CORRELACIÓN", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  const body = corr.map((row, i) => [nombres[i], ...row.map((v) => v.toFixed(3))]);
+  autoTable(doc, {
+    startY: currentY,
+    head: [["", ...nombres]],
+    body,
+    theme: "grid",
+    headStyles: { fillColor: [6, 182, 212] },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { fontSize: 9 },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Estadística | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-matriz-correlacion-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Estadísticas descriptivas. */
+export async function exportarEstadisticasDescriptivasPdf(
+  stats: Array<{ variable: string; media: number; mediana: number; desvEstandar: number; min: number; max: number; n: number }>
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("ESTADÍSTICAS DESCRIPTIVAS", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  const body = stats.map((s) => [
+    s.variable,
+    s.media.toFixed(2),
+    s.mediana.toFixed(2),
+    s.desvEstandar.toFixed(2),
+    s.min.toFixed(2),
+    s.max.toFixed(2),
+    String(s.n),
+  ]);
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Variable", "Mean", "Median", "Std. Dev.", "Min", "Max", "N"]],
+    body,
+    theme: "grid",
+    headStyles: { fillColor: [16, 185, 129] },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { fontSize: 9 },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Estadística | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-estadisticas-descriptivas-${new Date().toISOString().split("T")[0]}.pdf`);
+}

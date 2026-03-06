@@ -83,6 +83,9 @@ export const SIMULATOR_ACCESS: Record<string, Record<string, PlanLevel>> = {
   estadistica: {
     regresion: "FREE",
     tcl: "PRO",
+    regresionMultiple: "FREE",
+    matrizCorrelacion: "FREE",
+    estadisticasDescriptivas: "PRO",
   },
   contadores: {
     depreciacion: "FREE",

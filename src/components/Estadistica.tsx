@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, BarChart, Info, BookOpen, Layers, Activity, Lock } from "lucide-react";
-import { SimuladorRegresion, SimuladorTCL } from "./simuladores-stats";
+import { TrendingUp, BarChart, BookOpen, Layers, Activity, Lock, Table2, Grid3X3, BarChart2 } from "lucide-react";
+import { SimuladorRegresion, SimuladorTCL, SimuladorRegresionMultiple, SimuladorMatrizCorrelacion, SimuladorEstadisticasDescriptivas } from "./simuladores-stats";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
 
 export default function Estadistica() {
     const { data: session } = useSession();
-    const [activeTab, setActiveTab] = useState<"regresion" | "tcl">("regresion");
+    const [activeTab, setActiveTab] = useState<"regresion" | "tcl" | "regresionMultiple" | "matrizCorrelacion" | "estadisticasDescriptivas">("regresion");
 
     return (
         <div className="space-y-6 animate-in fade-in duration-700">
@@ -32,6 +32,9 @@ export default function Estadistica() {
                 {[
                     { id: 'regresion', label: 'Regresión Lineal', icon: Activity },
                     { id: 'tcl', label: 'Teorema Límite Central', icon: Layers },
+                    { id: 'regresionMultiple', label: 'Regresión Múltiple (EViews)', icon: Table2 },
+                    { id: 'matrizCorrelacion', label: 'Matriz Correlación', icon: Grid3X3 },
+                    { id: 'estadisticasDescriptivas', label: 'Estadísticas Descriptivas', icon: BarChart2 },
                 ].map((tab) => {
                     const locked = !canAccess(session?.user?.plan, "estadistica", tab.id);
                     return (
@@ -57,6 +60,9 @@ export default function Estadistica() {
                 )}
                 {canAccess(session?.user?.plan, "estadistica", activeTab) && activeTab === 'regresion' && <SimuladorRegresion />}
                 {canAccess(session?.user?.plan, "estadistica", activeTab) && activeTab === 'tcl' && <SimuladorTCL />}
+                {canAccess(session?.user?.plan, "estadistica", activeTab) && activeTab === 'regresionMultiple' && <SimuladorRegresionMultiple />}
+                {canAccess(session?.user?.plan, "estadistica", activeTab) && activeTab === 'matrizCorrelacion' && <SimuladorMatrizCorrelacion />}
+                {canAccess(session?.user?.plan, "estadistica", activeTab) && activeTab === 'estadisticasDescriptivas' && <SimuladorEstadisticasDescriptivas />}
             </div>
 
             <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
