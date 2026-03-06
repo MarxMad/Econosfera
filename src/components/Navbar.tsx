@@ -3,36 +3,12 @@
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { User, LogIn, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-function SignOutButton({ variant = "icon", onClose }: { variant?: "icon" | "full"; onClose?: () => void }) {
-    const [csrfToken, setCsrfToken] = useState<string>("");
-
-    useEffect(() => {
-        fetch("/api/auth/csrf")
-            .then((r) => r.json())
-            .then((d) => setCsrfToken(d.csrfToken || ""))
-            .catch(() => {});
-    }, []);
-
-    if (!csrfToken) {
-        return (
-            <button
-                type="button"
-                onClick={() => { onClose?.(); window.location.href = "/api/auth/signout?callbackUrl=%2F"; }}
-                className={variant === "full" ? "w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10" : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"}
-                title="Cerrar Sesión"
-            >
-                <LogOut className="w-5 h-5" />
-                {variant === "full" && "Cerrar Sesión"}
-            </button>
-        );
-    }
-
+function SignOutButton({ variant = "icon" }: { variant?: "icon" | "full" }) {
     return (
-        <form action="/api/auth/signout" method="POST" className={variant === "full" ? "w-full" : "inline"}>
+        <form action="/api/signout" method="POST" className={variant === "full" ? "w-full" : "inline"}>
             <input type="hidden" name="callbackUrl" value="/" />
-            <input type="hidden" name="csrfToken" value={csrfToken} />
             <button
                 type="submit"
                 className={variant === "full" ? "w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10" : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"}
@@ -142,7 +118,7 @@ export default function Navbar() {
                                 <User className="w-5 h-5" /> Mi Perfil
                             </Link>
                             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-blue-400">Dashboard ({session.user.credits} créditos)</Link>
-                            <SignOutButton variant="full" onClose={() => setMenuOpen(false)} />
+                            <SignOutButton variant="full" />
                         </>
                     ) : (
                         <>
