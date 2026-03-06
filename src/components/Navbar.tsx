@@ -6,18 +6,18 @@ import { User, LogIn, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
 import { useState } from "react";
 
 function SignOutButton({ variant = "icon" }: { variant?: "icon" | "full" }) {
+    const className = variant === "full"
+        ? "w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10"
+        : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors";
     return (
-        <form action="/api/signout" method="POST" className={variant === "full" ? "w-full" : "inline"}>
-            <input type="hidden" name="callbackUrl" value="/" />
-            <button
-                type="submit"
-                className={variant === "full" ? "w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10" : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"}
-                title="Cerrar Sesión"
-            >
-                <LogOut className="w-5 h-5" />
-                {variant === "full" && "Cerrar Sesión"}
-            </button>
-        </form>
+        <Link
+            href="/api/signout?callbackUrl=%2F"
+            className={className}
+            title="Cerrar Sesión"
+        >
+            <LogOut className="w-5 h-5" />
+            {variant === "full" && "Cerrar Sesión"}
+        </Link>
     );
 }
 
