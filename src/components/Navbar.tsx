@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { User, LogIn, LogOut, LayoutDashboard, Menu, X } from "lucide-react";
 import { useState } from "react";
 
@@ -57,9 +57,8 @@ export default function Navbar() {
                                         <p className="text-[10px] text-blue-400 font-mono">{session.user.credits} créditos AI</p>
                                     </div>
                                     <button
-                                        onClick={async () => {
-                                            await signOut({ redirect: false });
-                                            window.location.href = "/";
+                                        onClick={() => {
+                                            window.location.href = "/api/auth/signout?callbackUrl=%2F";
                                         }}
                                         className="p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors"
                                         title="Cerrar Sesión"
@@ -111,7 +110,7 @@ export default function Navbar() {
                                 <User className="w-5 h-5" /> Mi Perfil
                             </Link>
                             <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium text-blue-400">Dashboard ({session.user.credits} créditos)</Link>
-                            <button onClick={async () => { setMenuOpen(false); await signOut({ redirect: false }); window.location.href = "/"; }} className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10">
+                            <button onClick={() => { setMenuOpen(false); window.location.href = "/api/auth/signout?callbackUrl=%2F"; }} className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium text-red-400 hover:bg-red-900/10">
                                 <LogOut className="w-5 h-5" /> Cerrar Sesión
                             </button>
                         </>

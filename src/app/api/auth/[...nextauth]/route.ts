@@ -11,8 +11,12 @@ if (process.env.NODE_ENV === "production" && !process.env.NEXTAUTH_SECRET) {
 const handler = NextAuth(authOptions);
 
 export async function POST(req: Request) {
-  const rateLimitRes = await checkAuthRateLimit(req);
-  if (rateLimitRes) return rateLimitRes;
+  const url = new URL(req.url);
+  const isSignout = url.pathname.endsWith("/signout");
+  if (!isSignout) {
+    const rateLimitRes = await checkAuthRateLimit(req);
+    if (rateLimitRes) return rateLimitRes;
+  }
   return handler(req);
 }
 

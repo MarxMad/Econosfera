@@ -122,7 +122,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
 
     if (status === "loading" || loading) {
         return (
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg animate-pulse">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg animate-pulse">
                 <div className="h-20 bg-slate-200 dark:bg-slate-700 rounded-2xl mb-4" />
                 <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-3/4 mb-2" />
                 <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/2" />
@@ -135,17 +135,17 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
     const avatarUrl = profile?.image || session?.user?.image;
 
     return (
-        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg relative overflow-hidden">
+        <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg relative overflow-hidden">
             {/* Toast coqueto: recompensa reclamada */}
             {toastMessage && (
                 <div
-                    className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-white text-sm font-bold shadow-lg shadow-amber-500/30 ring-2 ring-amber-300/50"
+                    className="fixed bottom-4 left-4 right-4 sm:left-1/2 sm:right-auto sm:-translate-x-1/2 sm:max-w-md z-50 px-4 py-3 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-400 text-white text-sm font-bold shadow-lg shadow-amber-500/30 ring-2 ring-amber-300/50 text-center"
                     role="status"
                 >
                     {toastMessage}
                 </div>
             )}
-            <div className="absolute top-0 right-0 p-4">
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4">
                 {isVerified ? (
                     <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-500 border border-emerald-200 dark:border-emerald-800">
                         <CheckCircle2 className="w-3.5 h-3.5" />
@@ -160,10 +160,10 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
             </div>
 
             {/* Vista compacta: avatar + nombre + correo + botón editar */}
-            <div className="flex flex-col sm:flex-row gap-4 mb-4">
-                <div className="shrink-0">
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 p-0.5 shadow-md overflow-hidden">
-                        <div className="w-full h-full rounded-2xl bg-slate-900 flex items-center justify-center text-xl sm:text-2xl font-black text-white overflow-hidden">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 pt-10 sm:pt-0">
+                <div className="shrink-0 flex justify-center sm:justify-start">
+                    <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 p-0.5 shadow-md overflow-hidden">
+                        <div className="w-full h-full rounded-[10px] sm:rounded-2xl bg-slate-900 flex items-center justify-center text-lg sm:text-2xl font-black text-white overflow-hidden">
                             {avatarUrl ? (
                                 <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
                             ) : (
@@ -173,13 +173,13 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
                     </div>
                 </div>
 
-                <div className="flex-1 min-w-0 flex flex-col justify-center">
-                    <p className="font-bold text-slate-900 dark:text-white text-lg truncate">{displayName}</p>
+                <div className="flex-1 min-w-0 flex flex-col justify-center text-center sm:text-left">
+                    <p className="font-bold text-slate-900 dark:text-white text-base sm:text-lg truncate">{displayName}</p>
                     <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{profile?.email ?? session?.user?.email ?? ""}</p>
                     <button
                         type="button"
                         onClick={() => setEditingProfile((v) => !v)}
-                        className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-fit"
+                        className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors w-fit mx-auto sm:mx-0"
                     >
                         {editingProfile ? <ChevronUp className="w-3.5 h-3.5" /> : <Pencil className="w-3.5 h-3.5" />}
                         {editingProfile ? "Ocultar datos" : "Editar perfil"}
@@ -301,13 +301,16 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
                 profile.institution.toLowerCase().includes("unam") &&
                 !profile.unamCreditsClaimedAt && (
                     <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <div className="p-4 rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 border border-amber-200 dark:border-amber-800/50">
-                            <div className="flex items-start gap-3">
-                                <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/40">
-                                    <Gift className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                        <div className="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/20 border border-amber-200 dark:border-amber-800/50">
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-3">
+                                <div className="flex items-center gap-3 sm:block">
+                                    <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/40 w-fit">
+                                        <Gift className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                                    </div>
+                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white sm:hidden">¡Oferta UNAM!</h4>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h4 className="text-sm font-bold text-slate-900 dark:text-white mb-1">
+                                    <h4 className="hidden sm:block text-sm font-bold text-slate-900 dark:text-white mb-1">
                                         ¡Oferta UNAM!
                                     </h4>
                                     <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
@@ -344,7 +347,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
                                             }
                                         }}
                                         disabled={claimingUnam}
-                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-amber-600 text-white text-sm font-bold hover:bg-amber-500 disabled:opacity-50 transition-colors"
+                                        className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2 rounded-xl bg-amber-600 text-white text-sm font-bold hover:bg-amber-500 disabled:opacity-50 transition-colors"
                                     >
                                         {claimingUnam ? (
                                             <Loader2 className="w-4 h-4 animate-spin" />
@@ -361,12 +364,12 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
 
             {/* Preferencias de correo: recordatorios, blog, promociones */}
             <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
-                <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                        <MailCheck className="w-4 h-4 text-slate-500 dark:text-slate-400" />
-                        <div>
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                        <MailCheck className="w-4 h-4 shrink-0 text-slate-500 dark:text-slate-400" />
+                        <div className="min-w-0">
                             <p className="text-sm font-bold text-slate-800 dark:text-slate-200">Notificaciones por correo</p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">Recordatorios, nuevos artículos del blog y promociones</p>
+                            <p className="text-xs text-slate-500 dark:text-slate-400">Recordatorios, blog y promociones</p>
                         </div>
                     </div>
                     <button
@@ -383,7 +386,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
                                 alert(res.error);
                             }
                         }}
-                        className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                        className={`relative inline-flex h-6 w-11 shrink-0 self-start sm:self-auto cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                             profile?.emailMarketingOptIn ? "bg-blue-600" : "bg-slate-200 dark:bg-slate-700"
                         }`}
                     >
@@ -397,7 +400,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
             </div>
 
             {!isVerified && (
-                <div className="p-4 bg-amber-50 dark:bg-amber-950/30 rounded-2xl border border-amber-100 dark:border-amber-900/50">
+                <div className="p-3 sm:p-4 bg-amber-50 dark:bg-amber-950/30 rounded-xl sm:rounded-2xl border border-amber-100 dark:border-amber-900/50">
                     <div className="flex items-start gap-2 mb-1">
                         <AlertCircle className="w-4 h-4 text-amber-600 dark:text-amber-500 mt-0.5 shrink-0" />
                         <h4 className="text-sm font-bold text-amber-900 dark:text-amber-500">Verificación pendiente</h4>

@@ -52,19 +52,19 @@ export default function DashboardPage() {
         }
     };
 
-    if (status === "loading") return <div className="p-10 text-center">Cargando...</div>;
-    if (!session) return <div className="p-10 text-center">Debes iniciar sesión.</div>;
+    if (status === "loading") return <div className="p-8 sm:p-10 text-center text-slate-500">Cargando...</div>;
+    if (!session) return <div className="p-8 sm:p-10 text-center text-slate-500">Debes iniciar sesión.</div>;
 
     return (
-        <div className="max-w-7xl mx-auto px-4 py-8">
-            <header className="mb-8">
-                <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Mi Espacio de Trabajo</h1>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+            <header className="mb-6 sm:mb-8">
+                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Mi Espacio de Trabajo</h1>
                 <p className="text-slate-500 dark:text-slate-400">Gestiona tus simulaciones guardadas y créditos de análisis AI.</p>
             </header>
 
             {/* Banner: sin créditos → CTA a Pro/Researcher */}
             {(session.user.credits ?? 0) === 0 && (
-                <div className="mb-6 p-5 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex flex-wrap items-center justify-between gap-4">
+                <div className="mb-6 p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/40">
                             <Sparkles className="w-5 h-5 text-amber-600 dark:text-amber-400" />
@@ -80,14 +80,14 @@ export default function DashboardPage() {
                 </div>
             )}
 
-            <div className="grid lg:grid-cols-3 gap-8">
+            <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
                 {/* Left Column: Stats, Profile & Credits */}
                 <div className="space-y-6">
                     {/* Tarjeta de Perfil (datos, verificación) */}
                     <ProfileCard onCreditsClaimed={loadData} />
 
                     {/* Tarjeta de Créditos e IA */}
-                    <div className="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-3xl p-6 text-white shadow-xl relative overflow-hidden">
+                    <div className="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-white shadow-xl relative overflow-hidden">
                         <div className="absolute -right-4 -top-4 opacity-10">
                             <BrainCircuit className="w-32 h-32" />
                         </div>
@@ -133,7 +133,7 @@ export default function DashboardPage() {
                     <PlanComparador />
 
                     {/* Resumen de Actividad Académica */}
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
                         <h3 className="font-bold text-slate-900 dark:text-white mb-4">Progreso Económico</h3>
                         <div className="space-y-3">
                             <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-800/50">
@@ -164,7 +164,7 @@ export default function DashboardPage() {
                 <div className="lg:col-span-2 space-y-6">
 
                     {/* Tu siguiente paso */}
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-2xl p-5 border border-blue-100 dark:border-slate-700">
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-blue-100 dark:border-slate-700">
                         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Tu siguiente paso</h3>
                         {(session.user.credits ?? 0) > 0 ? (
                             <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Completa un análisis de minuta con IA o exporta tu primer reporte para aprovechar al máximo la plataforma.</p>
@@ -193,10 +193,10 @@ export default function DashboardPage() {
                         </Link>
                     </div>
 
-                    <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
-                        <div className="flex items-center justify-between mb-6">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                             <div>
-                                <h2 className="text-2xl font-black text-slate-900 dark:text-white">Mis Escenarios</h2>
+                                <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">Mis Escenarios</h2>
                                 <p className="text-sm text-slate-500 mt-1">Recupera tus proyecciones y reportes IA guardados.</p>
                             </div>
                             <button onClick={loadData} className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 text-sm font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
