@@ -36,12 +36,20 @@ const INICIAL_ISLM: VariablesISLM = {
 };
 
 
-import { SimuladorSolow, SimuladorPhillips, SimuladorISLMBP } from "@/components/simuladores-macro";
+import {
+  SimuladorSolow,
+  SimuladorPhillips,
+  SimuladorISLMBP,
+  SimuladorLeyOkun,
+  SimuladorPPP,
+  SimuladorHarrodDomar,
+  SimuladorMultiplicadorTransferencias,
+} from "@/components/simuladores-macro";
 
 export default function SimuladorMacro({ initialData }: { initialData?: any }) {
   const { data: session } = useSession();
   const isPro = session?.user?.plan === 'PRO' || session?.user?.plan === 'RESEARCHER';
-  const [activeTab, setActiveTab] = useState<"multiplier" | "islm" | "solow" | "phillips" | "mundell">("multiplier");
+  const [activeTab, setActiveTab] = useState<"multiplier" | "islm" | "solow" | "phillips" | "mundell" | "okun" | "ppp" | "harrodDomar" | "multTransferencias">("multiplier");
   const [v, setV] = useState<VariablesMacro>(INICIAL);
   const [vISLM, setVISLM] = useState<VariablesISLM>(INICIAL_ISLM);
   const [baselineISLM, setBaselineISLM] = useState<VariablesISLM>(INICIAL_ISLM);
@@ -145,7 +153,11 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
           { id: 'islm', label: 'IS-LM' },
           { id: 'solow', label: 'Solow' },
           { id: 'phillips', label: 'Phillips' },
-          { id: 'mundell', label: 'Mundell-Fleming' }
+          { id: 'mundell', label: 'Mundell-Fleming' },
+          { id: 'okun', label: 'Ley Okun' },
+          { id: 'ppp', label: 'PPP' },
+          { id: 'harrodDomar', label: 'Harrod-Domar' },
+          { id: 'multTransferencias', label: 'Mult. Transferencias' },
         ].map((tab) => {
           const locked = !canAccess(session?.user?.plan, "macro", tab.id);
           return (
@@ -170,6 +182,10 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
       {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'solow' && <SimuladorSolow />}
       {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'phillips' && <SimuladorPhillips />}
       {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'mundell' && <SimuladorISLMBP />}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'okun' && <SimuladorLeyOkun />}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'ppp' && <SimuladorPPP />}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'harrodDomar' && <SimuladorHarrodDomar />}
+      {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'multTransferencias' && <SimuladorMultiplicadorTransferencias />}
 
       {canAccess(session?.user?.plan, "macro", activeTab) && activeTab === 'multiplier' && (
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 lg:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">

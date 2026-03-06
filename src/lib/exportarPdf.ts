@@ -727,3 +727,285 @@ export async function exportarPhillipsPdf(vars: {
   }
   doc.save(`econosfera-phillips-${new Date().toISOString().split("T")[0]}.pdf`);
 }
+
+/** PDF Ley de Okun. */
+export async function exportarOkunPdf(
+  crecimientoPIB: number,
+  crecimientoPotencial: number,
+  beta: number,
+  cambioDesempleo: number
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("LEY DE OKUN", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros y resultado", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["Crecimiento PIB (%)", `${crecimientoPIB}%`],
+      ["Crecimiento potencial (%)", `${crecimientoPotencial}%`],
+      ["Beta (β)", String(beta)],
+      ["Cambio en desempleo (pp)", `${cambioDesempleo > 0 ? "+" : ""}${cambioDesempleo.toFixed(2)} pp`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [37, 99, 235], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Macro | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-ley-okun-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Paridad de poder adquisitivo (PPP). */
+export async function exportarPPPPdf(
+  precioDomestico: number,
+  precioExtranjero: number,
+  tipoCambioImplicito: number
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("PARIDAD DE PODER ADQUISITIVO (PPP)", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros y resultado", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["Precio doméstico (P_dom)", String(precioDomestico)],
+      ["Precio extranjero (P_ext)", String(precioExtranjero)],
+      ["Tipo de cambio implícito (S)", tipoCambioImplicito.toFixed(4)],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [99, 102, 241], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Macro | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-ppp-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Harrod-Domar. */
+export async function exportarHarrodDomarPdf(
+  tasaAhorro: number,
+  relacionCapitalProducto: number,
+  tasaCrecimiento: number
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("MODELO HARROD-DOMAR", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros y resultado", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["Tasa de ahorro (%)", `${tasaAhorro}%`],
+      ["Relación capital-producto (v)", String(relacionCapitalProducto)],
+      ["Tasa de crecimiento (%)", `${tasaCrecimiento.toFixed(2)}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [16, 185, 129], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Macro | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-harrod-domar-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Multiplicador de transferencias. */
+export async function exportarMultTransferenciasPdf(pmc: number, multiplicador: number): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("MULTIPLICADOR DE TRANSFERENCIAS", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros y resultado", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["PMC (Propensión marginal a consumir)", String(pmc)],
+      ["Multiplicador (k_T)", multiplicador.toFixed(2)],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [245, 158, 11], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Macro | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-mult-transferencias-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
+/** PDF Paridad UIP (Monetaria). */
+export async function exportarUIPPdf(
+  tasaExtranjera: number,
+  depreciacionEsperada: number,
+  tasaDomestica: number
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("PARIDAD DE TASAS DESCUBIERTA (UIP)", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros y resultado", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Concepto", "Valor"]],
+    body: [
+      ["Tasa extranjera (%)", `${tasaExtranjera}%`],
+      ["Depreciación esperada (%)", `${depreciacionEsperada}%`],
+      ["Tasa doméstica implícita (%)", `${tasaDomestica.toFixed(2)}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [139, 92, 246], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Monetaria | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-paridad-uip-${new Date().toISOString().split("T")[0]}.pdf`);
+}

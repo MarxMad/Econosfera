@@ -149,3 +149,49 @@ function redondear(n: number, d: number): number {
   const f = 10 ** d;
   return Math.round(n * f) / f;
 }
+
+// --- Ley de Okun ---
+// Δu ≈ -β × (crecimiento PIB - crecimiento potencial). β típico ~0.4-0.5
+export function leyOkun(
+  crecimientoPIB: number,
+  crecimientoPotencial: number,
+  beta: number = 0.5
+): { cambioDesempleo: number; interpretacion: string } {
+  const deltaU = -beta * (crecimientoPIB - crecimientoPotencial);
+  const interp = deltaU < 0
+    ? "El desempleo baja: la economía crece por encima del potencial."
+    : deltaU > 0
+    ? "El desempleo sube: la economía crece por debajo del potencial."
+    : "Sin cambio: crecimiento al potencial.";
+  return { cambioDesempleo: redondear(deltaU, 2), interpretacion: interp };
+}
+
+// --- Paridad de tasas descubierta (UIP) ---
+// i_dom = i_ext + depreciacionEsperada (todas en %)
+export function paridadUIP(
+  tasaExtranjera: number,
+  depreciacionEsperadaPct: number
+): number {
+  return redondear(tasaExtranjera + depreciacionEsperadaPct, 2);
+}
+
+// --- Paridad de poder adquisitivo (PPP) ---
+// S = P_dom / P_ext. Tipo de cambio implícito según niveles de precios.
+export function pppTipoCambio(precioDomestico: number, precioExtranjero: number): number {
+  if (precioExtranjero <= 0) return 0;
+  return redondear(precioDomestico / precioExtranjero, 4);
+}
+
+// --- Multiplicador de transferencias ---
+// k_T = PMC / (1 - PMC). Una transferencia aumenta Y en k_T por cada peso.
+export function multiplicadorTransferencias(pmc: number): number {
+  const p = Math.max(0.01, Math.min(0.99, pmc));
+  return redondear(p / (1 - p), 2);
+}
+
+// --- Modelo Harrod-Domar ---
+// g = s/v. Crecimiento = tasa ahorro / relación capital-producto
+export function harrodDomar(tasaAhorro: number, relacionCapitalProducto: number): number {
+  if (relacionCapitalProducto <= 0) return 0;
+  return redondear((tasaAhorro / 100) / relacionCapitalProducto * 100, 2);
+}

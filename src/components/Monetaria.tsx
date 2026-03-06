@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LineChart, Brain, Calculator, Save, Lock } from "lucide-react";
+import { LineChart, Brain, Calculator, Save, Lock, ArrowRightLeft, Zap, Scale } from "lucide-react";
 import PanelVariables from "@/components/PanelVariables";
 import Resultados from "@/components/Resultados";
 import GraficoSimulacion from "@/components/GraficoSimulacion";
@@ -12,6 +12,7 @@ import FuentesOficialesMexico from "@/components/FuentesOficialesMexico";
 import ReferenciasAcademicas from "@/components/ReferenciasAcademicas";
 import SeccionFuentesColapsable from "@/components/SeccionFuentesColapsable";
 import TaylorSolver from "@/components/TaylorSolver";
+import { SimuladorParidadUIP, SimuladorCanalesTransmision, SimuladorComparadorPostura } from "@/components/simuladores-monetaria";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "@/components/SimulatorLocked";
@@ -32,7 +33,7 @@ export default function Monetaria({
     initialData?: any;
 }) {
     const { data: session } = useSession();
-    const [activeTab, setActiveTab] = useState<"core" | "taylor" | "ai">("core");
+    const [activeTab, setActiveTab] = useState<"core" | "taylor" | "ai" | "uip" | "canalesTransmision" | "comparadorPostura">("core");
 
     const handleSave = async () => {
         const { saveScenario } = await import("@/lib/actions/scenarioActions");
@@ -60,6 +61,9 @@ export default function Monetaria({
                     { id: 'core', label: 'Simulador Core', icon: LineChart },
                     { id: 'taylor', label: 'Regla de Taylor', icon: Calculator },
                     { id: 'ai', label: 'Análisis AI Minutas', icon: Brain },
+                    { id: 'uip', label: 'Paridad UIP', icon: ArrowRightLeft },
+                    { id: 'canalesTransmision', label: 'Canales transmisión', icon: Zap },
+                    { id: 'comparadorPostura', label: 'Comparador postura', icon: Scale },
                 ].map((tab) => {
                     const locked = !canAccess(session?.user?.plan, "monetaria", tab.id);
                     return (
@@ -129,6 +133,9 @@ export default function Monetaria({
                         <TaylorSolver />
                     </div>
                 )}
+                {canAccess(session?.user?.plan, "monetaria", activeTab) && activeTab === 'uip' && <SimuladorParidadUIP />}
+                {canAccess(session?.user?.plan, "monetaria", activeTab) && activeTab === 'canalesTransmision' && <SimuladorCanalesTransmision />}
+                {canAccess(session?.user?.plan, "monetaria", activeTab) && activeTab === 'comparadorPostura' && <SimuladorComparadorPostura />}
             </div>
 
             <section className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/50 p-6">
