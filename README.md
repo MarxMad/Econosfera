@@ -130,6 +130,13 @@ npm start
 
 **Si ves errores** tipo `Cannot find module './174.js'` o `middleware-manifest.json`: ejecuta `npm run fresh` y luego `npm run dev`.
 
+### Scripts de base de datos (cuestionarios)
+
+| Script | Descripción |
+|--------|-------------|
+| `node scripts/seed-quiz-questions-add.js` | Añade 5 preguntas nuevas a cada cuestionario existente. Requiere `DATABASE_URL` en `.env`. |
+| `node scripts/reset-quiz-progress.js` | Reinicia el progreso de todos los usuarios: elimina intentos de cuestionarios, insignias y pone XP y racha en 0. |
+
 ---
 
 ## Despliegue
@@ -165,7 +172,9 @@ Opcional: variable de entorno `NEXT_PUBLIC_SITE_URL` (ej. `https://tudominio.com
 │   ├── components/   # UI: simuladores, gráficos, glosario, exportar, etc.
 │   └── lib/          # Lógica: cálculos, tipos, preguntas, fuentes, países
 ├── scripts/
-│   └── ensure-build.js   # Asegura build antes de dev (middleware-manifest)
+│   ├── ensure-build.js           # Asegura build antes de dev (middleware-manifest)
+│   ├── seed-quiz-questions-add.js # Añade preguntas a los cuestionarios
+│   └── reset-quiz-progress.js    # Reinicia XP y progreso de cuestionarios
 ├── next.config.js
 ├── tailwind.config.ts
 └── package.json
