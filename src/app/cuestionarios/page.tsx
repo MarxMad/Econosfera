@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getQuizzes, getUserStats } from "@/lib/actions/quizActions";
-import { BrainCircuit, Trophy, Flame, ChevronRight, Lock, Unlock, PlayCircle, Star, Target } from "lucide-react";
+import { BrainCircuit, Trophy, Flame, Lock, Unlock, PlayCircle, Star, Target } from "lucide-react";
 
-export default function CuestionariosPage() {
+function CuestionariosContent() {
     const { data: session, status } = useSession();
+    const searchParams = useSearchParams();
+    const showLockedMessage = searchParams.get("locked") === "1";
     const [quizzes, setQuizzes] = useState<any[]>([]);
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(true);
@@ -45,6 +48,8 @@ export default function CuestionariosPage() {
         );
     }
 
+    const plan = (session?.user as any)?.plan ?? "FREE";
+    const isFree = plan === "FREE";
     const difficultyStyles: any = {
         'BASIC': 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
         'INTERMEDIATE': 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400 border-amber-200 dark:border-amber-800',
@@ -93,6 +98,19 @@ export default function CuestionariosPage() {
                 </div>
             </header>
 
+            {showLockedMessage && (
+                <div className="mb-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex items-center gap-3">
+                    <Lock className="w-6 h-6 text-amber-600 dark:text-amber-400 shrink-0" />
+                    <div>
+                        <p className="font-bold text-amber-800 dark:text-amber-200">Cuestionario bloqueado</p>
+                        <p className="text-sm text-amber-700 dark:text-amber-300">Actualiza a Pro para acceder a todos los cuestionarios de la academia.</p>
+                    </div>
+                    <Link href="/pricing" className="ml-auto px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl font-bold text-sm whitespace-nowrap">
+                        Ver planes
+                    </Link>
+                </div>
+            )}
+
             <div className="grid lg:grid-cols-3 gap-8 relative z-10">
                 {/* Lista de Cuestionarios */}
                 <div className="lg:col-span-2 space-y-5">
@@ -100,51 +118,49 @@ export default function CuestionariosPage() {
                         <Target className="w-5 h-5 text-indigo-500" /> Cuestionarios Disponibles
                     </h2>
 
-                    {quizzes.map((quiz, i) => (
-                        <div key={quiz.id} className="group bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-indigo-400 dark:hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-500/5 transition-all flex flex-col sm:flex-row gap-6 items-start sm:items-center relative overflow-hidden">
-                            {/* Accent Glow */}
-                            <div className="absolute inset-x-0 -bottom-px h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-
-                            <div className={`p-4 rounded-2xl ${moduleColors[quiz.module] || 'bg-slate-100 text-slate-600'} shrink-0 group-hover:scale-110 transition-transform`}>
-                                <BrainCircuit className="w-8 h-8" />
-                            </div>
-
-                            <div className="flex-1">
-                                <div className="flex flex-wrap items-center gap-3 mb-2">
-                                    <span className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-md border ${difficultyStyles[quiz.difficulty]}`}>
-                                        {quiz.difficulty}
-                                    </span>
-                                    <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
-                                        <Star className="w-3.5 h-3.5 text-amber-500" fill="currentColor" /> {quiz.xpReward} XP
-                                    </span>
+                    {quizzes.map((quiz, i) => {
+                        const isLocked = isFree && i >= 2;
+                        return (
+                            <div key={quiz.id} className={`group bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row gap-6 items-start sm:items-center relative overflow-hidden ${isLocked ? 'opacity-75' : 'hover:border-indigo-400 dark:hover:border-indigo-600 hover:shadow-xl hover:shadow-indigo-500/5 transition-all'}`}>
+                                {isLocked && (
+                                    <div className="absolute inset-x-0 -bottom-px h-1 bg-gradient-to-r from-transparent via-amber-500 to-transparent opacity-60"></div>
+                                )}
+                                <div className={`p-4 rounded-2xl shrink-0 ${isLocked ? 'bg-slate-200 dark:bg-slate-800 text-slate-500' : `${moduleColors[quiz.module] || 'bg-slate-100 text-slate-600'} group-hover:scale-110 transition-transform`}`}>
+                                    {isLocked ? <Lock className="w-8 h-8" /> : <BrainCircuit className="w-8 h-8" />}
                                 </div>
-                                <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{quiz.title}</h3>
-                                <p className="text-sm text-slate-500 leading-relaxed pr-6">{quiz.description}</p>
+
+                                <div className="flex-1">
+                                    <div className="flex flex-wrap items-center gap-3 mb-2">
+                                        {isLocked && (
+                                            <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-md border bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400 border-amber-200 dark:border-amber-800">Pro</span>
+                                        )}
+                                        <span className={`px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-md border ${difficultyStyles[quiz.difficulty]}`}>
+                                            {quiz.difficulty}
+                                        </span>
+                                        <span className="text-xs font-bold text-slate-500 flex items-center gap-1">
+                                            <Star className="w-3.5 h-3.5 text-amber-500" fill="currentColor" /> {quiz.xpReward} XP
+                                        </span>
+                                    </div>
+                                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">{quiz.title}</h3>
+                                    <p className="text-sm text-slate-500 leading-relaxed pr-6">{quiz.description}</p>
+                                </div>
+
+                                {isLocked ? (
+                                    <Link href="/pricing" className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 whitespace-nowrap transition-all hover:-translate-y-0.5">
+                                        <Lock className="w-4 h-4" /> Desbloquear con Pro
+                                    </Link>
+                                ) : stats?.quizAttempts?.some((a: any) => a.quizId === quiz.id && a.completed) ? (
+                                    <button disabled className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-xl font-bold flex items-center justify-center gap-2 whitespace-nowrap cursor-not-allowed">
+                                        <Trophy className="w-4 h-4" /> Completado
+                                    </button>
+                                ) : (
+                                    <Link href={`/cuestionarios/${quiz.id}`} className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:-translate-y-1 hover:shadow-lg transition-all rounded-xl font-bold flex items-center justify-center gap-2 whitespace-nowrap">
+                                        <PlayCircle className="w-5 h-5" /> Iniciar
+                                    </Link>
+                                )}
                             </div>
-
-                            {stats?.quizAttempts?.some((a: any) => a.quizId === quiz.id && a.completed) ? (
-                                <button disabled className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-3 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 rounded-xl font-bold flex items-center justify-center gap-2 whitespace-nowrap cursor-not-allowed">
-                                    <Trophy className="w-4 h-4" /> Completado
-                                </button>
-                            ) : (
-                                <Link href={`/cuestionarios/${quiz.id}`} className="w-full sm:w-auto mt-4 sm:mt-0 px-6 py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 hover:-translate-y-1 hover:shadow-lg transition-all rounded-xl font-bold flex items-center justify-center gap-2 whitespace-nowrap">
-                                    <PlayCircle className="w-5 h-5" /> Iniciar
-                                </Link>
-                            )}
-                        </div>
-                    ))}
-
-                    {/* Locked Preview Questionnaire */}
-                    <div className="bg-slate-50 dark:bg-slate-900/40 p-6 rounded-3xl border border-slate-200 dark:border-slate-800/60 opacity-60 flex flex-col sm:flex-row gap-6 items-start sm:items-center">
-                        <div className="p-4 rounded-2xl bg-slate-200 dark:bg-slate-800 text-slate-500 shrink-0">
-                            <Lock className="w-8 h-8" />
-                        </div>
-                        <div className="flex-1">
-                            <span className="px-2.5 py-1 text-[10px] font-black uppercase tracking-widest rounded-md border bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-400 dark:border-slate-700 mb-2 inline-block">Pro Level</span>
-                            <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">Arbitraje y Opciones Reales</h3>
-                            <p className="text-sm text-slate-500">Desbloquea este módulo acumulando 200 XP en los cuestionarios de Renta Fija para acceder a estos desafíos.</p>
-                        </div>
-                    </div>
+                        );
+                    })}
                 </div>
 
                 {/* Right Column: Mini Leaderboard / Badges */}
@@ -201,5 +217,13 @@ export default function CuestionariosPage() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function CuestionariosPage() {
+    return (
+        <Suspense fallback={<div className="p-20 text-center text-slate-500 animate-pulse">Cargando módulos de aprendizaje...</div>}>
+            <CuestionariosContent />
+        </Suspense>
     );
 }

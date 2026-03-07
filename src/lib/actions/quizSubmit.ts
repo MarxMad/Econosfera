@@ -3,10 +3,14 @@
 import { prisma } from "../prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
+import { canAccessQuiz } from "./quizActions";
 
 export async function submitQuizAttempt(quizId: string, score: number, xpReward: number) {
     const session = await getServerSession(authOptions);
     if (!session?.user?.email) return { error: "No autorizado" };
+
+    const allowed = await canAccessQuiz(quizId);
+    if (!allowed) return { error: "Este cuestionario requiere plan Pro. Actualiza para desbloquearlo." };
 
     try {
         const user = await prisma.user.findUnique({

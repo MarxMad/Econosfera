@@ -16,6 +16,7 @@ const tiers = [
             "Finanzas: VPVF, CETES, bonos, CAPM, amortización",
             "Portafolio, break-even, flujo financiero",
             "Minado básico (Blockchain)",
+            "Academia: 2 primeros cuestionarios",
             "Sin análisis de minutas con IA",
             "Soporte por comunidad"
         ],
@@ -33,7 +34,7 @@ const tiers = [
             "Simuladores: Markowitz, VPN/TIR, WACC, Phillips",
             "Blockchain: Merkle, Llaves, P2P, Consenso, Smart Contracts",
             "Sin análisis de minutas (solo Researcher)",
-            "Acceso a la academia (Quizzes)",
+            "Academia: todos los cuestionarios",
             "Soporte prioritario"
         ],
         buttonText: "Suscribirse",
@@ -175,6 +176,10 @@ export default function PricingPage() {
                         <div>
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Qué pasa si me acabo mis créditos?</h4>
                             <p className="text-sm text-slate-500 dark:text-slate-400">En Free y Pro, cada exportación consume 1 crédito. Al agotarlos, actualiza a Pro (50/mes) o Researcher (exportaciones ilimitadas). Solo Researcher tiene exportaciones sin límite.</p>
+                        </div>
+                        <div>
+                            <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿La academia está en el plan gratuito?</h4>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">Sí. En el plan gratuito tienes acceso a los primeros 2 cuestionarios. Para desbloquear todos los cuestionarios, actualiza a Estudiante Pro.</p>
                         </div>
                     </div>
                 </div>

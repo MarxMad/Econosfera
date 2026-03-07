@@ -39,16 +39,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const url = `${base}/glosario/${slug}`;
   const description = truncateDescription(termino.definicion, 155);
   const label = MODULO_LABEL[termino.modulo] ?? termino.modulo;
+  const ogImage = `${base}/og-simulator.png`;
 
   return {
     title: `${termino.termino} | Glosario Económico`,
     description,
-    keywords: [termino.termino, label, "definición", "economía", "glosario"],
+    keywords: [termino.termino, label, "definición", "economía", "glosario", "Econosfera"],
     openGraph: {
       title: `${termino.termino} | Glosario Económico | Econosfera`,
       description,
       url,
       type: "article",
+      locale: "es_MX",
+      siteName: "Econosfera",
+      images: [{ url: ogImage, width: 1200, height: 630, alt: `Definición de ${termino.termino} - Econosfera` }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${termino.termino} | Glosario Económico`,
+      description,
     },
     alternates: { canonical: url },
     robots: { index: true, follow: true },

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { getQuizById, submitQuizAttempt } from "@/lib/actions/quizSubmit";
+import { canAccessQuiz } from "@/lib/actions/quizActions";
 import { BrainCircuit, Check, X, ArrowRight, Trophy, Sparkles } from "lucide-react";
 import Link from "next/link";
 import Confetti from "react-confetti";
@@ -31,6 +32,11 @@ export default function QuizPage({ params }: { params: { id: string } }) {
     }, [status]);
 
     const loadQuiz = async () => {
+        const allowed = await canAccessQuiz(params.id);
+        if (!allowed) {
+            router.push("/cuestionarios?locked=1");
+            return;
+        }
         const q = await getQuizById(params.id);
         if (q) setQuiz(q);
         else router.push("/cuestionarios");

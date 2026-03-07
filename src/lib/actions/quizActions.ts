@@ -33,3 +33,17 @@ export async function getQuizzes() {
         include: { questions: true }
     });
 }
+
+/** Verifica si el usuario puede acceder al cuestionario según su plan. Free: primeros 2; Pro/Researcher: todos. */
+export async function canAccessQuiz(quizId: string): Promise<boolean> {
+    const session = await getServerSession(authOptions);
+    const plan = (session?.user as any)?.plan ?? "FREE";
+    if (plan === "PRO" || plan === "RESEARCHER") return true;
+
+    const quizzes = await (prisma as any).quiz.findMany({
+        orderBy: { xpReward: 'asc' },
+        select: { id: true }
+    });
+    const idx = quizzes.findIndex((q: any) => q.id === quizId);
+    return idx >= 0 && idx < 2; // Free: solo primeros 2 cuestionarios
+}

@@ -25,8 +25,17 @@ export const metadata: Metadata = {
     title: "Glosario de Términos Económicos | Econosfera",
     description: "Consulta definiciones de conceptos económicos y financieros. Referencia académica sin necesidad de cuenta.",
     url: "/glosario",
+    type: "website",
+    locale: "es_MX",
+    siteName: "Econosfera",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Glosario de Términos Económicos | Econosfera",
+    description: "Diccionario de inflación, política monetaria, macro, micro y finanzas. Consulta sin crear cuenta.",
   },
   alternates: { canonical: "/glosario" },
+  robots: { index: true, follow: true },
 };
 
 export default function GlosarioPage() {
