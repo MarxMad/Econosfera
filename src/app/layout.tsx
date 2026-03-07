@@ -74,10 +74,10 @@ export const metadata: Metadata = {
       "Domina el análisis económico con simuladores avanzados de inflación, macro y micro. Análisis de minutas con IA y reportes profesionales.",
     images: [
       {
-        url: "/opengraph-image",
+        url: "/og-simulator.png",
         width: 1200,
         height: 630,
-        alt: "Econosfera - Terminal de Simulación Económica",
+        alt: "Econosfera - Simulador Oferta y Demanda",
       },
     ],
   },
@@ -85,7 +85,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Econosfera | Terminal de Simulación Económica",
     description: "Simuladores profesionales de economía y finanzas con IA integrada.",
-    images: ["/opengraph-image"],
+    images: ["/og-simulator.png"],
   },
   category: "education",
 };

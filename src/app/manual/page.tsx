@@ -47,7 +47,7 @@ export default function ManualPage() {
                                 <li>Ve al módulo <strong>Teoría monetaria</strong> y abre la pestaña <strong>Análisis AI Minutas</strong>.</li>
                                 <li>Sube un documento en <strong>PDF o TXT</strong> (por ejemplo, minutas de Banxico).</li>
                                 <li>La plataforma identifica posturas <em>hawkish</em> o <em>dovish</em>, votos disidentes y el balance de riesgos macroeconómicos.</li>
-                                <li><strong>Créditos:</strong> Cada análisis profundo consume <strong>10 créditos</strong>. Plan Free: 10 créditos iniciales; <strong>Estudiante Pro</strong>: 50/mes; <strong>Researcher</strong>: 100/mes.</li>
+                                <li><strong>Créditos:</strong> Plan Free: 10 créditos para exportar análisis y escenarios (sin minutas IA). <strong>Estudiante Pro</strong>: 50 créditos IA/mes (minutas) + exportaciones ilimitadas. <strong>Researcher</strong>: 200 créditos IA/mes.</li>
                                 <li>Puedes descargar el análisis en PDF desde el mismo panel (botón &quot;Descargar Reporte PDF&quot;).</li>
                             </ul>
                         </div>

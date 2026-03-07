@@ -9,9 +9,9 @@ const PLANS = [
     id: "free",
     name: "Gratuito",
     price: "$0",
-    credits: "10 iniciales",
+    credits: "10 para exportar",
     exports: "Consumen créditos",
-    features: ["Macro y Micro básicos", "Glosario y manual", "Comunidad Discord"],
+    features: ["Macro y Micro básicos", "Sin minutas IA", "Glosario y manual"],
     highlight: false,
   },
   {

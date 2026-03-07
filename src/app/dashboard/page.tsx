@@ -71,7 +71,7 @@ export default function DashboardPage() {
                         </div>
                         <div>
                             <p className="font-bold text-slate-900 dark:text-white">Sin créditos</p>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Recarga con Pro (50/mes) o Researcher (100/mes) para seguir usando análisis IA y exportaciones.</p>
+                            <p className="text-sm text-slate-600 dark:text-slate-400">Recarga con Pro (50 IA/mes + exportaciones ilimitadas) o Researcher (200 IA/mes) para análisis de minutas y más.</p>
                         </div>
                     </div>
                     <Link href="/pricing" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 text-white font-bold hover:bg-amber-500 transition-colors">
@@ -100,17 +100,16 @@ export default function DashboardPage() {
                         <div className="space-y-4 relative z-10">
                             <div className="p-3 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm">
                                 <div className="flex justify-between text-xs font-bold uppercase mb-2">
-                                    <span>Exportaciones (Free)</span>
-                                    <span>{stats?.exportsCount || 0} / 3</span>
+                                    <span>Créditos para exportar (Free)</span>
+                                    <span>{session.user.credits ?? 0} / 10</span>
                                 </div>
                                 <div className="h-2 bg-blue-950/30 rounded-full overflow-hidden">
                                     <div
-                                        className={`h-full rounded-full transition-all duration-1000 ${(stats?.exportsCount || 0) >= 3 ? 'bg-rose-400' : 'bg-emerald-400'
-                                            }`}
-                                        style={{ width: `${Math.min(((stats?.exportsCount || 0) / 3) * 100, 100)}%` }}
+                                        className={`h-full rounded-full transition-all duration-1000 ${(session.user.credits ?? 0) <= 0 ? 'bg-rose-400' : 'bg-emerald-400'}`}
+                                        style={{ width: `${Math.min(((session.user.credits ?? 0) / 10) * 100, 100)}%` }}
                                     />
                                 </div>
-                                <p className="text-[10px] mt-2 opacity-70">Límite mensual para usuarios gratuitos.</p>
+                                <p className="text-[10px] mt-2 opacity-70">Gasta tus 10 créditos en exportaciones de análisis y escenarios.</p>
                             </div>
 
                             <Link href="/pricing" className="block w-full py-3 bg-white text-blue-700 text-center font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm active:scale-[0.98]">
@@ -167,9 +166,9 @@ export default function DashboardPage() {
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-blue-100 dark:border-slate-700">
                         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Tu siguiente paso</h3>
                         {(session.user.credits ?? 0) > 0 ? (
-                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Completa un análisis de minuta con IA o exporta tu primer reporte para aprovechar al máximo la plataforma.</p>
+                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Usa tus créditos para exportar análisis y escenarios en PDF. Pro y Researcher incluyen análisis de minutas con IA.</p>
                         ) : (
-                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Sin créditos por ahora. Pásate a Pro para obtener 50 créditos IA al mes y exportaciones ilimitadas.</p>
+                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Sin créditos. Pásate a Pro para 50 créditos IA/mes (minutas) y exportaciones ilimitadas.</p>
                         )}
                         <div className="flex flex-wrap gap-2">
                             <Link href="/simulador" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors">

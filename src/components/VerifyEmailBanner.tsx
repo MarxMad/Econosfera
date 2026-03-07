@@ -33,7 +33,7 @@ export default function VerifyEmailBanner() {
         <div className="bg-amber-500/90 dark:bg-amber-600/90 text-slate-900 px-4 py-2.5 flex flex-wrap items-center justify-center gap-2 text-sm font-medium">
             <Mail className="w-4 h-4 flex-shrink-0" />
             <span>
-                Verifica tu correo para desbloquear tus créditos de IA y exportaciones.
+                Verifica tu correo para desbloquear tus 10 créditos de exportación.
             </span>
             <button
                 type="button"

@@ -11,10 +11,10 @@ const tiers = [
         price: "$0",
         description: "Para estudiantes que empiezan su camino en la economía.",
         features: [
-            "Hasta 3 exportaciones PDF/mes",
+            "10 créditos para exportar análisis y escenarios",
             "Modelos macro y micro básicos",
             "Simulador de Minado básico (Blockchain)",
-            "10 Créditos Creados (1 Análisis IA)",
+            "Sin análisis de minutas con IA",
             "Soporte por comunidad"
         ],
         buttonText: "Actual",
@@ -159,8 +159,8 @@ export default function PricingPage() {
 
                     <div className="grid md:grid-cols-2 gap-8 text-left">
                         <div>
-                            <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Cómo funcionan los créditos de IA?</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Cada análisis profundo de una minuta del Banco Central cuesta 10 créditos. El plan Pro te da 50 créditos y el Researcher 100 créditos al mes.</p>
+                            <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Cómo funcionan los créditos?</h4>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">El plan Gratuito incluye 10 créditos para exportar análisis y escenarios (PDF). El plan Pro da 50 créditos IA/mes para análisis de minutas Banxico y exportaciones ilimitadas. El Researcher da 200 créditos IA/mes.</p>
                         </div>
                         <div>
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Cuáles simuladores de Blockchain bloquean y en qué plan?</h4>
@@ -172,7 +172,7 @@ export default function PricingPage() {
                         </div>
                         <div>
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Qué pasa si me acabo mis créditos?</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">Puedes esperar al inicio de tu mes de ciclo de suscripción donde recuperas los 50 o 100 créditos y volver a analizar documentos IA.</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">En el plan Gratuito, los 10 créditos se gastan en exportaciones (PDF de análisis y escenarios). Al agotarlos, actualiza a Pro para exportaciones ilimitadas. En Pro/Researcher, los créditos IA se recargan cada mes.</p>
                         </div>
                     </div>
                 </div>

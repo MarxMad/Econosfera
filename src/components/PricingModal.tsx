@@ -29,7 +29,7 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                         Desbloquea más créditos y exportaciones
                     </h2>
                     <p className="text-slate-600 dark:text-slate-400 mb-6">
-                        Has alcanzado el límite gratuito. Con <strong>Estudiante Pro por MXN 99/mes</strong> obtienes 50 créditos IA y exportaciones PDF ilimitadas.
+                        Has alcanzado tus 10 créditos de exportación. Con <strong>Estudiante Pro por MXN 99/mes</strong> obtienes 50 créditos IA para minutas y exportaciones PDF ilimitadas.
                     </p>
 
                     <div className="space-y-3 mb-6">
@@ -37,7 +37,7 @@ export default function PricingModal({ isOpen, onClose }: PricingModalProps) {
                             <div className="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
                                 <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" />
                             </div>
-                            <p className="font-medium text-slate-800 dark:text-slate-200">50 créditos IA al mes (análisis de minutas)</p>
+                            <p className="font-medium text-slate-800 dark:text-slate-200">50 créditos IA/mes (análisis de minutas Banxico)</p>
                         </div>
                         <div className="flex items-center gap-3">
                             <div className="p-1 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">

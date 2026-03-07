@@ -314,7 +314,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
                                         ¡Oferta UNAM!
                                     </h4>
                                     <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
-                                        Como estudiante de la UNAM, reclama <strong>10 créditos extra</strong> para análisis IA. Solo una vez por cuenta.
+                                        Como estudiante de la UNAM, reclama <strong>10 créditos extra</strong> para exportar análisis y escenarios. Solo una vez por cuenta.
                                     </p>
                                     <button
                                         type="button"
@@ -406,7 +406,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
                         <h4 className="text-sm font-bold text-amber-900 dark:text-amber-500">Verificación pendiente</h4>
                     </div>
                     <p className="text-xs text-amber-700 dark:text-amber-600/80 mb-3">
-                        Confirma tu identidad para asegurar tus créditos IA y habilitar exportaciones ilimitadas.
+                        Confirma tu correo para desbloquear tus 10 créditos de exportación. Pro y Researcher incluyen exportaciones ilimitadas.
                     </p>
                     <button
                         onClick={handleResendEmail}
