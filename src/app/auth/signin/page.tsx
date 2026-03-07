@@ -20,7 +20,6 @@ function SignInContent() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
     const [loading, setLoading] = useState(false);
-    const [csrfToken, setCsrfToken] = useState("");
     const router = useRouter();
     const verified = searchParams.get("verified") === "1";
     const verifyError = searchParams.get("error");
@@ -32,13 +31,6 @@ function SignInContent() {
             router.push("/simulador");
         }
     }, [status, router]);
-
-    useEffect(() => {
-        fetch("/api/auth/csrf")
-            .then((r) => r.json())
-            .then((d) => setCsrfToken(d?.token || ""))
-            .catch(() => {});
-    }, []);
 
     useEffect(() => {
         if (errorFromUrl === "CredentialsSignin") setError("Email o contraseña incorrectos");
@@ -69,8 +61,29 @@ function SignInContent() {
         e.preventDefault();
         setLoading(true);
         setError("");
-        const form = e.target as HTMLFormElement;
-        form.submit();
+        try {
+            const res = await signIn("credentials", {
+                email,
+                password,
+                callbackUrl: "/simulador",
+                redirect: false,
+            });
+            if (res?.ok) {
+                router.push("/simulador");
+                router.refresh();
+            } else {
+                const msg = res?.error === "CredentialsSignin"
+                    ? "Email o contraseña incorrectos"
+                    : res?.error === "GoogleAccount"
+                        ? "Esta cuenta se creó con Google. Inicia sesión con el botón de Google."
+                        : res?.error || "Error al iniciar sesión. Intenta de nuevo.";
+                setError(msg);
+            }
+        } catch (err) {
+            setError("Error al iniciar sesión. Intenta de nuevo.");
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -107,12 +120,8 @@ function SignInContent() {
                 {!loginToken && (
                 <form
                     className="mt-8 space-y-6"
-                    method="POST"
-                    action="/api/auth/callback/credentials"
                     onSubmit={handleSubmit}
                 >
-                    <input type="hidden" name="csrfToken" value={csrfToken} />
-                    <input type="hidden" name="callbackUrl" value="/simulador" />
                     {error && (
                         <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl">
                             {error}
