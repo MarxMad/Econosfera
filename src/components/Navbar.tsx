@@ -11,10 +11,8 @@ function SignOutButton({ variant = "icon", onClose }: { variant?: "icon" | "full
         : "p-2 rounded-full hover:bg-slate-800 text-slate-400 hover:text-red-400 transition-colors";
     const handleSignOut = () => {
         onClose?.();
-        // Limpiar sesión en cliente y redirigir a nuestra ruta que borra cookies
-        signOut({ redirect: false }).catch(() => {}).finally(() => {
-            window.location.href = "/api/signout?callbackUrl=%2F";
-        });
+        // Usar signout nativo de NextAuth (evita conflictos con cookies del login)
+        signOut({ callbackUrl: "/" });
     };
     return (
         <button
