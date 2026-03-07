@@ -28,6 +28,12 @@ function getNextAuthParams(pathname: string): string[] {
   return match ? match[1].split("/").filter(Boolean) : [];
 }
 
+/** Context que NextAuth espera: debe tener params con nextauth para usar NextAuthRouteHandler (App Router) */
+function buildContext(pathname: string): { params: { nextauth: string[] } } {
+  const nextauth = getNextAuthParams(pathname);
+  return { params: { nextauth } };
+}
+
 export async function POST(
   req: Request,
   context?: { params?: Promise<Record<string, string | string[]>> | Record<string, string | string[]> }
@@ -36,8 +42,12 @@ export async function POST(
     const url = new URL(req.url);
     const pathname = url.pathname;
     const isSignout = pathname.endsWith("/signout");
-    const nextauth = getNextAuthParams(pathname);
-    const ctx = { params: { nextauth }, query: { nextauth } };
+    // NextAuth requiere ctx.params para usar NextAuthRouteHandler (App Router).
+    // Priorizar context de Next.js; si no existe, construir desde pathname.
+    const ctx =
+      context && "params" in context && context.params != null
+        ? { params: context.params instanceof Promise ? context.params : Promise.resolve(context.params) }
+        : buildContext(pathname);
     if (!isSignout) {
       try {
         const rateLimitRes = await checkAuthRateLimit(req);
@@ -47,7 +57,12 @@ export async function POST(
         // Si rate limit falla (ej. DB), continuar sin bloquear el login
       }
     }
-    const res = await handler(req, ctx);
+    // NextAuthRouteHandler requiere req.nextUrl; si falta (ej. en Vercel), añadirlo
+    const reqForAuth = req as Request & { nextUrl?: URL };
+    if (!reqForAuth.nextUrl && req.url) {
+      reqForAuth.nextUrl = new URL(req.url);
+    }
+    const res = await handler(reqForAuth, ctx);
     if (res?.status === 500) {
       const text = await res.text();
       try {
@@ -96,7 +111,13 @@ export async function GET(
   context?: { params?: Promise<Record<string, string | string[]>> | Record<string, string | string[]> }
 ) {
   const url = new URL(req.url);
-  const nextauth = getNextAuthParams(url.pathname);
-  const ctx = { params: { nextauth }, query: { nextauth } };
-  return handler(req, ctx);
+  const ctx =
+    context && "params" in context && context.params != null
+      ? { params: context.params instanceof Promise ? context.params : Promise.resolve(context.params) }
+      : buildContext(url.pathname);
+  const reqForAuth = req as Request & { nextUrl?: URL };
+  if (!reqForAuth.nextUrl && req.url) {
+    reqForAuth.nextUrl = new URL(req.url);
+  }
+  return handler(reqForAuth, ctx);
 }
