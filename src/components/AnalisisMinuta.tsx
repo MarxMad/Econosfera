@@ -101,7 +101,7 @@ export default function AnalisisMinuta({ onAnalisisComplete, initialData }: Anal
           </div>
           <h3 className="text-xl md:text-2xl font-black text-slate-800 dark:text-white mb-2">Análisis de minuta con IA</h3>
           <p className="text-slate-600 dark:text-slate-400 max-w-md mx-auto mb-8">
-            Esta función está disponible solo para suscriptores <strong>Pro</strong> o <strong>Researcher</strong>. Actualiza tu plan para subir minutas reales de Banxico y obtener análisis con inteligencia artificial.
+            Esta función está disponible solo para el plan <strong>Researcher</strong>. Actualiza tu suscripción para subir minutas reales de Banxico y obtener análisis con inteligencia artificial.
           </p>
           <a
             href="/pricing"

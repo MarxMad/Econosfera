@@ -11,9 +11,11 @@ const tiers = [
         price: "$0",
         description: "Para estudiantes que empiezan su camino en la economía.",
         features: [
-            "10 créditos para exportar análisis y escenarios",
-            "Modelos macro y micro básicos",
-            "Simulador de Minado básico (Blockchain)",
+            "10 créditos (cada exportación consume 1)",
+            "Macro y Micro básicos",
+            "Finanzas: VPVF, CETES, bonos, CAPM, amortización",
+            "Portafolio, break-even, flujo financiero",
+            "Minado básico (Blockchain)",
             "Sin análisis de minutas con IA",
             "Soporte por comunidad"
         ],
@@ -27,10 +29,10 @@ const tiers = [
         price: "MXN 99",
         description: "Análisis avanzado para trabajos universitarios y tesis.",
         features: [
-            "Exportaciones PDF ilimitadas (sin consumir créditos)",
+            "50 créditos/mes (cada exportación consume 1)",
             "Simuladores: Markowitz, VPN/TIR, WACC, Phillips",
             "Blockchain: Merkle, Llaves, P2P, Consenso, Smart Contracts",
-            "50 Créditos IA/mes",
+            "Sin análisis de minutas (solo Researcher)",
             "Acceso a la academia (Quizzes)",
             "Soporte prioritario"
         ],
@@ -44,11 +46,11 @@ const tiers = [
         price: "MXN 199",
         description: "Para profesionales que requieren todas las herramientas institucionales.",
         features: [
-            "200 Créditos IA/mes (el doble que Pro)",
+            "200 Créditos IA/mes (minutas Banxico)",
+            "Análisis AI de Minutas Banxico (exclusivo)",
+            "Exportaciones PDF ilimitadas (sin consumir créditos)",
             "Regla de Taylor, DCF, Black-Scholes",
-            "Análisis AI de Minutas Banxico",
             "Mundell-Fleming, Teoría de Juegos, AMM",
-            "Exportaciones PDF ilimitadas",
             "Soporte prioritario 24/7"
         ],
         buttonText: "Suscribirse",
@@ -160,7 +162,7 @@ export default function PricingPage() {
                     <div className="grid md:grid-cols-2 gap-8 text-left">
                         <div>
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Cómo funcionan los créditos?</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">El plan Gratuito incluye 10 créditos para exportar análisis y escenarios (PDF). El plan Pro da 50 créditos IA/mes para análisis de minutas Banxico y exportaciones ilimitadas. El Researcher da 200 créditos IA/mes.</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">En todos los planes, cada exportación PDF consume 1 crédito. Free: 10 créditos. Pro: 50 créditos/mes. Solo Researcher tiene exportaciones ilimitadas (sin consumir créditos) y análisis de minutas Banxico con IA.</p>
                         </div>
                         <div>
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Cuáles simuladores de Blockchain bloquean y en qué plan?</h4>
@@ -172,7 +174,7 @@ export default function PricingPage() {
                         </div>
                         <div>
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 mb-2">¿Qué pasa si me acabo mis créditos?</h4>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">En el plan Gratuito, los 10 créditos se gastan en exportaciones (PDF de análisis y escenarios). Al agotarlos, actualiza a Pro para exportaciones ilimitadas. En Pro/Researcher, los créditos IA se recargan cada mes.</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">En Free y Pro, cada exportación consume 1 crédito. Al agotarlos, actualiza a Pro (50/mes) o Researcher (exportaciones ilimitadas). Solo Researcher tiene exportaciones sin límite.</p>
                         </div>
                     </div>
                 </div>

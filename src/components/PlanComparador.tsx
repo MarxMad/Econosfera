@@ -9,18 +9,18 @@ const PLANS = [
     id: "free",
     name: "Gratuito",
     price: "$0",
-    credits: "10 para exportar",
-    exports: "Consumen créditos",
-    features: ["Macro y Micro básicos", "Sin minutas IA", "Glosario y manual"],
+    credits: "10",
+    exports: "1 crédito/export",
+    features: ["Macro, Micro, Finanzas (VPVF, CETES, bonos, CAPM)", "Portafolio, break-even", "Sin minutas IA"],
     highlight: false,
   },
   {
     id: "pro",
     name: "Estudiante Pro",
     price: "MXN 99/mes",
-    credits: "50 IA/mes",
-    exports: "PDF ilimitados",
-    features: ["Merkle, Llaves, P2P, Smart Contracts", "DCF, Markowitz, Taylor", "Soporte prioritario"],
+    credits: "50/mes",
+    exports: "1 crédito/export",
+    features: ["Merkle, Llaves, P2P, Smart Contracts", "DCF, Markowitz, Taylor", "Sin minutas IA"],
     highlight: true,
   },
   {
@@ -28,8 +28,8 @@ const PLANS = [
     name: "Researcher",
     price: "MXN 199/mes",
     credits: "200 IA/mes",
-    exports: "PDF ilimitados",
-    features: ["Taylor, DCF, Black-Scholes", "AI Minutas Banxico", "AMM, Mundell, Juegos", "Soporte 24/7"],
+    exports: "Ilimitadas",
+    features: ["AI Minutas Banxico (exclusivo)", "Taylor, DCF, Black-Scholes", "AMM, Mundell, Juegos", "Soporte 24/7"],
     highlight: false,
   },
 ];
@@ -49,7 +49,7 @@ export default function PlanComparador({ compact = false }: PlanComparadorProps)
         <div className="px-5 py-4 border-b border-slate-200 dark:border-slate-800 flex flex-wrap items-center justify-between gap-3">
           <div>
             <h3 className="font-bold text-slate-900 dark:text-white">Desbloquea más con Pro</h3>
-            <p className="text-sm text-slate-500 dark:text-slate-400">Más créditos IA, exportaciones ilimitadas y modelos avanzados.</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Más créditos, modelos avanzados. Solo Researcher tiene exportaciones ilimitadas y minutas IA.</p>
           </div>
           <Link
             href="/pricing"

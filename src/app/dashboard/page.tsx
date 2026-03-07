@@ -71,7 +71,7 @@ export default function DashboardPage() {
                         </div>
                         <div>
                             <p className="font-bold text-slate-900 dark:text-white">Sin créditos</p>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">Recarga con Pro (50 IA/mes + exportaciones ilimitadas) o Researcher (200 IA/mes) para análisis de minutas y más.</p>
+                            <p className="text-sm text-slate-600 dark:text-slate-400">Recarga con Pro (50 créditos/mes) o Researcher (exportaciones ilimitadas + minutas IA).</p>
                         </div>
                     </div>
                     <Link href="/pricing" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-600 text-white font-bold hover:bg-amber-500 transition-colors">
@@ -166,9 +166,9 @@ export default function DashboardPage() {
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-blue-100 dark:border-slate-700">
                         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Tu siguiente paso</h3>
                         {(session.user.credits ?? 0) > 0 ? (
-                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Usa tus créditos para exportar análisis y escenarios en PDF. Pro y Researcher incluyen análisis de minutas con IA.</p>
+                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Usa tus créditos para exportar (1 por PDF). Pro: 50/mes. Solo Researcher tiene exportaciones ilimitadas y minutas IA.</p>
                         ) : (
-                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Sin créditos. Pásate a Pro para 50 créditos IA/mes (minutas) y exportaciones ilimitadas.</p>
+                            <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Sin créditos. Pro: 50/mes. Researcher: exportaciones ilimitadas + minutas IA.</p>
                         )}
                         <div className="flex flex-wrap gap-2">
                             <Link href="/simulador" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors">

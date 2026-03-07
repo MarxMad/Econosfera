@@ -298,7 +298,7 @@ export default function Home() {
                 <span className="text-slate-500 font-medium"> /por siempre</span>
               </div>
               <ul className="space-y-5 mb-12 flex-1">
-                {["Simuladores Macro/Micro básicos", "10 Créditos IA Iniciales", "Hasta 3 Exportaciones PDF", "Comunidad de Discord"].map((item, i) => (
+                {["Macro y Micro básicos", "Finanzas: VPVF, CETES, bonos, CAPM", "Portafolio, break-even, flujo financiero", "10 créditos (exportar consume créditos)", "Sin análisis de minutas IA"].map((item, i) => (
                   <li key={i} className="flex gap-3 text-sm text-slate-400">
                     <svg className="w-5 h-5 text-slate-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
                     {item}
@@ -318,10 +318,10 @@ export default function Home() {
                 <span className="text-blue-200 font-medium"> /mes</span>
               </div>
               <ul className="space-y-5 mb-12 flex-1">
-                {["50 Créditos IA Mensuales", "Exportaciones PDF Ilimitadas", "Modelos: DCF y Black-Scholes", "Simuladores Cripto: Merkle", "Soporte Prioritario"].map((item, i) => (
+                {["50 créditos/mes para exportar", "Exportaciones consumen créditos", "Modelos: DCF y Black-Scholes", "Simuladores Cripto: Merkle", "Soporte Prioritario"].map((item, i) => (
                   <li key={i} className="flex gap-3 text-sm text-blue-50">
                     <svg className="w-5 h-5 text-blue-200 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                    <span className={item.includes("Modelos") || item.includes("Ilimitadas") || item.includes("Cripto") || item.includes("50") ? "font-bold text-white" : ""}>{item}</span>
+                    <span className={item.includes("Modelos") || item.includes("Cripto") || item.includes("50") ? "font-bold text-white" : ""}>{item}</span>
                   </li>
                 ))}
               </ul>
@@ -337,10 +337,10 @@ export default function Home() {
                 <span className="text-slate-500 font-medium"> /mes</span>
               </div>
               <ul className="space-y-5 mb-12 flex-1">
-                {["100 Créditos IA Mensuales", "Simuladores Full: Smart Contracts", "Simuladores Full: Redes P2P", "Reportes de Estrategia", "Soporte 24/7"].map((item, i) => (
+                {["200 Créditos IA/mes (minutas Banxico)", "Exportaciones PDF ilimitadas", "Simuladores Full: Smart Contracts, P2P", "Análisis AI de Minutas Banxico", "Soporte 24/7"].map((item, i) => (
                   <li key={i} className="flex gap-3 text-sm text-slate-400">
                     <svg className="w-5 h-5 text-indigo-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" /></svg>
-                    <span className={item.includes("Full") || item.includes("100") ? "font-bold text-white" : ""}>{item}</span>
+                    <span className={item.includes("Full") || item.includes("200") || item.includes("Minutas") || item.includes("ilimitadas") ? "font-bold text-white" : ""}>{item}</span>
                   </li>
                 ))}
               </ul>

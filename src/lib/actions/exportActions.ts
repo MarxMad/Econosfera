@@ -24,13 +24,13 @@ export async function registrarExportacion(modulo: string, type: string = "PDF")
     }
 
     const plan = (user.plan ?? "FREE").toUpperCase();
-    const exportacionesIlimitadas = plan === "PRO" || plan === "RESEARCHER";
+    const exportacionesIlimitadas = plan === "RESEARCHER";
 
     if (!exportacionesIlimitadas && user.credits < 1) {
-        throw new Error("No tienes créditos suficientes para exportar. Por favor, adquiere más créditos o actualiza a Pro.");
+        throw new Error("No tienes créditos suficientes para exportar. Por favor, adquiere más créditos o actualiza tu plan.");
     }
 
-    // PRO y RESEARCHER: exportaciones ilimitadas (no consumen créditos). FREE: descuenta 1 crédito.
+    // Solo RESEARCHER: exportaciones ilimitadas (no consumen créditos). FREE y PRO: descuentan 1 crédito por exportación.
     await prisma.$transaction([
         prisma.user.update({
             where: { id: session.user.id },
