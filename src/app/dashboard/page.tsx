@@ -139,9 +139,11 @@ export default function DashboardPage() {
                                 plan={(session.user.plan ?? "FREE").toUpperCase()}
                             />
 
-                            <Link href="/pricing" className="block w-full py-3 bg-white text-blue-700 text-center font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm active:scale-[0.98]">
-                                Ver Planes (Pro: 50 / Researcher: 200 créditos)
-                            </Link>
+                            {(session.user.plan ?? "FREE").toUpperCase() !== "RESEARCHER" && (
+                                <Link href="/pricing" className="block w-full py-3 bg-white text-blue-700 text-center font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm active:scale-[0.98]">
+                                    Ver Planes (Pro: 50 / Researcher: 200 créditos)
+                                </Link>
+                            )}
                             {(session.user.plan === "PRO" || session.user.plan === "RESEARCHER") && (
                                 <button
                                     type="button"
@@ -155,8 +157,8 @@ export default function DashboardPage() {
                         </div>
                     </div>
 
-                    {/* Comparador Free vs Pro vs Researcher */}
-                    <PlanComparador />
+                    {/* Comparador Free vs Pro vs Researcher (solo para usuarios Free) */}
+                    {((session.user.plan ?? "FREE") as string).toUpperCase() === "FREE" && <PlanComparador />}
 
                     {/* Resumen de Actividad Académica */}
                     <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg">
