@@ -90,9 +90,9 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
     try {
       const resScenario = await saveScenario({
         type: "MACRO",
-        subType: tipo.toUpperCase(),
+        subType: tipo === 'multiplier' ? 'MULTIPLIER' : 'ISLM',
         name: `Macro ${tipo} ${new Date().toLocaleDateString()}`,
-        variables: tipo === 'multiplier' ? v : vISLM,
+        variables: { v, vISLM },
         results: tipo === 'multiplier' ? res : resISLM
       });
       if (resScenario.success) alert(`Escenario ${tipo} guardado (1 crédito)`);

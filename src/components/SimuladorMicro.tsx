@@ -128,6 +128,7 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
     if (initialData?.data?.elasticidad) setElasticidad(initialData.data.elasticidad);
   }, [initialData]);
   const [exportando, setExportando] = useState(false);
+  const [guardando, setGuardando] = useState(false);
 
   const resMercado = useMemo(() => calcularMercado(mercado), [mercado]);
   const resMercadoBase = useMemo(() => calcularMercado(baselineMercado), [baselineMercado]);
@@ -306,19 +307,29 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
                       <button
                         type="button"
                         onClick={async () => {
-                          const { saveScenario } = await import("@/lib/actions/scenarioActions");
-                          const resSave = await saveScenario({
-                            type: "MICRO",
-                            name: `Simulación Micro ${new Date().toLocaleDateString()}`,
-                            variables: { mercado, elasticidad },
-                            results: { resMercado, resElast },
-                          });
-                          if (resSave.success) alert("Escenario guardado");
-                          else alert(resSave.error);
+                          if ((session?.user?.credits ?? 0) < 1) {
+                            alert("No tienes créditos suficientes para guardar.");
+                            return;
+                          }
+                          setGuardando(true);
+                          try {
+                            const { saveScenario } = await import("@/lib/actions/scenarioActions");
+                            const resSave = await saveScenario({
+                              type: "MICRO",
+                              subType: "MERCADO",
+                              name: `Simulación Micro ${new Date().toLocaleDateString()}`,
+                              variables: { mercado, elasticidad },
+                              results: { resMercado, resElast },
+                            });
+                            if (resSave.success) alert("Escenario guardado (1 crédito)");
+                            else alert(resSave.error);
+                          } catch (e) { alert("Error al guardar"); }
+                          finally { setGuardando(false); }
                         }}
-                        className="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition-all shadow-md active:scale-95"
+                        disabled={guardando}
+                        className="px-4 py-2 text-sm font-bold text-white bg-blue-600 rounded-xl hover:bg-blue-500 transition-all shadow-md active:scale-95 disabled:opacity-50"
                       >
-                        Guardar
+                        {guardando ? "Guardando..." : "Guardar"}
                       </button>
                     )}
                   </div>

@@ -37,16 +37,23 @@ export default function Monetaria({
     const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState<"core" | "taylor" | "ai" | "uip" | "canalesTransmision" | "comparadorPostura">("core");
 
+    const [guardando, setGuardando] = useState(false);
     const handleSave = async () => {
-        const { saveScenario } = await import("@/lib/actions/scenarioActions");
-        const resSave = await saveScenario({
-            type: "INFLACION",
-            name: `Simulación Política Monetaria ${new Date().toLocaleDateString()}`,
-            variables: { variables, datosAI },
-            results: resultados,
-        });
-        if (resSave.success) alert("Escenario guardado");
-        else alert(resSave.error);
+        if ((session?.user?.credits ?? 0) < 1) return alert("No tienes créditos suficientes para guardar.");
+        setGuardando(true);
+        try {
+            const { saveScenario } = await import("@/lib/actions/scenarioActions");
+            const resSave = await saveScenario({
+                type: "MONETARIA",
+                subType: "CORE",
+                name: `Simulación Política Monetaria ${new Date().toLocaleDateString()}`,
+                variables: { variables, datosAI },
+                results: resultados,
+            });
+            if (resSave.success) alert("Escenario guardado (1 crédito)");
+            else alert(resSave.error);
+        } catch (e) { alert("Error al guardar"); }
+        finally { setGuardando(false); }
     };
 
     return (
@@ -103,10 +110,11 @@ export default function Monetaria({
                                 <button
                                     type="button"
                                     onClick={handleSave}
-                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-md active:scale-95"
+                                    disabled={guardando}
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold bg-blue-600 text-white hover:bg-blue-500 transition-all shadow-md active:scale-95 disabled:opacity-50"
                                 >
                                     <Save className="w-4 h-4" />
-                                    Guardar
+                                    {guardando ? "Guardando..." : "Guardar"}
                                 </button>
                             )}
                         </div>

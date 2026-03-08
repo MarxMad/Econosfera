@@ -19,7 +19,7 @@ import type { ModuloSimulador } from "./NavSimuladores";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
-import SimulatorTabs from "./SimulatorTabs";
+import SimulatorDropdown from "./SimulatorDropdown";
 import BannerCuestionarios from "./BannerCuestionarios";
 import {
   SimuladorVPVF,
@@ -103,17 +103,18 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
         </p>
       </div>
 
-      <div className="sticky top-16 z-20 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-950 shadow-md p-3 sm:p-4">
-        <SimulatorTabs
+      <div className="sticky top-16 z-20 flex items-center gap-3 py-2 -mx-1 px-1 bg-slate-100 dark:bg-slate-950">
+        <SimulatorDropdown
           tabs={TABS_FINANZAS}
           activeTab={activeTab}
           onTabChange={setActiveTab}
           moduleId="finanzas"
           isLocked={(id) => !canAccess(session?.user?.plan, "finanzas", id)}
-          hint="Elige un simulador para ver los resultados"
-          grouped
-          compact
+          placeholder="Elige un simulador"
         />
+        <span className="text-xs text-slate-500 dark:text-slate-400 hidden sm:inline">
+          Haz clic para cambiar
+        </span>
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">

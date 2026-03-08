@@ -1,10 +1,16 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { TrendingUp, Info, HelpCircle, Save, ArrowRight, Gauge } from "lucide-react";
+import { TrendingUp, Info, HelpCircle, Save, Gauge, FileDown } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area, ReferenceLine, Label } from "recharts";
+import PricingModal from "@/components/PricingModal";
 
 export default function SimuladorSolow() {
+    const { data: session, update } = useSession();
+    const [showPricing, setShowPricing] = useState(false);
+    const [exportando, setExportando] = useState(false);
+    const [guardando, setGuardando] = useState(false);
     // Parámetros del modelo
     const [s, setS] = useState(0.2); // Tasa de ahorro
     const [n, setN] = useState(0.02); // Crecimiento poblacional
@@ -46,6 +52,48 @@ export default function SimuladorSolow() {
         }
         return data;
     }, [s, alpha, stats]);
+
+    const isLimitReached = (session?.user?.credits ?? 0) < 1;
+
+    const handleReportePdf = async () => {
+        if (isLimitReached) { setShowPricing(true); return; }
+        setExportando(true);
+        try {
+            const { registrarExportacion } = await import("@/lib/actions/exportActions");
+            const { exportarSolowPdf } = await import("@/lib/exportarPdf");
+            const { getGraficoAsDataUrl } = await import("@/lib/exportarGrafico");
+            await registrarExportacion("Modelo Solow", "PDF");
+            let chartUrl: string | null = null;
+            try { chartUrl = await getGraficoAsDataUrl("grafico-solow"); } catch (_) {}
+            await exportarSolowPdf(
+                { s, n, g, delta, alpha, kInitial },
+                stats,
+                chartUrl
+            );
+            await update();
+        } catch (e: any) {
+            if (String(e?.message || e).includes("créditos")) setShowPricing(true);
+            else alert(e?.message || "Error al exportar");
+        } finally { setExportando(false); }
+    };
+
+    const handleGuardar = async () => {
+        if (isLimitReached) { setShowPricing(true); return; }
+        setGuardando(true);
+        try {
+            const { saveScenario } = await import("@/lib/actions/scenarioActions");
+            const res = await saveScenario({
+                type: "MACRO",
+                subType: "SOLOW",
+                name: `Solow ${new Date().toLocaleDateString()}`,
+                variables: { s, n, g, delta, alpha, kInitial },
+                results: stats,
+            });
+            if (res.success) { alert("Escenario guardado (1 crédito)"); await update(); }
+            else alert(res.error);
+        } catch (e) { alert("Error al guardar"); }
+        finally { setGuardando(false); }
+    };
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
@@ -186,10 +234,32 @@ export default function SimuladorSolow() {
                 {/* Gráfica */}
                 <div className="lg:col-span-2 space-y-6">
                     <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-lg h-full min-h-[500px] flex flex-col">
-                        <div className="flex items-center justify-between mb-8">
+                        <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
                             <div>
                                 <h3 className="font-black text-slate-900 dark:text-white text-xl">Dinámica de Acumulación</h3>
                                 <p className="text-xs text-slate-500">Balance entre Inversión vs. Gasto de Mantenimiento</p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={handleReportePdf}
+                                    disabled={exportando}
+                                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-slate-900 dark:bg-slate-700 text-white hover:bg-slate-800 dark:hover:bg-slate-600 disabled:opacity-50 transition-colors"
+                                >
+                                    <FileDown className="w-4 h-4" />
+                                    {exportando ? "Generando..." : "Reporte PDF"}
+                                </button>
+                                {session && (
+                                    <button
+                                        type="button"
+                                        onClick={handleGuardar}
+                                        disabled={guardando}
+                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white hover:bg-blue-500 disabled:opacity-50 transition-colors"
+                                    >
+                                        <Save className="w-4 h-4" />
+                                        {guardando ? "Guardando..." : "Guardar"}
+                                    </button>
+                                )}
                             </div>
                             <div className="flex items-center gap-4">
                                 <div className="flex items-center gap-2">
@@ -203,11 +273,11 @@ export default function SimuladorSolow() {
                             </div>
                         </div>
 
-                        <div className="flex-1 w-full min-h-[400px]">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <div id="grafico-solow" className="w-full" style={{ height: 400 }}>
+                            <ResponsiveContainer width="100%" height={400}>
                                 <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                     <defs>
-                                        <linearGradient id="colorInv" x1="0" y1="0" x2="0" y2="1">
+                                        <linearGradient id="colorInvSolow" x1="0" y1="0" x2="0" y2="1">
                                             <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
                                             <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
                                         </linearGradient>
@@ -223,7 +293,7 @@ export default function SimuladorSolow() {
                                         contentStyle={{ backgroundColor: '#0f172a', border: 'none', borderRadius: '12px', color: '#fff', fontSize: '12px' }}
                                         itemStyle={{ color: '#94a3b8' }}
                                     />
-                                    <Area type="monotone" dataKey="investment" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorInv)" />
+                                    <Area type="monotone" dataKey="investment" stroke="#3b82f6" strokeWidth={3} fillOpacity={1} fill="url(#colorInvSolow)" />
                                     <Line type="monotone" dataKey="output" stroke="#e2e8f0" strokeDasharray="5 5" dot={false} strokeWidth={1} />
                                     <Line type="monotone" dataKey="depreciation" stroke="#94a3b8" strokeWidth={2} dot={false} />
                                     <ReferenceLine x={stats.kStar} stroke="#10b981" strokeDasharray="3 3">
@@ -233,7 +303,7 @@ export default function SimuladorSolow() {
                             </ResponsiveContainer>
                         </div>
 
-                        <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-4 border-t border-slate-100 dark:border-slate-800 pt-6">
+                        <div className="mt-6 grid grid-cols-2 lg:grid-cols-3 gap-4 border-t border-slate-100 dark:border-slate-800 pt-6">
                             <div className="space-y-1">
                                 <span className="text-[10px] text-slate-400 uppercase font-bold">Consumo Óptimo (Golden)</span>
                                 <p className="text-lg font-black text-slate-900 dark:text-white">{stats.cGold.toFixed(3)}</p>
@@ -246,14 +316,11 @@ export default function SimuladorSolow() {
                                 <span className="text-[10px] text-slate-400 uppercase font-bold">Eficiencia del Capital</span>
                                 <p className="text-lg font-black text-slate-900 dark:text-white">{(alpha * 100).toFixed(1)}%</p>
                             </div>
-                            <button className="flex items-center justify-center gap-2 p-3 bg-slate-900 text-white dark:bg-white dark:text-slate-900 rounded-2xl text-xs font-black hover:scale-[1.02] transition-all">
-                                <Save className="w-3.5 h-3.5" />
-                                Guardar Análisis
-                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+            <PricingModal isOpen={showPricing} onClose={() => setShowPricing(false)} />
         </div>
     );
 }

@@ -82,7 +82,8 @@ export async function exportarGraficoComoPNG(
 export function getGraficoAsDataUrl(elementoId: string): Promise<string> {
   const elemento = document.getElementById(elementoId);
   if (!elemento) return Promise.reject(new Error(`Elemento no encontrado: ${elementoId}`));
-  const svg = elemento.querySelector("svg");
+  // Preferir SVG de Recharts (más específico) para evitar capturar iconos u otros SVGs
+  const svg = elemento.querySelector("svg.recharts-surface") ?? elemento.querySelector("svg");
   if (!svg) return Promise.reject(new Error("No se encontró SVG en el elemento"));
 
   const svgClone = svg.cloneNode(true) as SVGSVGElement;

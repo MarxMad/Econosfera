@@ -901,6 +901,101 @@ export async function exportarHarrodDomarPdf(
   doc.save(`econosfera-harrod-domar-${new Date().toISOString().split("T")[0]}.pdf`);
 }
 
+/** PDF Modelo de Solow. */
+export async function exportarSolowPdf(
+  vars: { s: number; n: number; g: number; delta: number; alpha: number; kInitial: number },
+  stats: { kStar: number; yStar: number; cStar: number; kGold: number; yGold: number; cGold: number; breakEven: number },
+  chartUrl?: string | null
+): Promise<void> {
+  const doc = new jsPDF() as any;
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let currentY = 20;
+
+  doc.setFillColor(15, 23, 42);
+  doc.rect(0, 0, pageWidth, 40, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(22);
+  doc.setFont("helvetica", "bold");
+  doc.text("ECONOSFERA", MARGIN, 20);
+  doc.setFontSize(10);
+  doc.setFont("helvetica", "normal");
+  doc.text("MODELO DE CRECIMIENTO DE SOLOW", MARGIN, 27);
+  doc.setFontSize(14);
+  doc.text("REPORTE", pageWidth - MARGIN, 25, { align: "right" });
+  currentY = 50;
+
+  doc.setTextColor(30, 41, 59);
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Parámetros del modelo", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Variable", "Valor"]],
+    body: [
+      ["Tasa de ahorro (s)", `${(vars.s * 100).toFixed(0)}%`],
+      ["Crecimiento poblacional (n)", `${(vars.n * 100).toFixed(2)}%`],
+      ["Progreso tecnológico (g)", `${(vars.g * 100).toFixed(2)}%`],
+      ["Depreciación (δ)", `${(vars.delta * 100).toFixed(1)}%`],
+      ["Participación capital (α)", vars.alpha.toFixed(2)],
+      ["Capital inicial (k₀)", vars.kInitial.toString()],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [59, 130, 246], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  // @ts-ignore
+  currentY = doc.lastAutoTable.finalY + 10;
+
+  doc.setFontSize(12);
+  doc.setFont("helvetica", "bold");
+  doc.text("Estado estacionario y Regla de Oro", MARGIN, currentY);
+  currentY += 8;
+  autoTable(doc, {
+    startY: currentY,
+    head: [["Métrica", "Valor"]],
+    body: [
+      ["Capital por trabajador (k*)", stats.kStar.toFixed(3)],
+      ["Producto por trabajador (y*)", stats.yStar.toFixed(3)],
+      ["Consumo por trabajador (c*)", stats.cStar.toFixed(3)],
+      ["Consumo óptimo Golden (c_gold)", stats.cGold.toFixed(3)],
+      ["Ahorro Regla de Oro", `${(vars.alpha * 100).toFixed(0)}%`],
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [16, 185, 129], textColor: 255 },
+    margin: { left: MARGIN, right: MARGIN },
+    styles: { overflow: "linebreak" },
+  });
+
+  // @ts-ignore
+  currentY = doc.lastAutoTable.finalY + 10;
+
+  if (chartUrl) {
+    try {
+      doc.addImage(chartUrl, "PNG", MARGIN, currentY, 180, 70);
+      currentY += 80;
+    } catch (e) {
+      console.warn("Chart image failed for Solow", e);
+    }
+  }
+
+  const totalPages = doc.internal.pages.length - 1;
+  for (let i = 1; i <= totalPages; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Página ${i} de ${totalPages} | Econosfera Macro | ${new Date().toLocaleDateString("es-MX")}`,
+      pageWidth / 2,
+      doc.internal.pageSize.getHeight() - 10,
+      { align: "center" }
+    );
+  }
+  doc.save(`econosfera-solow-${new Date().toISOString().split("T")[0]}.pdf`);
+}
+
 /** PDF Multiplicador de transferencias. */
 export async function exportarMultTransferenciasPdf(pmc: number, multiplicador: number): Promise<void> {
   const doc = new jsPDF() as any;

@@ -46,7 +46,7 @@ export default function SimuladorApp() {
           if (scenario.type === "MACRO") setModulo("macro");
           else if (scenario.type === "MICRO") setModulo("micro");
           else if (scenario.type === "FINANZAS") setModulo("finanzas");
-          else {
+          else if (scenario.type === "MONETARIA" || scenario.type === "INFLACION") {
             setModulo("monetaria");
             if (scenario.data) {
               const data = scenario.data as any;

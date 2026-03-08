@@ -9,6 +9,42 @@ import Link from "next/link";
 import ProfileCard from "@/components/ProfileCard";
 import PlanComparador from "@/components/PlanComparador";
 
+const CREDITS_MAX = { FREE: 10, PRO: 50, RESEARCHER: 200 } as const;
+
+function CreditsByPlanCard({ credits, plan }: { credits: number; plan: string }) {
+    const max = CREDITS_MAX[plan as keyof typeof CREDITS_MAX] ?? CREDITS_MAX.FREE;
+    const isUnlimited = plan === "RESEARCHER";
+    const planLabel = plan === "FREE" ? "Free" : plan === "PRO" ? "Pro" : "Researcher";
+
+    return (
+        <div className="p-3 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm">
+            <div className="flex justify-between text-xs font-bold uppercase mb-2">
+                <span>Créditos para exportar ({planLabel})</span>
+                <span>
+                    {isUnlimited ? (
+                        <>Ilimitados</>
+                    ) : (
+                        <>{credits} / {max}</>
+                    )}
+                </span>
+            </div>
+            {!isUnlimited && (
+                <div className="h-2 bg-blue-950/30 rounded-full overflow-hidden">
+                    <div
+                        className={`h-full rounded-full transition-all duration-1000 ${credits <= 0 ? "bg-rose-400" : "bg-emerald-400"}`}
+                        style={{ width: `${Math.min((credits / max) * 100, 100)}%` }}
+                    />
+                </div>
+            )}
+            <p className="text-[10px] mt-2 opacity-70">
+                {isUnlimited
+                    ? "Exportaciones ilimitadas y análisis de minutas con IA."
+                    : `Gasta tus ${max} créditos en exportaciones de análisis y escenarios.`}
+            </p>
+        </div>
+    );
+}
+
 export default function DashboardPage() {
     const { data: session, status } = useSession();
     const [scenarios, setScenarios] = useState<any[]>([]);
@@ -98,22 +134,13 @@ export default function DashboardPage() {
                         </div>
 
                         <div className="space-y-4 relative z-10">
-                            <div className="p-3 bg-white/10 rounded-2xl border border-white/10 backdrop-blur-sm">
-                                <div className="flex justify-between text-xs font-bold uppercase mb-2">
-                                    <span>Créditos para exportar (Free)</span>
-                                    <span>{session.user.credits ?? 0} / 10</span>
-                                </div>
-                                <div className="h-2 bg-blue-950/30 rounded-full overflow-hidden">
-                                    <div
-                                        className={`h-full rounded-full transition-all duration-1000 ${(session.user.credits ?? 0) <= 0 ? 'bg-rose-400' : 'bg-emerald-400'}`}
-                                        style={{ width: `${Math.min(((session.user.credits ?? 0) / 10) * 100, 100)}%` }}
-                                    />
-                                </div>
-                                <p className="text-[10px] mt-2 opacity-70">Gasta tus 10 créditos en exportaciones de análisis y escenarios.</p>
-                            </div>
+                            <CreditsByPlanCard
+                                credits={session.user.credits ?? 0}
+                                plan={(session.user.plan ?? "FREE").toUpperCase()}
+                            />
 
                             <Link href="/pricing" className="block w-full py-3 bg-white text-blue-700 text-center font-bold rounded-xl hover:bg-blue-50 transition-all shadow-sm active:scale-[0.98]">
-                                Ver Planes (50 / 100 créditos)
+                                Ver Planes (Pro: 50 / Researcher: 200 créditos)
                             </Link>
                             {(session.user.plan === "PRO" || session.user.plan === "RESEARCHER") && (
                                 <button
