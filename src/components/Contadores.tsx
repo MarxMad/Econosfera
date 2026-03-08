@@ -55,6 +55,7 @@ export default function Contadores() {
           ]}
           activeTab={activeTab}
           onTabChange={(id) => setActiveTab(id as TabContadores)}
+          moduleId="contadores"
           isLocked={(id) => !canAccess(session?.user?.plan, "contadores", id)}
           hint="Elige una herramienta de contabilidad"
         />

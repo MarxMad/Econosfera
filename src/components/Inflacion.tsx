@@ -43,6 +43,7 @@ export default function Inflacion({
                     ]}
                     activeTab={activeTab}
                     onTabChange={(id) => setActiveTab(id as any)}
+                    moduleId="inflacion"
                     isLocked={(id) => !canAccess(session?.user?.plan, "inflacion", id)}
                     hint="Elige un simulador para analizar la inflación"
                 />

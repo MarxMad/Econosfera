@@ -41,6 +41,7 @@ export default function Estadistica() {
                     ]}
                     activeTab={activeTab}
                     onTabChange={(id) => setActiveTab(id as any)}
+                    moduleId="estadistica"
                     isLocked={(id) => !canAccess(session?.user?.plan, "estadistica", id)}
                     hint="Elige un simulador de estadística"
                 />

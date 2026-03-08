@@ -183,6 +183,7 @@ export default function BlockchainEcon() {
           ]}
           activeTab={activeTab}
           onTabChange={(id) => setActiveTab(id as any)}
+          moduleId="blockchain"
           isLocked={(id) => !canAccess(session?.user?.plan, "blockchain", id)}
           hint="Elige un simulador de economía blockchain"
         />

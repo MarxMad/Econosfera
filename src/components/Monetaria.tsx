@@ -70,6 +70,7 @@ export default function Monetaria({
                     ]}
                     activeTab={activeTab}
                     onTabChange={(id) => setActiveTab(id as any)}
+                    moduleId="monetaria"
                     isLocked={(id) => !canAccess(session?.user?.plan, "monetaria", id)}
                     hint="Elige un simulador de política monetaria"
                 />

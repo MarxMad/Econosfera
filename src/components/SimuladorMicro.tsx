@@ -222,6 +222,7 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
           ]}
           activeTab={activeTab}
           onTabChange={(id) => setActiveTab(id as any)}
+          moduleId="micro"
           isLocked={(id) => !canAccess(session?.user?.plan, "micro", id)}
           hint="Elige un simulador de microeconomía"
         />

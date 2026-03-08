@@ -38,6 +38,7 @@ export default function Actuaria() {
                     ]}
                     activeTab={activeTab}
                     onTabChange={(id) => setActiveTab(id as any)}
+                    moduleId="actuaria"
                     isLocked={(id) => !canAccess(session?.user?.plan, "actuaria", id)}
                     hint="Elige un simulador actuarial"
                 />

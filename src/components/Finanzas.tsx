@@ -51,32 +51,32 @@ import {
 } from "./simuladores-finanzas";
 
 const TABS_FINANZAS = [
-  { id: "vpvf", label: "VP/VF", icon: Calculator, plan: "FREE" as const, group: "Básicos" },
-  { id: "amortizacion", label: "Amortización", icon: FileText, plan: "FREE" as const, group: "Básicos" },
-  { id: "anualidad", label: "Anualidad", icon: Percent, plan: "FREE" as const, group: "Básicos" },
-  { id: "interesSimpleCompuesto", label: "Interés simple/compuesto", icon: Percent, plan: "FREE" as const, group: "Básicos" },
-  { id: "regla72", label: "Regla del 72", icon: Percent, plan: "FREE" as const, group: "Básicos" },
-  { id: "tasaEfectiva", label: "Tasa efectiva", icon: Percent, plan: "FREE" as const, group: "Básicos" },
-  { id: "bono", label: "Bono", icon: Coins, plan: "FREE" as const, group: "Renta fija" },
-  { id: "cetes", label: "CETES", icon: Coins, plan: "FREE" as const, group: "Renta fija" },
-  { id: "duracionBono", label: "Duración bono", icon: Coins, plan: "PRO" as const, group: "Renta fija" },
-  { id: "valuacion", label: "Valuación", icon: Target, plan: "PRO" as const, group: "Valuación" },
-  { id: "dcf", label: "DCF", icon: BarChart2, plan: "PRO" as const, group: "Valuación" },
-  { id: "vpntir", label: "VPN/TIR", icon: BarChart2, plan: "PRO" as const, group: "Valuación" },
-  { id: "wacc", label: "WACC", icon: BarChart2, plan: "PRO" as const, group: "Valuación" },
-  { id: "capm", label: "CAPM", icon: BarChart2, plan: "FREE" as const, group: "Valuación" },
-  { id: "markowitz", label: "Markowitz", icon: PieChart, plan: "PRO" as const, group: "Portafolio" },
-  { id: "portafolio2", label: "Portafolio", icon: PieChart, plan: "PRO" as const, group: "Portafolio" },
-  { id: "blackScholes", label: "Black-Scholes", icon: Zap, plan: "PRO" as const, group: "Derivados" },
-  { id: "yieldCurve", label: "Yield Curve", icon: TrendingUp, plan: "PRO" as const, group: "Derivados" },
-  { id: "forward", label: "Forward", icon: TrendingUp, plan: "PRO" as const, group: "Derivados" },
-  { id: "breakEven", label: "Break-even", icon: Target, plan: "PRO" as const, group: "Empresa" },
-  { id: "ahorro", label: "Ahorro", icon: Wallet, plan: "FREE" as const, group: "Empresa" },
-  { id: "impactoNoticias", label: "Impacto noticias", icon: Newspaper, plan: "FREE" as const },
-  { id: "correlacionFundamental", label: "Correlación", icon: TrendingUp, plan: "FREE" as const },
-  { id: "flujoFinanciero", label: "Flujo sistema", icon: Layers, plan: "FREE" as const, group: "Mapas" },
-  { id: "mapaInstrumentos", label: "Mapa instrumentos", icon: Layers, plan: "FREE" as const, group: "Mapas" },
-  { id: "mapaEstructuraCapital", label: "Mapa estructura", icon: Layers, plan: "FREE" as const, group: "Mapas" },
+  { id: "vpvf", label: "VP/VF", icon: Calculator, group: "Básicos" },
+  { id: "amortizacion", label: "Amortización", icon: FileText, group: "Básicos" },
+  { id: "anualidad", label: "Anualidad", icon: Percent, group: "Básicos" },
+  { id: "interesSimpleCompuesto", label: "Interés simple/compuesto", icon: Percent, group: "Básicos" },
+  { id: "regla72", label: "Regla del 72", icon: Percent, group: "Básicos" },
+  { id: "tasaEfectiva", label: "Tasa efectiva", icon: Percent, group: "Básicos" },
+  { id: "bono", label: "Bono", icon: Coins, group: "Renta fija" },
+  { id: "cetes", label: "CETES", icon: Coins, group: "Renta fija" },
+  { id: "duracionBono", label: "Duración bono", icon: Coins, group: "Renta fija" },
+  { id: "valuacion", label: "Valuación", icon: Target, group: "Valuación" },
+  { id: "dcf", label: "DCF", icon: BarChart2, group: "Valuación" },
+  { id: "vpntir", label: "VPN/TIR", icon: BarChart2, group: "Valuación" },
+  { id: "wacc", label: "WACC", icon: BarChart2, group: "Valuación" },
+  { id: "capm", label: "CAPM", icon: BarChart2, group: "Valuación" },
+  { id: "markowitz", label: "Markowitz", icon: PieChart, group: "Portafolio" },
+  { id: "portafolio2", label: "Portafolio", icon: PieChart, group: "Portafolio" },
+  { id: "blackScholes", label: "Black-Scholes", icon: Zap, group: "Derivados" },
+  { id: "yieldCurve", label: "Yield Curve", icon: TrendingUp, group: "Derivados" },
+  { id: "forward", label: "Forward", icon: TrendingUp, group: "Derivados" },
+  { id: "breakEven", label: "Break-even", icon: Target, group: "Empresa" },
+  { id: "ahorro", label: "Ahorro", icon: Wallet, group: "Empresa" },
+  { id: "impactoNoticias", label: "Impacto noticias", icon: Newspaper },
+  { id: "correlacionFundamental", label: "Correlación", icon: TrendingUp },
+  { id: "flujoFinanciero", label: "Flujo sistema", icon: Layers, group: "Mapas" },
+  { id: "mapaInstrumentos", label: "Mapa instrumentos", icon: Layers, group: "Mapas" },
+  { id: "mapaEstructuraCapital", label: "Mapa estructura", icon: Layers, group: "Mapas" },
 ];
 
 const SUBTYPE_TO_TAB: Record<string, string> = {
@@ -95,22 +95,24 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
   }, [initialData?.subType]);
 
   return (
-    <div className="space-y-6">
-      <div className="rounded-3xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 p-8 shadow-sm">
-        <h2 className="text-3xl font-black text-slate-900 dark:text-white mb-3">Finanzas y Mercados de Capital</h2>
-        <p className="text-slate-600 dark:text-slate-400 text-sm max-w-2xl">
-          Visualiza flujos de efectivo, valora activos y gestiona portafolios. Econosfera proporciona herramientas de grado profesional para entender la dinámica del capital.
+    <div className="space-y-4">
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-slate-900 dark:to-slate-800 p-4 sm:p-5 shadow-sm">
+        <h2 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white mb-1">Finanzas y Mercados de Capital</h2>
+        <p className="text-slate-600 dark:text-slate-400 text-xs sm:text-sm max-w-2xl">
+          Visualiza flujos de efectivo, valora activos y gestiona portafolios.
         </p>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
+      <div className="sticky top-16 z-20 rounded-2xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-950 shadow-md p-3 sm:p-4">
         <SimulatorTabs
           tabs={TABS_FINANZAS}
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          moduleId="finanzas"
           isLocked={(id) => !canAccess(session?.user?.plan, "finanzas", id)}
-          hint="Elige un simulador para ver los resultados. Haz clic en cualquier tarjeta."
+          hint="Elige un simulador para ver los resultados"
           grouped
+          compact
         />
       </div>
 

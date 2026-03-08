@@ -164,6 +164,7 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
           ]}
           activeTab={activeTab}
           onTabChange={(id) => setActiveTab(id as any)}
+          moduleId="macro"
           isLocked={(id) => !canAccess(session?.user?.plan, "macro", id)}
           hint="Elige un modelo macroeconómico"
         />
