@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Shield, Heart } from "lucide-react";
-import SimulatorTabs from "./SimulatorTabs";
+import SimulatorDropdown from "./SimulatorDropdown";
 import { SimuladorMortalidad, SimuladorRuina } from "./simuladores-actuaria";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
@@ -30,8 +30,8 @@ export default function Actuaria() {
                     </p>
                 </div>
             </div>
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
-                <SimulatorTabs
+            <div className="sticky top-16 z-20 flex items-center gap-3 py-3 -mx-1 px-1 rounded-xl border border-indigo-200/50 dark:border-indigo-800/50 bg-gradient-to-r from-indigo-50/50 to-transparent dark:from-indigo-950/20 bg-slate-100 dark:bg-slate-950">
+                <SimulatorDropdown
                     tabs={[
                         { id: 'mortalidad', label: 'Tablas de Mortalidad', icon: Heart },
                         { id: 'ruina', label: 'Modelo de Ruina', icon: Shield }
@@ -40,8 +40,9 @@ export default function Actuaria() {
                     onTabChange={(id) => setActiveTab(id as any)}
                     moduleId="actuaria"
                     isLocked={(id) => !canAccess(session?.user?.plan, "actuaria", id)}
-                    hint="Elige un simulador actuarial"
+                    placeholder="Elige un simulador actuarial"
                 />
+                <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hidden sm:inline">← Haz clic para cambiar</span>
             </div>
 
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">

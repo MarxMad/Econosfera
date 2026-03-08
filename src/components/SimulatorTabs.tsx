@@ -82,7 +82,7 @@ export default function SimulatorTabs({
     const ungrouped = tabs.filter((t) => !t.group);
     return (
       <div className={compact ? "space-y-2" : "space-y-5"}>
-        <p className={`flex items-center gap-2 text-slate-500 dark:text-slate-400 ${compact ? "text-xs" : "text-sm"}`}>
+        <p className={`flex items-center gap-2 font-semibold text-indigo-600 dark:text-indigo-400 ${compact ? "text-xs" : "text-sm"}`}>
           <MousePointer2 className={compact ? "w-3.5 h-3.5" : "w-4 h-4"} />
           {hint}
         </p>
@@ -114,11 +114,11 @@ export default function SimulatorTabs({
 
   return (
     <div className="space-y-3">
-      <p className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+      <p className="flex items-center gap-2 text-sm font-semibold text-indigo-600 dark:text-indigo-400">
         <MousePointer2 className="w-4 h-4" />
         {hint}
       </p>
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2 p-1">
         {tabs.map(tabButton)}
       </div>
     </div>

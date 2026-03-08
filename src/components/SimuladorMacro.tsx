@@ -5,7 +5,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import {
   Calculator, TrendingUp, ArrowRight, Download, Save, FileDown, Activity, Target, Globe, BarChart2, Layers, ChartLine
 } from "lucide-react";
-import SimulatorTabs from "./SimulatorTabs";
+import SimulatorDropdown from "./SimulatorDropdown";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "@/components/SimulatorLocked";
@@ -149,8 +149,8 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
       </div>
 
       {/* Tab Navigation */}
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
-        <SimulatorTabs
+      <div className="sticky top-16 z-20 flex items-center gap-3 py-3 -mx-1 px-1 rounded-xl border border-indigo-200/50 dark:border-indigo-800/50 bg-gradient-to-r from-indigo-50/50 to-transparent dark:from-indigo-950/20 bg-slate-100 dark:bg-slate-950">
+        <SimulatorDropdown
           tabs={[
             { id: 'multiplier', label: 'Multiplicador 45°', icon: Calculator },
             { id: 'islm', label: 'IS-LM', icon: ChartLine },
@@ -166,8 +166,9 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
           onTabChange={(id) => setActiveTab(id as any)}
           moduleId="macro"
           isLocked={(id) => !canAccess(session?.user?.plan, "macro", id)}
-          hint="Elige un modelo macroeconómico"
+          placeholder="Elige un modelo macroeconómico"
         />
+        <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hidden sm:inline">← Haz clic para cambiar</span>
       </div>
 
       {!canAccess(session?.user?.plan, "macro", activeTab) && getRequiredPlan("macro", activeTab) && (

@@ -4,7 +4,7 @@ import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Area } from "recharts";
 import type { VariablesMercado, VariablesElasticidad } from "@/lib/micro";
 import { TrendingDown, Download, Ruler, Layers, Gamepad2 } from "lucide-react";
-import SimulatorTabs from "./SimulatorTabs";
+import SimulatorDropdown from "./SimulatorDropdown";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "@/components/SimulatorLocked";
 import { calcularMercado, calcularElasticidadArco } from "@/lib/micro";
@@ -212,8 +212,8 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
         </div>
       </div>
 
-      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
-        <SimulatorTabs
+      <div className="sticky top-16 z-20 flex items-center gap-3 py-3 -mx-1 px-1 rounded-xl border border-indigo-200/50 dark:border-indigo-800/50 bg-gradient-to-r from-indigo-50/50 to-transparent dark:from-indigo-950/20 bg-slate-100 dark:bg-slate-950">
+        <SimulatorDropdown
           tabs={[
             { id: "mercado", label: "Oferta y Demanda", icon: TrendingDown },
             { id: "estructuras", label: "Estructuras de Mercado", icon: Layers },
@@ -225,8 +225,9 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
           onTabChange={(id) => setActiveTab(id as any)}
           moduleId="micro"
           isLocked={(id) => !canAccess(session?.user?.plan, "micro", id)}
-          hint="Elige un simulador de microeconomía"
+          placeholder="Elige un simulador de microeconomía"
         />
+        <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400 hidden sm:inline">← Haz clic para cambiar</span>
       </div>
 
       {!canAccess(session?.user?.plan, "micro", activeTab) && getRequiredPlan("micro", activeTab) && (

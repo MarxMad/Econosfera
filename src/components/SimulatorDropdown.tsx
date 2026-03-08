@@ -92,16 +92,19 @@ export default function SimulatorDropdown({
 
   return (
     <div ref={ref} className="relative">
+      <p className="text-[10px] font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-1.5 px-1">
+        Cambiar simulador
+      </p>
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex items-center gap-2 w-full sm:w-auto min-w-[200px] px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 hover:border-indigo-300 dark:hover:border-indigo-700 transition-all shadow-sm"
+        className="flex items-center gap-2 w-full sm:w-auto min-w-[200px] px-4 py-2.5 rounded-xl border-2 border-indigo-300 dark:border-indigo-600 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-950/50 dark:to-slate-800 text-slate-800 dark:text-slate-100 font-bold text-sm hover:from-indigo-100 hover:to-blue-100 dark:hover:from-indigo-900/50 dark:hover:to-slate-700 hover:border-indigo-400 dark:hover:border-indigo-500 hover:shadow-lg hover:shadow-indigo-500/20 transition-all shadow-md"
         aria-expanded={open}
         aria-haspopup="listbox"
       >
         {ActiveIcon && <ActiveIcon className="w-5 h-5 shrink-0 text-indigo-600 dark:text-indigo-400" />}
         <span className="flex-1 text-left truncate">{active?.label ?? placeholder}</span>
-        <ChevronDown className={`w-4 h-4 shrink-0 text-slate-400 transition-transform ${open ? "rotate-180" : ""}`} />
+        <ChevronDown className={`w-4 h-4 shrink-0 text-indigo-500 dark:text-indigo-400 transition-transform ${open ? "rotate-180" : ""}`} />
       </button>
 
       {open && (
