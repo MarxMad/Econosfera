@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Glosario from "@/components/Glosario";
 import GlosarioAdBanner from "@/components/GlosarioAdBanner";
+import GlosarioAdLayout from "@/components/GlosarioAdSidebars";
 
 export const metadata: Metadata = {
   title: "Glosario de Términos Económicos",
@@ -42,10 +43,11 @@ export const metadata: Metadata = {
 export default function GlosarioPage() {
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
-      <div className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
-        <GlosarioAdBanner format="horizontal" label="Publicidad" />
-        <Glosario standalone />
-        <GlosarioAdBanner format="rectangle" label="Publicidad" />
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        <GlosarioAdLayout compact={false}>
+          <GlosarioAdBanner label="Publicidad" />
+          <Glosario standalone />
+        </GlosarioAdLayout>
       </div>
     </div>
   );

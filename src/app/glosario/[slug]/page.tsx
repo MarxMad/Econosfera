@@ -5,6 +5,7 @@ import { ChevronRight, BookOpen, ArrowLeft, Link2 } from "lucide-react";
 import { getTerminoBySlug, getTodosLosSlugs, getTerminosPorModulo, getSlugDeTermino } from "@/lib/glosario";
 import { getBaseUrl } from "@/lib/siteUrl";
 import GlosarioAdBanner from "@/components/GlosarioAdBanner";
+import GlosarioAdLayout from "@/components/GlosarioAdSidebars";
 
 const MODULO_LABEL: Record<string, string> = {
   inflacion: "Inflación",
@@ -105,7 +106,8 @@ export default function GlosarioTerminoPage({ params }: Props) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
-      <div className="max-w-3xl mx-auto px-4 py-6 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        <GlosarioAdLayout compact>
         <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-sm text-slate-500 dark:text-slate-400 mb-6">
           <Link href="/" className="hover:text-slate-700 dark:hover:text-slate-300 transition-colors">
             Inicio
@@ -132,11 +134,7 @@ export default function GlosarioTerminoPage({ params }: Props) {
             </h1>
             <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{termino.definicion}</p>
 
-            <GlosarioAdBanner
-              slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_1}
-              format="rectangle"
-              label="Publicidad"
-            />
+            <GlosarioAdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_1} label="Publicidad" />
 
             {termino.formula && (
               <div className="mb-6 p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
@@ -157,12 +155,6 @@ export default function GlosarioTerminoPage({ params }: Props) {
                 <p className="text-sm text-slate-700 dark:text-slate-300 italic">{termino.ejemplo}</p>
               </div>
             )}
-
-            <GlosarioAdBanner
-              slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_2}
-              format="horizontal"
-              label="Publicidad"
-            />
 
             {relacionados.length > 0 && (
               <div className="mt-6 pt-6 border-t border-slate-200 dark:border-slate-700">
@@ -206,6 +198,7 @@ export default function GlosarioTerminoPage({ params }: Props) {
             Explorar glosario completo
           </Link>
         </p>
+        </GlosarioAdLayout>
       </div>
     </div>
   );

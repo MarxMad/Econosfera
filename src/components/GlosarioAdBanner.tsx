@@ -13,15 +13,19 @@ import {
   AFFILIATE_BROKER_IMAGE,
 } from "@/lib/ads";
 
-/** Iframes XM PipAffiliates (enlaces directos, sin variables de entorno) */
-const XM_IFRAME_SMALL = "https://images.pipaffiliates.com/f/b?g=1011&c=744292";  // 320x100
-const XM_IFRAME_LARGE = "https://images.pipaffiliates.com/f/b?g=1013&c=744292";  // 300x250
+/** XM PipAffiliates: banner líder 728x90 (único en contenido) */
+const XM_LEADERBOARD = {
+  href: "https://clicks.pipaffiliates.com/c?m=131871&c=744292",
+  img: "https://ads.pipaffiliates.com/i/131871?c=744292",
+  width: 728,
+  height: 90,
+};
 
 interface GlosarioAdBannerProps {
-  /** Slot ID de AdSense para esta posición (opcional). Si no hay, se muestra affiliate o placeholder. */
+  /** Slot ID de AdSense para esta posición (opcional). Si no hay, se muestra XM o placeholder. */
   slotId?: string;
-  /** Formato del bloque AdSense */
-  format?: "auto" | "rectangle" | "horizontal";
+  /** Formato: leaderboard (728x90) para el banner principal del glosario */
+  format?: "auto" | "rectangle" | "horizontal" | "leaderboard";
   /** Etiqueta para el placeholder cuando no hay anuncios */
   label?: string;
 }
@@ -32,7 +36,7 @@ interface GlosarioAdBannerProps {
  */
 export default function GlosarioAdBanner({
   slotId = "",
-  format = "rectangle",
+  format = "leaderboard",
   label = "Publicidad",
 }: GlosarioAdBannerProps) {
   const showAdSense = ADS_ENABLED && ADSENSE_CLIENT && slotId;
@@ -40,28 +44,34 @@ export default function GlosarioAdBanner({
   const showAffiliate = !showAdSense && AFFILIATE_ENABLED && AFFILIATE_BROKER_URL;
 
   if (showAdSense) {
+    const adFormat = format === "leaderboard" ? "horizontal" : format;
     return (
       <aside className="my-6 flex justify-center" aria-label="Anuncio">
-        <AdSlot slotId={slotId} format={format} label={label} className="min-w-0 w-full max-w-full" />
+        <AdSlot slotId={slotId} format={adFormat as "auto" | "rectangle" | "horizontal"} label={label} className="min-w-0 w-full max-w-full" />
       </aside>
     );
   }
 
   if (showXmAffiliate) {
-    const isRectangle = format === "rectangle";
-    const src = isRectangle ? XM_IFRAME_LARGE : XM_IFRAME_SMALL;
-    const width = isRectangle ? 300 : 320;
-    const height = isRectangle ? 250 : 100;
     return (
       <aside className="my-6 flex justify-center" aria-label="Promoción XM">
-        <iframe
-          src={src}
-          width={width}
-          height={height}
+        <a
+          href={XM_LEADERBOARD.href}
+          target="_blank"
+          rel="noopener noreferrer sponsored"
           referrerPolicy="no-referrer-when-downgrade"
-          style={{ border: 0 }}
-          title="XM Afiliados"
-        />
+          className="block w-full max-w-[728px] mx-auto"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={XM_LEADERBOARD.img}
+            alt="XM"
+            width={XM_LEADERBOARD.width}
+            height={XM_LEADERBOARD.height}
+            referrerPolicy="no-referrer-when-downgrade"
+            className="w-full h-auto max-w-full"
+          />
+        </a>
       </aside>
     );
   }
@@ -115,7 +125,7 @@ export default function GlosarioAdBanner({
     <aside className="my-6 flex justify-center" aria-hidden>
       <div
         className="flex items-center justify-center rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 text-sm w-full"
-        style={{ minHeight: format === "rectangle" ? 250 : format === "horizontal" ? 90 : 100 }}
+        style={{ minHeight: format === "rectangle" ? 250 : format === "leaderboard" || format === "horizontal" ? 90 : 100 }}
       >
         <span>{label}</span>
       </div>
