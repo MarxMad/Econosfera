@@ -7,6 +7,8 @@ import MiniSimulator from "@/components/home/MiniSimulator";
 import MiniValuacion from "@/components/home/MiniValuacion";
 import MiniSimulatorSeguros from "@/components/home/MiniSimulatorSeguros";
 import AuthModal from "@/components/home/AuthModal";
+import GaleriaSimuladores from "@/components/home/GaleriaSimuladores";
+import ComoFunciona from "@/components/home/ComoFunciona";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -246,6 +248,12 @@ export default function Home() {
         {/* Brillo luminoso */}
         <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_50px_rgba(255,255,255,0.25),0_0_30px_rgba(251,191,36,0.3)]" />
       </div>
+
+      {/* Cómo funciona */}
+      <ComoFunciona />
+
+      {/* Galería de simuladores */}
+      <GaleriaSimuladores onProbarClick={handleProbarClick} />
 
       {/* Grid de Funcionalidades Pro */}
       <section className="py-32 relative overflow-hidden">

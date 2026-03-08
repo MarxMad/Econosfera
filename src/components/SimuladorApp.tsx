@@ -37,6 +37,14 @@ export default function SimuladorApp() {
   const [datosAI, setDatosAI] = useState<any>(null);
 
   useEffect(() => {
+    const moduloParam = searchParams.get("modulo") as ModuloSimulador | null;
+    const validModulos: ModuloSimulador[] = ["finanzas", "monetaria", "macro", "micro", "inflacion", "contadores", "actuaria", "estadistica", "blockchain"];
+    if (moduloParam && validModulos.includes(moduloParam)) {
+      setModulo(moduloParam);
+    }
+  }, [searchParams]);
+
+  useEffect(() => {
     const scenarioId = searchParams.get("scenarioId");
     if (scenarioId) {
       const fetchScenario = async () => {

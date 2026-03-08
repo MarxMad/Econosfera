@@ -4,7 +4,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { getScenarios, deleteScenario } from "@/lib/actions/scenarioActions";
 import { getUserStats } from "@/lib/actions/quizActions";
-import { Trash2, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Flame, Sparkles, ArrowRight, CreditCard } from "lucide-react";
+import { Trash2, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Flame, Sparkles, ArrowRight, CreditCard, Zap } from "lucide-react";
 import Link from "next/link";
 import ProfileCard from "@/components/ProfileCard";
 import PlanComparador from "@/components/PlanComparador";
@@ -211,15 +211,48 @@ export default function DashboardPage() {
                         </div>
                     </div>
 
-                    {/* Acciones Rápidas */}
-                    <div className="w-full">
-                        <Link href="/cuestionarios" className="flex flex-col items-center justify-center gap-3 w-full min-h-[120px] md:min-h-[140px] p-6 md:p-8 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 hover:shadow-lg transition-all group">
-                            <div className="w-14 h-14 md:w-16 md:h-16 rounded-full bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <BrainCircuit className="w-7 h-7 md:w-8 md:h-8" />
+                    {/* Cuestionarios - CTA destacado */}
+                    <Link
+                        href="/cuestionarios"
+                        className="block w-full group relative overflow-hidden rounded-2xl sm:rounded-3xl border-2 border-violet-300 dark:border-violet-600 bg-gradient-to-br from-violet-500 via-purple-600 to-indigo-700 dark:from-violet-600 dark:via-purple-700 dark:to-indigo-800 p-6 sm:p-8 shadow-xl shadow-violet-500/20 hover:shadow-violet-500/30 hover:scale-[1.02] active:scale-[0.99] transition-all duration-300"
+                    >
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,rgba(255,255,255,0.15),transparent_50%)] pointer-events-none" />
+                        <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-white/10 blur-2xl group-hover:bg-white/20 transition-colors" />
+                        <div className="relative z-10 flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-transform duration-300 shadow-lg">
+                                <BrainCircuit className="w-7 h-7 sm:w-9 sm:h-9 text-white" />
                             </div>
-                            <span className="text-sm md:text-base font-bold text-slate-600 dark:text-slate-300">Cuestionarios</span>
-                        </Link>
-                    </div>
+                            <div className="flex-1 text-center sm:text-left">
+                                <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/20 text-[10px] font-black uppercase tracking-wider text-white/90 mb-2">
+                                    <Zap className="w-3 h-3" /> Pon a prueba tu conocimiento
+                                </div>
+                                <h3 className="text-xl sm:text-2xl font-black text-white mb-1">Cuestionarios</h3>
+                                <p className="text-sm text-white/90">
+                                    Responde quizzes de economía, finanzas y más. Gana XP y mantén tu racha.
+                                </p>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm font-bold text-white/90 hidden sm:inline">Practicar</span>
+                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
+                                    <ArrowRight className="w-5 h-5 text-white" />
+                                </div>
+                            </div>
+                        </div>
+                        {stats?.currentStreak || stats?.totalScore ? (
+                            <div className="relative z-10 mt-4 pt-4 border-t border-white/20 flex justify-center sm:justify-start gap-6">
+                                {stats.currentStreak > 0 && (
+                                    <span className="flex items-center gap-1.5 text-white/90 text-sm font-bold">
+                                        <Flame className="w-4 h-4 text-amber-300" fill="currentColor" /> {stats.currentStreak} días de racha
+                                    </span>
+                                )}
+                                {stats.totalScore > 0 && (
+                                    <span className="text-white/90 text-sm font-bold">
+                                        {stats.totalScore} XP acumulados
+                                    </span>
+                                )}
+                            </div>
+                        ) : null}
+                    </Link>
 
                     <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 border border-slate-200 dark:border-slate-800 shadow-xl">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
