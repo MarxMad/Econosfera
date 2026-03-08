@@ -160,7 +160,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
             </div>
 
             {/* Vista compacta: avatar + nombre + correo + botón editar */}
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 pt-10 sm:pt-0">
+            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 mb-4 pt-10 sm:pt-0 sm:pr-28">
                 <div className="shrink-0 flex justify-center sm:justify-start">
                     <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl bg-gradient-to-br from-blue-500 to-emerald-500 p-0.5 shadow-md overflow-hidden">
                         <div className="w-full h-full rounded-[10px] sm:rounded-2xl bg-slate-900 flex items-center justify-center text-lg sm:text-2xl font-black text-white overflow-hidden">
@@ -173,7 +173,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
                     </div>
                 </div>
 
-                <div className="flex-1 min-w-0 flex flex-col justify-center text-center sm:text-left">
+                <div className="flex-1 min-w-0 flex flex-col justify-center text-center sm:text-left pr-0 sm:pr-2">
                     <p className="font-bold text-slate-900 dark:text-white text-base sm:text-lg truncate">{displayName}</p>
                     <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{profile?.email ?? session?.user?.email ?? ""}</p>
                     <button

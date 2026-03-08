@@ -23,7 +23,7 @@ const PASOS = [
   },
 ];
 
-export default function ComoFunciona() {
+export default function ComoFunciona({ onProbarClick }: { onProbarClick?: (e: React.MouseEvent) => void }) {
   return (
     <section className="py-20 sm:py-28 bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800">
       <div className="max-w-7xl mx-auto px-4">
@@ -62,6 +62,16 @@ export default function ComoFunciona() {
             );
           })}
         </div>
+        {onProbarClick && (
+          <div className="mt-14 text-center flex flex-wrap justify-center gap-4">
+            <button onClick={onProbarClick} className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-indigo-600 text-white text-base font-bold hover:bg-indigo-500 transition-colors shadow-lg">
+              Crear cuenta gratis
+            </button>
+            <button onClick={onProbarClick} className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border-2 border-indigo-300 dark:border-indigo-600 text-indigo-600 dark:text-indigo-400 text-base font-bold hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-colors">
+              Ir a simuladores
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -30,6 +30,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: base, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 1 },
     { url: `${base}/simulador`, lastModified: new Date(), changeFrequency: "always" as const, priority: 0.9 },
     { url: `${base}/glosario`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.85 },
+    { url: `${base}/premios-nobel-economia`, lastModified: new Date(), changeFrequency: "monthly" as const, priority: 0.85 },
     ...glossaryEntries,
     { url: `${base}/blog`, lastModified: new Date(), changeFrequency: "weekly" as const, priority: 0.8 },
     ...blogEntries,
