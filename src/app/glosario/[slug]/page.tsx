@@ -9,9 +9,11 @@ import GlosarioAdLayout from "@/components/GlosarioAdSidebars";
 
 const MODULO_LABEL: Record<string, string> = {
   inflacion: "Inflación",
+  monetaria: "Teoría monetaria",
   macro: "Macro",
   micro: "Micro",
   finanzas: "Finanzas",
+  contadores: "Contabilidad",
   general: "General",
   blockchain: "Blockchain",
   actuaria: "Actuaria",

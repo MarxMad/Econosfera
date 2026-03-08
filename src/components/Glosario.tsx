@@ -21,7 +21,7 @@ const MODULO_LABEL: Record<string, string> = {
 
 export default function Glosario({ moduloActivo, onIrAModulo, standalone }: GlosarioProps) {
   const [busqueda, setBusqueda] = useState("");
-  const [filtroModulo, setFiltroModulo] = useState<"todos" | ModuloSimulador | "general" | "teorias">("todos");
+  const [filtroModulo, setFiltroModulo] = useState<"todos" | ModuloSimulador | "general" | "teorias" | "contadores">("todos");
 
   const terminosFiltrados = useMemo(() => {
     let resultado = buscarTerminos(busqueda);
@@ -51,13 +51,14 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
 
   const lineaTiempo = useMemo(() => getLineaTiempoCompleta(), []);
 
-  const modulos: Array<{ id: "todos" | ModuloSimulador | "general" | "teorias"; label: string }> = [
+  const modulos: Array<{ id: "todos" | ModuloSimulador | "general" | "teorias" | "contadores"; label: string }> = [
     { id: "todos", label: "Todos" },
     { id: "inflacion", label: "Inflación" },
     { id: "monetaria", label: "Teoría monetaria" },
     { id: "macro", label: "Macro" },
     { id: "micro", label: "Micro" },
     { id: "finanzas", label: "Finanzas" },
+    { id: "contadores", label: "Contabilidad" },
     { id: "blockchain", label: "Blockchain" },
     { id: "actuaria", label: "Actuaria" },
     { id: "estadistica", label: "Estadística" },
