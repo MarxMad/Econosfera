@@ -13,6 +13,10 @@ import {
   AFFILIATE_BROKER_IMAGE,
 } from "@/lib/ads";
 
+/** Iframes XM PipAffiliates (enlaces directos, sin variables de entorno) */
+const XM_IFRAME_SMALL = "https://images.pipaffiliates.com/f/b?g=1011&c=744292";  // 320x100
+const XM_IFRAME_LARGE = "https://images.pipaffiliates.com/f/b?g=1013&c=744292";  // 300x250
+
 interface GlosarioAdBannerProps {
   /** Slot ID de AdSense para esta posición (opcional). Si no hay, se muestra affiliate o placeholder. */
   slotId?: string;
@@ -32,12 +36,32 @@ export default function GlosarioAdBanner({
   label = "Publicidad",
 }: GlosarioAdBannerProps) {
   const showAdSense = ADS_ENABLED && ADSENSE_CLIENT && slotId;
+  const showXmAffiliate = !showAdSense; // XM siempre visible cuando no hay AdSense
   const showAffiliate = !showAdSense && AFFILIATE_ENABLED && AFFILIATE_BROKER_URL;
 
   if (showAdSense) {
     return (
       <aside className="my-6 flex justify-center" aria-label="Anuncio">
         <AdSlot slotId={slotId} format={format} label={label} className="min-w-0 w-full max-w-full" />
+      </aside>
+    );
+  }
+
+  if (showXmAffiliate) {
+    const isRectangle = format === "rectangle";
+    const src = isRectangle ? XM_IFRAME_LARGE : XM_IFRAME_SMALL;
+    const width = isRectangle ? 300 : 320;
+    const height = isRectangle ? 250 : 100;
+    return (
+      <aside className="my-6 flex justify-center" aria-label="Promoción XM">
+        <iframe
+          src={src}
+          width={width}
+          height={height}
+          referrerPolicy="no-referrer-when-downgrade"
+          style={{ border: 0 }}
+          title="XM Afiliados"
+        />
       </aside>
     );
   }

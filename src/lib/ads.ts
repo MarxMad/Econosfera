@@ -18,6 +18,8 @@
  *    NEXT_PUBLIC_AFFILIATE_BROKER_URL=https://... (tu link de referido)
  *    NEXT_PUBLIC_AFFILIATE_CTA_TEXT=Abre tu cuenta (opcional)
  *
+ * Afiliados XM: iframes PipAffiliates están hardcodeados en GlosarioAdBanner (sin variables).
+ *
  * Si NEXT_PUBLIC_ADS_ENABLED no está en true, se muestran placeholders
  * para que el diseño se adapte a los espacios de publicidad.
  */
