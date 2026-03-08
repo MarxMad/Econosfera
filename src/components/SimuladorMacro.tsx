@@ -3,8 +3,9 @@
 import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Area } from "recharts";
 import {
-  Calculator, TrendingUp, ArrowRight, Download, Save, FileDown, Activity, Lock
+  Calculator, TrendingUp, ArrowRight, Download, Save, FileDown, Activity, Target, Globe, BarChart2, Layers, ChartLine
 } from "lucide-react";
+import SimulatorTabs from "./SimulatorTabs";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "@/components/SimulatorLocked";
@@ -148,33 +149,24 @@ export default function SimuladorMacro({ initialData }: { initialData?: any }) {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
-        {[
-          { id: 'multiplier', label: 'Multiplicador 45°' },
-          { id: 'islm', label: 'IS-LM' },
-          { id: 'solow', label: 'Solow' },
-          { id: 'phillips', label: 'Phillips' },
-          { id: 'mundell', label: 'Mundell-Fleming' },
-          { id: 'okun', label: 'Ley Okun' },
-          { id: 'ppp', label: 'PPP' },
-          { id: 'harrodDomar', label: 'Harrod-Domar' },
-          { id: 'multTransferencias', label: 'Mult. Transferencias' },
-        ].map((tab) => {
-          const locked = !canAccess(session?.user?.plan, "macro", tab.id);
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                } ${locked ? 'opacity-80' : ''}`}
-            >
-              {locked && <Lock className="w-3 h-3" />}
-              {tab.label}
-            </button>
-          );
-        })}
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
+        <SimulatorTabs
+          tabs={[
+            { id: 'multiplier', label: 'Multiplicador 45°', icon: Calculator },
+            { id: 'islm', label: 'IS-LM', icon: ChartLine },
+            { id: 'solow', label: 'Solow', icon: TrendingUp },
+            { id: 'phillips', label: 'Phillips', icon: Activity },
+            { id: 'mundell', label: 'Mundell-Fleming', icon: Globe },
+            { id: 'okun', label: 'Ley Okun', icon: Target },
+            { id: 'ppp', label: 'PPP', icon: BarChart2 },
+            { id: 'harrodDomar', label: 'Harrod-Domar', icon: Layers },
+            { id: 'multTransferencias', label: 'Mult. Transferencias', icon: Calculator },
+          ]}
+          activeTab={activeTab}
+          onTabChange={(id) => setActiveTab(id as any)}
+          isLocked={(id) => !canAccess(session?.user?.plan, "macro", id)}
+          hint="Elige un modelo macroeconómico"
+        />
       </div>
 
       {!canAccess(session?.user?.plan, "macro", activeTab) && getRequiredPlan("macro", activeTab) && (

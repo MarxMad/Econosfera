@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { TrendingUp, BarChart, Layers, Activity, Lock, Table2, Grid3X3, BarChart2 } from "lucide-react";
+import { TrendingUp, BarChart, Layers, Activity, Table2, Grid3X3, BarChart2 } from "lucide-react";
+import SimulatorTabs from "./SimulatorTabs";
 import { SimuladorRegresion, SimuladorTCL, SimuladorRegresionMultiple, SimuladorMatrizCorrelacion, SimuladorEstadisticasDescriptivas } from "./simuladores-stats";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
@@ -29,30 +30,20 @@ export default function Estadistica() {
                     </p>
                 </div>
             </div>
-            <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
-                {[
-                    { id: 'regresion', label: 'Regresión Lineal', icon: Activity },
-                    { id: 'tcl', label: 'Teorema Límite Central', icon: Layers },
-                    { id: 'regresionMultiple', label: 'Regresión Múltiple (EViews)', icon: Table2 },
-                    { id: 'matrizCorrelacion', label: 'Matriz Correlación', icon: Grid3X3 },
-                    { id: 'estadisticasDescriptivas', label: 'Estadísticas Descriptivas', icon: BarChart2 },
-                ].map((tab) => {
-                    const locked = !canAccess(session?.user?.plan, "estadistica", tab.id);
-                    return (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-                                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                                } ${locked ? 'opacity-80' : ''}`}
-                        >
-                            {locked && <Lock className="w-3 h-3" />}
-                            <tab.icon className="w-3.5 h-3.5" />
-                            {tab.label}
-                        </button>
-                    );
-                })}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
+                <SimulatorTabs
+                    tabs={[
+                        { id: 'regresion', label: 'Regresión Lineal', icon: Activity },
+                        { id: 'tcl', label: 'Teorema Límite Central', icon: Layers },
+                        { id: 'regresionMultiple', label: 'Regresión Múltiple (EViews)', icon: Table2 },
+                        { id: 'matrizCorrelacion', label: 'Matriz Correlación', icon: Grid3X3 },
+                        { id: 'estadisticasDescriptivas', label: 'Estadísticas Descriptivas', icon: BarChart2 },
+                    ]}
+                    activeTab={activeTab}
+                    onTabChange={(id) => setActiveTab(id as any)}
+                    isLocked={(id) => !canAccess(session?.user?.plan, "estadistica", id)}
+                    hint="Elige un simulador de estadística"
+                />
             </div>
 
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">

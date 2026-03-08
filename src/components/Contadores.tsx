@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Calculator, Package, BarChart3, FileText, Scale, PieChart, Target } from "lucide-react";
+import SimulatorTabs from "./SimulatorTabs";
 import {
   SimuladorDepreciacion,
   SimuladorCostosInventario,
@@ -40,33 +41,23 @@ export default function Contadores() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl">
-        {[
-          { id: "depreciacion" as const, label: "Depreciación", icon: Calculator },
-          { id: "costos" as const, label: "Inventario (FIFO/LIFO)", icon: Package },
-          { id: "razones" as const, label: "Razones financieras", icon: BarChart3 },
-          { id: "estadoResultados" as const, label: "Estado de resultados", icon: FileText },
-          { id: "ecuacion" as const, label: "Ecuación contable", icon: Scale },
-          { id: "prorrateo" as const, label: "Prorrateo", icon: PieChart },
-          { id: "costoProduccion" as const, label: "Costo producción", icon: Package },
-          { id: "puntoEquilibrio" as const, label: "Punto equilibrio", icon: Target },
-        ].map((tab) => {
-          const locked = !canAccess(session?.user?.plan, "contadores", tab.id);
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${
-                activeTab === tab.id
-                  ? "bg-white dark:bg-slate-700 text-teal-600 dark:text-teal-400 shadow-sm"
-                  : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-              } ${locked ? "opacity-80" : ""}`}
-            >
-              <tab.icon className="w-3.5 h-3.5" />
-              {tab.label}
-            </button>
-          );
-        })}
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
+        <SimulatorTabs
+          tabs={[
+            { id: "depreciacion", label: "Depreciación", icon: Calculator },
+            { id: "costos", label: "Inventario (FIFO/LIFO)", icon: Package },
+            { id: "razones", label: "Razones financieras", icon: BarChart3 },
+            { id: "estadoResultados", label: "Estado de resultados", icon: FileText },
+            { id: "ecuacion", label: "Ecuación contable", icon: Scale },
+            { id: "prorrateo", label: "Prorrateo", icon: PieChart },
+            { id: "costoProduccion", label: "Costo producción", icon: Package },
+            { id: "puntoEquilibrio", label: "Punto equilibrio", icon: Target },
+          ]}
+          activeTab={activeTab}
+          onTabChange={(id) => setActiveTab(id as TabContadores)}
+          isLocked={(id) => !canAccess(session?.user?.plan, "contadores", id)}
+          hint="Elige una herramienta de contabilidad"
+        />
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">

@@ -7,7 +7,6 @@ import {
   BarChart2,
   Layers,
   PieChart,
-  Lock,
   Newspaper,
   Percent,
   Coins,
@@ -20,6 +19,7 @@ import type { ModuloSimulador } from "./NavSimuladores";
 import { useSession } from "next-auth/react";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
+import SimulatorTabs from "./SimulatorTabs";
 import BannerCuestionarios from "./BannerCuestionarios";
 import {
   SimuladorVPVF,
@@ -51,32 +51,32 @@ import {
 } from "./simuladores-finanzas";
 
 const TABS_FINANZAS = [
-  { id: "vpvf", label: "VP/VF", icon: Calculator, plan: "FREE" as const },
-  { id: "amortizacion", label: "Amortización", icon: FileText, plan: "FREE" as const },
-  { id: "anualidad", label: "Anualidad", icon: Percent, plan: "FREE" as const },
-  { id: "interesSimpleCompuesto", label: "Interés simple/compuesto", icon: Percent, plan: "FREE" as const },
-  { id: "regla72", label: "Regla del 72", icon: Percent, plan: "FREE" as const },
-  { id: "tasaEfectiva", label: "Tasa efectiva", icon: Percent, plan: "FREE" as const },
-  { id: "bono", label: "Bono", icon: Coins, plan: "FREE" as const },
-  { id: "cetes", label: "CETES", icon: Coins, plan: "FREE" as const },
-  { id: "ahorro", label: "Ahorro", icon: Wallet, plan: "FREE" as const },
+  { id: "vpvf", label: "VP/VF", icon: Calculator, plan: "FREE" as const, group: "Básicos" },
+  { id: "amortizacion", label: "Amortización", icon: FileText, plan: "FREE" as const, group: "Básicos" },
+  { id: "anualidad", label: "Anualidad", icon: Percent, plan: "FREE" as const, group: "Básicos" },
+  { id: "interesSimpleCompuesto", label: "Interés simple/compuesto", icon: Percent, plan: "FREE" as const, group: "Básicos" },
+  { id: "regla72", label: "Regla del 72", icon: Percent, plan: "FREE" as const, group: "Básicos" },
+  { id: "tasaEfectiva", label: "Tasa efectiva", icon: Percent, plan: "FREE" as const, group: "Básicos" },
+  { id: "bono", label: "Bono", icon: Coins, plan: "FREE" as const, group: "Renta fija" },
+  { id: "cetes", label: "CETES", icon: Coins, plan: "FREE" as const, group: "Renta fija" },
+  { id: "duracionBono", label: "Duración bono", icon: Coins, plan: "PRO" as const, group: "Renta fija" },
+  { id: "valuacion", label: "Valuación", icon: Target, plan: "PRO" as const, group: "Valuación" },
+  { id: "dcf", label: "DCF", icon: BarChart2, plan: "PRO" as const, group: "Valuación" },
+  { id: "vpntir", label: "VPN/TIR", icon: BarChart2, plan: "PRO" as const, group: "Valuación" },
+  { id: "wacc", label: "WACC", icon: BarChart2, plan: "PRO" as const, group: "Valuación" },
+  { id: "capm", label: "CAPM", icon: BarChart2, plan: "FREE" as const, group: "Valuación" },
+  { id: "markowitz", label: "Markowitz", icon: PieChart, plan: "PRO" as const, group: "Portafolio" },
+  { id: "portafolio2", label: "Portafolio", icon: PieChart, plan: "PRO" as const, group: "Portafolio" },
+  { id: "blackScholes", label: "Black-Scholes", icon: Zap, plan: "PRO" as const, group: "Derivados" },
+  { id: "yieldCurve", label: "Yield Curve", icon: TrendingUp, plan: "PRO" as const, group: "Derivados" },
+  { id: "forward", label: "Forward", icon: TrendingUp, plan: "PRO" as const, group: "Derivados" },
+  { id: "breakEven", label: "Break-even", icon: Target, plan: "PRO" as const, group: "Empresa" },
+  { id: "ahorro", label: "Ahorro", icon: Wallet, plan: "FREE" as const, group: "Empresa" },
   { id: "impactoNoticias", label: "Impacto noticias", icon: Newspaper, plan: "FREE" as const },
   { id: "correlacionFundamental", label: "Correlación", icon: TrendingUp, plan: "FREE" as const },
-  { id: "capm", label: "CAPM", icon: BarChart2, plan: "FREE" as const },
-  { id: "valuacion", label: "Valuación", icon: Target, plan: "PRO" as const },
-  { id: "dcf", label: "DCF", icon: BarChart2, plan: "PRO" as const },
-  { id: "vpntir", label: "VPN/TIR", icon: BarChart2, plan: "PRO" as const },
-  { id: "wacc", label: "WACC", icon: BarChart2, plan: "PRO" as const },
-  { id: "duracionBono", label: "Duración bono", icon: Coins, plan: "PRO" as const },
-  { id: "markowitz", label: "Markowitz", icon: PieChart, plan: "PRO" as const },
-  { id: "portafolio2", label: "Portafolio", icon: PieChart, plan: "PRO" as const },
-  { id: "blackScholes", label: "Black-Scholes", icon: Zap, plan: "PRO" as const },
-  { id: "yieldCurve", label: "Yield Curve", icon: TrendingUp, plan: "PRO" as const },
-  { id: "forward", label: "Forward", icon: TrendingUp, plan: "PRO" as const },
-  { id: "breakEven", label: "Break-even", icon: Target, plan: "PRO" as const },
-  { id: "flujoFinanciero", label: "Flujo sistema", icon: Layers, plan: "FREE" as const },
-  { id: "mapaInstrumentos", label: "Mapa instrumentos", icon: Layers, plan: "FREE" as const },
-  { id: "mapaEstructuraCapital", label: "Mapa estructura", icon: Layers, plan: "FREE" as const },
+  { id: "flujoFinanciero", label: "Flujo sistema", icon: Layers, plan: "FREE" as const, group: "Mapas" },
+  { id: "mapaInstrumentos", label: "Mapa instrumentos", icon: Layers, plan: "FREE" as const, group: "Mapas" },
+  { id: "mapaEstructuraCapital", label: "Mapa estructura", icon: Layers, plan: "FREE" as const, group: "Mapas" },
 ];
 
 const SUBTYPE_TO_TAB: Record<string, string> = {
@@ -103,25 +103,15 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
         </p>
       </div>
 
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit max-w-full overflow-x-auto">
-        {TABS_FINANZAS.map((tab) => {
-          const locked = !canAccess(session?.user?.plan, "finanzas", tab.id);
-          const TabIcon = tab.icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${activeTab === tab.id
-                ? "bg-white dark:bg-slate-700 text-blue-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                } ${locked ? "opacity-80" : ""}`}
-            >
-              {locked && <Lock className="w-3 h-3" />}
-              <TabIcon className="w-3.5 h-3.5" />
-              {tab.label}
-            </button>
-          );
-        })}
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
+        <SimulatorTabs
+          tabs={TABS_FINANZAS}
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          isLocked={(id) => !canAccess(session?.user?.plan, "finanzas", id)}
+          hint="Elige un simulador para ver los resultados. Haz clic en cualquier tarjeta."
+          grouped
+        />
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">

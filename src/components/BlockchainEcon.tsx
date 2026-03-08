@@ -5,8 +5,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import {
   Link2, BookOpen, Coins, Droplets, LineChart as LineChartIcon, Wallet, ArrowRight,
   TrendingDown, Info, ShieldCheck, Zap, Globe, Cpu, Scale, GitMerge, KeyRound, Bug,
-  FileDown, Save, Lock
+  FileDown, Save
 } from "lucide-react";
+import SimulatorTabs from "./SimulatorTabs";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
 import { emisionConHalving, anosPorHalving, datosGraficoHalving } from "@/lib/blockchain";
@@ -166,35 +167,25 @@ export default function BlockchainEcon() {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
-        {[
-          { id: 'halving', label: 'Emisión (Halving)', icon: Coins },
-          { id: 'trading', label: 'Trading Activo', icon: LineChartIcon },
-          { id: 'staking', label: 'Staking y Yield Framing', icon: Wallet },
-          { id: 'amm', label: 'Market Makers / Liquidez', icon: Droplets },
-          { id: 'cadenabloques', label: 'Hash & Blockchain', icon: Cpu },
-          { id: 'llaves', label: 'Wallets & Firmas', icon: KeyRound },
-          { id: 'merkle', label: 'Árboles Merkle', icon: GitMerge },
-          { id: 'consenso', label: 'PoW vs PoS', icon: Scale },
-          { id: 'redp2p', label: 'Redes P2P', icon: Globe },
-          { id: 'smartcontracts', label: 'Hacking Contracts', icon: Bug },
-        ].map((tab) => {
-          const locked = !canAccess(session?.user?.plan, "blockchain", tab.id);
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id as any)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-                ? 'bg-white dark:bg-slate-700 text-violet-600 dark:text-violet-400 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                } ${locked ? 'opacity-80' : ''}`}
-            >
-              {locked && <Lock className="w-3 h-3" />}
-              <tab.icon className="w-3.5 h-3.5" />
-              {tab.label}
-            </button>
-          );
-        })}
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
+        <SimulatorTabs
+          tabs={[
+            { id: 'halving', label: 'Emisión (Halving)', icon: Coins },
+            { id: 'trading', label: 'Trading Activo', icon: LineChartIcon },
+            { id: 'staking', label: 'Staking y Yield Framing', icon: Wallet },
+            { id: 'amm', label: 'Market Makers / Liquidez', icon: Droplets },
+            { id: 'cadenabloques', label: 'Hash & Blockchain', icon: Cpu },
+            { id: 'llaves', label: 'Wallets & Firmas', icon: KeyRound },
+            { id: 'merkle', label: 'Árboles Merkle', icon: GitMerge },
+            { id: 'consenso', label: 'PoW vs PoS', icon: Scale },
+            { id: 'redp2p', label: 'Redes P2P', icon: Globe },
+            { id: 'smartcontracts', label: 'Hacking Contracts', icon: Bug },
+          ]}
+          activeTab={activeTab}
+          onTabChange={(id) => setActiveTab(id as any)}
+          isLocked={(id) => !canAccess(session?.user?.plan, "blockchain", id)}
+          hint="Elige un simulador de economía blockchain"
+        />
       </div>
 
       <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">

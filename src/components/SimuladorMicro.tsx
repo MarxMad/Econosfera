@@ -3,7 +3,8 @@
 import { useMemo, useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend, Area } from "recharts";
 import type { VariablesMercado, VariablesElasticidad } from "@/lib/micro";
-import { TrendingDown, Download, Ruler, Lock } from "lucide-react";
+import { TrendingDown, Download, Ruler, Layers, Gamepad2 } from "lucide-react";
+import SimulatorTabs from "./SimulatorTabs";
 import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "@/components/SimulatorLocked";
 import { calcularMercado, calcularElasticidadArco } from "@/lib/micro";
@@ -210,29 +211,20 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 p-1 bg-slate-100 dark:bg-slate-800 rounded-2xl w-fit">
-        {[
-          { id: "mercado", label: "Oferta y Demanda" },
-          { id: "estructuras", label: "Estructuras de Mercado" },
-          { id: "juegos", label: "Teoría de Juegos" },
-          { id: "elasticidad", label: "Elasticidad" },
-          { id: "elasticidadArco", label: "Elasticidad Arco" },
-        ].map((t) => {
-          const locked = !canAccess(session?.user?.plan, "micro", t.id);
-          return (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id as any)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === t.id
-                ? "bg-white dark:bg-slate-700 text-emerald-600 shadow-sm"
-                : "text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-                } ${locked ? "opacity-80" : ""}`}
-            >
-              {locked && <Lock className="w-3 h-3" />}
-              {t.label}
-            </button>
-          );
-        })}
+      <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
+        <SimulatorTabs
+          tabs={[
+            { id: "mercado", label: "Oferta y Demanda", icon: TrendingDown },
+            { id: "estructuras", label: "Estructuras de Mercado", icon: Layers },
+            { id: "juegos", label: "Teoría de Juegos", icon: Gamepad2 },
+            { id: "elasticidad", label: "Elasticidad", icon: Ruler },
+            { id: "elasticidadArco", label: "Elasticidad Arco", icon: Ruler },
+          ]}
+          activeTab={activeTab}
+          onTabChange={(id) => setActiveTab(id as any)}
+          isLocked={(id) => !canAccess(session?.user?.plan, "micro", id)}
+          hint="Elige un simulador de microeconomía"
+        />
       </div>
 
       {!canAccess(session?.user?.plan, "micro", activeTab) && getRequiredPlan("micro", activeTab) && (

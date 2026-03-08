@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { LineChart, Brain, Calculator, Save, Lock, ArrowRightLeft, Zap, Scale } from "lucide-react";
+import { LineChart, Brain, Calculator, Save, ArrowRightLeft, Zap, Scale } from "lucide-react";
+import SimulatorTabs from "./SimulatorTabs";
 import PanelVariables from "@/components/PanelVariables";
 import Resultados from "@/components/Resultados";
 import GraficoSimulacion from "@/components/GraficoSimulacion";
@@ -57,30 +58,21 @@ export default function Monetaria({
                 </p>
             </div>
 
-            <div className="flex flex-wrap gap-2 p-1 bg-slate-200 dark:bg-slate-800/50 rounded-2xl w-fit">
-                {[
-                    { id: 'core', label: 'Simulador Core', icon: LineChart },
-                    { id: 'taylor', label: 'Regla de Taylor', icon: Calculator },
-                    { id: 'ai', label: 'Análisis AI Minutas', icon: Brain },
-                    { id: 'uip', label: 'Paridad UIP', icon: ArrowRightLeft },
-                    { id: 'canalesTransmision', label: 'Canales transmisión', icon: Zap },
-                    { id: 'comparadorPostura', label: 'Comparador postura', icon: Scale },
-                ].map((tab) => {
-                    const locked = !canAccess(session?.user?.plan, "monetaria", tab.id);
-                    return (
-                        <button
-                            key={tab.id}
-                            onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeTab === tab.id
-                                ? 'bg-white dark:bg-slate-700 text-blue-600 shadow-sm'
-                                : 'text-slate-500 hover:text-slate-700 dark:hover:text-slate-300'
-                                } ${locked ? 'opacity-80' : ''}`}
-                        >
-                            {locked && <Lock className="w-3 h-3" />}
-                            {tab.label}
-                        </button>
-                    );
-                })}
+            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/50 dark:bg-slate-900/50 p-6 shadow-sm">
+                <SimulatorTabs
+                    tabs={[
+                        { id: 'core', label: 'Simulador Core', icon: LineChart },
+                        { id: 'taylor', label: 'Regla de Taylor', icon: Calculator },
+                        { id: 'ai', label: 'Análisis AI Minutas', icon: Brain },
+                        { id: 'uip', label: 'Paridad UIP', icon: ArrowRightLeft },
+                        { id: 'canalesTransmision', label: 'Canales transmisión', icon: Zap },
+                        { id: 'comparadorPostura', label: 'Comparador postura', icon: Scale },
+                    ]}
+                    activeTab={activeTab}
+                    onTabChange={(id) => setActiveTab(id as any)}
+                    isLocked={(id) => !canAccess(session?.user?.plan, "monetaria", id)}
+                    hint="Elige un simulador de política monetaria"
+                />
             </div>
 
             <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
