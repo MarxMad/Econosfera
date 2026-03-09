@@ -1,31 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getServerSession } from "next-auth";
 import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
 import { getBlogPosts, CATEGORY_LABEL } from "@/lib/blog";
-import { authOptions } from "@/lib/auth";
-import BlogPaywall from "@/components/blog/BlogPaywall";
+import BlogAdBanner from "@/components/blog/BlogAdBanner";
 
 export const metadata: Metadata = {
-  title: "Blog | Artículos para economistas",
+  title: "Blog | Guías y tips para estudiantes de economía y finanzas",
   description:
-    "Artículos sobre política monetaria, macroeconomía, finanzas y metodología. Análisis, datos y referencias para estudiantes y profesionales.",
+    "Guías gratuitas sobre política monetaria, macroeconomía, finanzas y metodología. Cómo usar los simuladores, teoría aplicada y tips para estudiantes.",
   openGraph: {
     title: "Blog | Econosfera",
-    description: "Artículos para economistas: política monetaria, macro, finanzas y más.",
+    description: "Guías y tips gratuitos para estudiantes de economía, finanzas y contabilidad.",
     url: "/blog",
   },
   alternates: { canonical: "/blog" },
 };
 
 export default async function BlogPage() {
-  const session = await getServerSession(authOptions);
-  const isPremium = session?.user?.plan === "PRO" || session?.user?.plan === "RESEARCHER";
-
-  if (!isPremium) {
-    return <BlogPaywall />;
-  }
-
   const posts = getBlogPosts();
 
   return (
@@ -40,9 +31,11 @@ export default async function BlogPage() {
             Artículos para economistas
           </h1>
           <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl">
-            Análisis, evidencia y reflexión sobre política monetaria, macroeconomía, finanzas y mercados. Con referencias, datos y formato listo para citar.
+            Guías gratuitas para estudiantes: cómo usar los simuladores, teoría aplicada y tips de finanzas, contabilidad y economía.
           </p>
         </header>
+
+        <BlogAdBanner format="leaderboard" />
 
         {posts.length === 0 ? (
           <div className="rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/50 p-12 sm:p-16 text-center">

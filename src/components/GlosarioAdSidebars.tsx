@@ -1,7 +1,10 @@
 "use client";
 
+import GlosarioAdBanner from "@/components/GlosarioAdBanner";
+
 /**
- * Layout del glosario con barras laterales XM (120x600) en pantallas grandes.
+ * Layout del glosario con barras laterales XM (120x600) en pantallas grandes
+ * y banner horizontal en móvil (donde las barras están ocultas).
  * Estructura: [sidebar izq] [contenido] [sidebar der]
  */
 const XM_SIDEBAR_LEFT = {
@@ -52,6 +55,10 @@ export default function GlosarioAdLayout({ children, compact = true }: GlosarioA
         <SidebarAd {...XM_SIDEBAR_LEFT} />
       </aside>
       <div className={`flex-1 min-w-0 ${compact ? "max-w-3xl" : "max-w-6xl"}`}>
+        {/* Banner horizontal solo en móvil (donde las barras laterales están ocultas) */}
+        <div className="lg:hidden mb-6">
+          <GlosarioAdBanner label="Publicidad" />
+        </div>
         {children}
       </div>
       <aside className="hidden lg:block w-[120px] shrink-0 sticky top-24 self-start" aria-label="Promoción XM">

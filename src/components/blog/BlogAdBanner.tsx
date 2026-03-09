@@ -6,6 +6,8 @@ import AdSlot from "@/components/AdSlot";
 import {
   ADS_ENABLED,
   ADSENSE_CLIENT,
+  ADSENSE_SLOT_BLOG_1,
+  ADSENSE_SLOT_BLOG_2,
   AFFILIATE_ENABLED,
   AFFILIATE_BROKER_NAME,
   AFFILIATE_BROKER_URL,
@@ -13,7 +15,7 @@ import {
   AFFILIATE_BROKER_IMAGE,
 } from "@/lib/ads";
 
-/** XM PipAffiliates: banner líder 728x90 (único en contenido) */
+/** XM PipAffiliates: banner líder 728x90 */
 const XM_LEADERBOARD = {
   href: "https://clicks.pipaffiliates.com/c?m=131871&c=744292",
   img: "https://ads.pipaffiliates.com/i/131871?c=744292",
@@ -21,38 +23,47 @@ const XM_LEADERBOARD = {
   height: 90,
 };
 
-interface GlosarioAdBannerProps {
-  /** Slot ID de AdSense para esta posición (opcional). Si no hay, se muestra XM o placeholder. */
+interface BlogAdBannerProps {
+  /** Slot ID de AdSense (opcional). Si no se pasa, usa BLOG_1 o BLOG_2 según contexto. */
   slotId?: string;
-  /** Formato: leaderboard (728x90) para el banner principal del glosario */
-  format?: "auto" | "rectangle" | "horizontal" | "leaderboard";
+  /** Formato: leaderboard (728x90) o rectangle (300x250) */
+  format?: "leaderboard" | "rectangle";
+  /** Si true, usa el slot para artículos (BLOG_2). Si false, usa el de página principal (BLOG_1). Solo aplica cuando slotId no está definido. */
+  forArticle?: boolean;
   /** Etiqueta para el placeholder cuando no hay anuncios */
   label?: string;
 }
 
 /**
- * Banner de publicidad para páginas de concepto del glosario.
- * Prioridad: 1) AdSense si está activo y hay slotId, 2) Banner de referido (broker) si está activo, 3) Placeholder.
+ * Banner de publicidad para el blog.
+ * Prioridad: 1) AdSense si está activo, 2) XM/affiliate, 3) Placeholder.
  */
-export default function GlosarioAdBanner({
-  slotId = "",
+export default function BlogAdBanner({
+  slotId,
   format = "leaderboard",
+  forArticle = false,
   label = "Publicidad",
-}: GlosarioAdBannerProps) {
-  const showAdSense = ADS_ENABLED && ADSENSE_CLIENT && slotId;
-  const showXmAffiliate = !showAdSense; // XM siempre visible cuando no hay AdSense
+}: BlogAdBannerProps) {
+  const resolvedSlotId = slotId ?? (forArticle ? ADSENSE_SLOT_BLOG_2 : ADSENSE_SLOT_BLOG_1);
+  const showAdSense = ADS_ENABLED && ADSENSE_CLIENT && resolvedSlotId;
+  const showXmAffiliate = !showAdSense;
   const showAffiliate = !showAdSense && AFFILIATE_ENABLED && AFFILIATE_BROKER_URL;
 
   if (showAdSense) {
-    const adFormat = format === "leaderboard" ? "horizontal" : format;
+    const adFormat = format === "leaderboard" ? "horizontal" : "rectangle";
     return (
       <aside className="my-6 flex justify-center" aria-label="Anuncio">
-        <AdSlot slotId={slotId} format={adFormat as "auto" | "rectangle" | "horizontal"} label={label} className="min-w-0 w-full max-w-full" />
+        <AdSlot
+          slotId={resolvedSlotId}
+          format={adFormat as "auto" | "rectangle" | "horizontal"}
+          label={label}
+          className="min-w-0 w-full max-w-full"
+        />
       </aside>
     );
   }
 
-  if (showXmAffiliate) {
+  if (showXmAffiliate && format === "leaderboard") {
     return (
       <aside className="my-6 flex justify-center min-h-[90px]" aria-label="Promoción XM">
         <a
@@ -125,7 +136,9 @@ export default function GlosarioAdBanner({
     <aside className="my-6 flex justify-center" aria-hidden>
       <div
         className="flex items-center justify-center rounded-lg border border-dashed border-slate-300 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-500 text-sm w-full"
-        style={{ minHeight: format === "rectangle" ? 250 : format === "leaderboard" || format === "horizontal" ? 90 : 100 }}
+        style={{
+          minHeight: format === "rectangle" ? 250 : 90,
+        }}
       >
         <span>{label}</span>
       </div>

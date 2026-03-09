@@ -9,6 +9,8 @@
  *    NEXT_PUBLIC_ADSENSE_CLIENT=ca-pub-XXXXXXXXXX  (tu ID de editor)
  *    NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_1=XXXXXXXX (opcional, unidad para glosario)
  *    NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_2=XXXXXXXX (opcional, segunda unidad)
+ *    NEXT_PUBLIC_ADSENSE_SLOT_BLOG_1=XXXXXXXX (opcional, banner página principal del blog)
+ *    NEXT_PUBLIC_ADSENSE_SLOT_BLOG_2=XXXXXXXX (opcional, banner en artículos del blog)
  * 4. En el layout se cargará el script de AdSense y los componentes AdSlot
  *    mostrarán los anuncios donde definas slotId (crea las unidades en AdSense).
  *
@@ -28,6 +30,8 @@ export const ADS_ENABLED = process.env.NEXT_PUBLIC_ADS_ENABLED === "true";
 export const ADSENSE_CLIENT = process.env.NEXT_PUBLIC_ADSENSE_CLIENT || "";
 export const ADSENSE_SLOT_GLOSARIO_1 = process.env.NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_1 || "";
 export const ADSENSE_SLOT_GLOSARIO_2 = process.env.NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_2 || "";
+export const ADSENSE_SLOT_BLOG_1 = process.env.NEXT_PUBLIC_ADSENSE_SLOT_BLOG_1 || "";
+export const ADSENSE_SLOT_BLOG_2 = process.env.NEXT_PUBLIC_ADSENSE_SLOT_BLOG_2 || "";
 
 export const AFFILIATE_ENABLED = process.env.NEXT_PUBLIC_AFFILIATE_ENABLED === "true";
 export const AFFILIATE_BROKER_NAME = process.env.NEXT_PUBLIC_AFFILIATE_BROKER_NAME || "Broker";

@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getServerSession } from "next-auth";
 import { Calendar, Clock, ArrowLeft, BookOpen } from "lucide-react";
 import { getBlogPostBySlug, getBlogSlugs, CATEGORY_LABEL } from "@/lib/blog";
 import { BLOG_CONTENT } from "@/lib/blogContent";
-import { authOptions } from "@/lib/auth";
-import BlogPaywall from "@/components/blog/BlogPaywall";
+import BlogAdBanner from "@/components/blog/BlogAdBanner";
 
 interface Props {
   params: { slug: string };
@@ -34,13 +32,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogArticlePage({ params }: Props) {
-  const session = await getServerSession(authOptions);
-  const isPremium = session?.user?.plan === "PRO" || session?.user?.plan === "RESEARCHER";
-
-  if (!isPremium) {
-    return <BlogPaywall forArticle />;
-  }
-
   const post = getBlogPostBySlug(params.slug);
   if (!post) notFound();
 
@@ -86,6 +77,8 @@ export default async function BlogArticlePage({ params }: Props) {
           </div>
         </header>
 
+        <BlogAdBanner format="leaderboard" forArticle label="Publicidad" />
+
         <div className="prose prose-slate dark:prose-invert prose-lg max-w-none prose-headings:font-bold prose-a:text-blue-600 dark:prose-a:text-blue-400 prose-img:rounded-xl">
           {ContentComponent ? (
             <ContentComponent />
@@ -98,6 +91,8 @@ export default async function BlogArticlePage({ params }: Props) {
             </div>
           )}
         </div>
+
+        <BlogAdBanner format="rectangle" forArticle label="Publicidad" />
 
         <footer className="mt-14 pt-8 border-t border-slate-200 dark:border-slate-700">
           <Link
