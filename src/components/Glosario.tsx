@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import Link from "next/link";
 import { BookOpen, Award, BookMarked } from "lucide-react";
-import { buscarTerminos, getSlugDeTermino, getLetraInicial, FUENTES_CONCEPTOS, type TerminoGlosario } from "@/lib/glosario";
+import { buscarTerminos, getSlugDeTermino, getLetraInicial, getDefinicionSEO, FUENTES_CONCEPTOS, type TerminoGlosario } from "@/lib/glosario";
 import { getLineaTiempoCompleta } from "@/lib/teoriasEconomicas";
 import type { ModuloSimulador } from "./NavSimuladores";
 
@@ -228,7 +228,7 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
                       )}
                     </div>
                   </div>
-                  <p className="text-slate-600 dark:text-slate-400 mb-2">{termino.definicion}</p>
+                  <p className="text-slate-600 dark:text-slate-400 mb-2">{getDefinicionSEO(termino)}</p>
                   {termino.formula && (
                     <div className="mt-2 p-3 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 overflow-x-auto">
                       <p className="text-sm font-mono text-slate-800 dark:text-slate-200 whitespace-nowrap">{termino.formula}</p>

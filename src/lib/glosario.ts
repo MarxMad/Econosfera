@@ -829,3 +829,17 @@ export function getLetraInicial(termino: string): string {
   if (/[0-9]/.test(first)) return "0-9";
   return first || "·";
 }
+
+/**
+ * Devuelve la definición optimizada para SEO y featured snippets.
+ * Asegura que empiece con el término para búsquedas tipo "qué es X".
+ */
+export function getDefinicionSEO(t: TerminoGlosario): string {
+  const def = t.definicion.trim();
+  const term = t.termino.trim();
+  if (!def || !term) return def;
+  const defLower = def.toLowerCase();
+  const termLower = term.toLowerCase();
+  if (defLower.startsWith(termLower) || defLower.startsWith("la " + termLower) || defLower.startsWith("el " + termLower) || defLower.startsWith("los ") || defLower.startsWith("las ")) return def;
+  return `${term}: ${def}`;
+}

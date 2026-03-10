@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChevronRight, BookOpen, ArrowLeft, Link2 } from "lucide-react";
-import { getTerminoBySlug, getTodosLosSlugs, getTerminosPorModulo, getSlugDeTermino } from "@/lib/glosario";
+import { getTerminoBySlug, getTodosLosSlugs, getTerminosPorModulo, getSlugDeTermino, getDefinicionSEO } from "@/lib/glosario";
 import { getBaseUrl } from "@/lib/siteUrl";
 import GlosarioAdBanner from "@/components/GlosarioAdBanner";
 import GlosarioAdLayout from "@/components/GlosarioAdSidebars";
@@ -40,14 +40,23 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const base = getBaseUrl();
   const url = `${base}/glosario/${slug}`;
-  const description = truncateDescription(termino.definicion, 155);
+  const description = truncateDescription(getDefinicionSEO(termino), 155);
   const label = MODULO_LABEL[termino.modulo] ?? termino.modulo;
   const ogImage = `${base}/og-simulator.png`;
 
   return {
-    title: `${termino.termino} | Glosario Económico`,
+    title: `${termino.termino} | Definición y Glosario Económico | Econosfera`,
     description,
-    keywords: [termino.termino, label, "definición", "economía", "glosario", "Econosfera"],
+    keywords: [
+      termino.termino,
+      `qué es ${termino.termino}`,
+      `definición de ${termino.termino}`,
+      label,
+      "economía",
+      "finanzas",
+      "glosario",
+      "Econosfera",
+    ],
     openGraph: {
       title: `${termino.termino} | Glosario Económico | Econosfera`,
       description,
@@ -73,16 +82,33 @@ export default function GlosarioTerminoPage({ params }: Props) {
   if (!termino) notFound();
 
   const base = getBaseUrl();
+  const definicionSEO = getDefinicionSEO(termino);
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "DefinedTerm",
     name: termino.termino,
-    description: termino.definicion,
+    description: definicionSEO,
+    alternateName: [`Qué es ${termino.termino}`, `Definición de ${termino.termino}`],
     inDefinedTermSet: {
       "@type": "DefinedTermSet",
       name: "Glosario de Términos Económicos",
       url: `${base}/glosario`,
     },
+  };
+
+  const faqLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: `¿Qué es ${termino.termino}?`,
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: definicionSEO,
+        },
+      },
+    ],
   };
 
   const breadcrumbLd = {
@@ -106,6 +132,7 @@ export default function GlosarioTerminoPage({ params }: Props) {
   return (
     <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
       <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
@@ -134,7 +161,7 @@ export default function GlosarioTerminoPage({ params }: Props) {
             <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-4">
               {termino.termino}
             </h1>
-            <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{termino.definicion}</p>
+            <p className="text-slate-600 dark:text-slate-400 leading-relaxed mb-6">{definicionSEO}</p>
 
             <GlosarioAdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_GLOSARIO_1} label="Publicidad" />
 
