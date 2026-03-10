@@ -84,40 +84,24 @@ export default function Home() {
 
             {/* Description: más legible en móvil */}
             <p className="text-slate-400 text-base sm:text-xl md:text-2xl mb-8 sm:mb-12 max-w-2xl leading-relaxed font-medium">
-              El puente real entre la teoría económica y el <span className="text-white font-bold">Trading Institucional</span>. Modela, proyecta y opera el mercado con <span className="text-emerald-400 border-b border-emerald-400/30 pb-0.5">poder de IA</span> y herramientas Wall Street grade.
+              Para estudiantes y <span className="text-white font-bold">profesionales de la industria</span>. El puente real entre la teoría económica y el <span className="text-white font-bold">Trading Institucional</span>. Modela, proyecta y opera el mercado con <span className="text-emerald-400 border-b border-emerald-400/30 pb-0.5">poder de IA</span> y herramientas Wall Street grade.
             </p>
 
-            {/* CTAs: en móvil "Explorar Modelos" primero para destacar simuladores */}
+            {/* CTA principal: Ir a simuladores con fondo azul */}
             <div className="flex flex-col gap-4 sm:gap-5 mb-8 sm:mb-16 relative z-20">
-              <div className="flex flex-col-reverse sm:flex-row flex-wrap gap-4 sm:gap-5">
-                <button
-                  onClick={handleProbarClick}
-                  className="group relative inline-flex items-center justify-center w-full sm:w-auto px-6 sm:px-10 py-3.5 sm:py-5 text-base sm:text-lg font-bold tracking-wide rounded-2xl text-white overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.6)]"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:from-blue-500 group-hover:to-indigo-500 transition-colors" />
-                  <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
-                  <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/10 to-transparent shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
-                  <span className="relative flex items-center gap-2">
-                    Crear cuenta gratis
-                    <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
-                  </span>
-                </button>
-
-                <button
-                  onClick={handleExplorarModelos}
-                  className="group w-full sm:w-auto px-6 sm:px-10 py-3.5 sm:py-5 text-base sm:text-lg font-bold rounded-2xl bg-white/[0.08] border-2 border-white/20 text-white hover:bg-white/15 hover:border-emerald-400/50 transition-all duration-300 shadow-xl backdrop-blur-sm flex items-center justify-center gap-2"
-                >
+              <button
+                onClick={handleExplorarModelos}
+                className="group relative inline-flex items-center justify-center w-full sm:w-auto px-6 sm:px-10 py-3.5 sm:py-5 text-base sm:text-lg font-bold tracking-wide rounded-2xl text-white overflow-hidden transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_40px_rgba(59,130,246,0.6)]"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-indigo-600 group-hover:from-blue-500 group-hover:to-indigo-500 transition-colors" />
+                <div className="absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-white/50 to-transparent" />
+                <div className="absolute inset-x-0 -bottom-px h-px bg-gradient-to-r from-transparent via-white/10 to-transparent shadow-[0_4px_10px_rgba(0,0,0,0.5)]" />
+                <span className="relative flex items-center gap-2">
                   <svg className="w-5 h-5 opacity-90 group-hover:opacity-100 transition-opacity flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                   Ir a simuladores
-                </button>
-
-                <button
-                  onClick={handleProbarClick}
-                  className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 text-sm font-bold rounded-xl border-2 border-white/30 text-white hover:bg-white/10 transition-all flex items-center justify-center gap-2"
-                >
-                  Registrarse
-                </button>
-              </div>
+                  <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+                </span>
+              </button>
             </div>
 
             {/* Móvil: preview de simuladores casi de inmediato (solo < lg) */}
@@ -136,13 +120,13 @@ export default function Home() {
                   </div>
                 </div>
                         <div className="px-3 sm:px-4 py-2.5 bg-slate-800/50 border-t border-white/5 flex items-center justify-between gap-2">
-                  <span className="text-[10px] sm:text-xs text-slate-500 font-medium">Vista previa · Crea tu cuenta para acceder</span>
+                  <span className="text-[10px] sm:text-xs text-slate-500 font-medium">Vista previa</span>
                   <button
                     type="button"
-                    onClick={handleProbarClick}
+                    onClick={handleExplorarModelos}
                     className="text-[10px] sm:text-xs font-bold text-emerald-400 hover:text-emerald-300 transition-colors shrink-0"
                   >
-                    Crear cuenta →
+                    Ir a simuladores →
                   </button>
                 </div>
               </div>
@@ -216,14 +200,6 @@ export default function Home() {
             <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Satisfacción</span>
           </div>
           </div>
-          <div className="flex flex-wrap justify-center gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-            <button onClick={handleProbarClick} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors">
-              Crear cuenta gratis
-            </button>
-            <button onClick={handleProbarClick} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
-              Acceder a simuladores
-            </button>
-          </div>
         </div>
       </div>
 
@@ -243,7 +219,7 @@ export default function Home() {
               Tenemos una sorpresa para ti — Crea tu cuenta ahora.
             </p>
             <span className="inline-flex items-center gap-1.5 mt-2 text-slate-800 font-bold text-sm group-hover:gap-2 transition-all">
-              Crear cuenta gratis
+              Ir a simuladores
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </span>
           </button>
@@ -308,11 +284,6 @@ export default function Home() {
                 </div>
               );
             })}
-          </div>
-          <div className="mt-16 text-center">
-            <button onClick={handleProbarClick} className="inline-flex items-center gap-2 px-10 py-4 rounded-2xl bg-blue-600 text-white text-lg font-bold hover:bg-blue-500 transition-colors shadow-xl">
-              Crear cuenta y acceder a simuladores
-            </button>
           </div>
         </div>
       </section>
@@ -397,20 +368,13 @@ export default function Home() {
           <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-8">
             ¿Listo para cambiar la forma en que entiendes la economía?
           </h2>
-          <div className="flex flex-wrap justify-center gap-4">
-            <button
-              onClick={handleProbarClick}
-              className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-lg sm:text-xl font-black rounded-3xl hover:shadow-2xl hover:scale-105 transition-all duration-300"
-            >
-              Crear cuenta gratis
-            </button>
-            <button
-              onClick={handleProbarClick}
-              className="w-full sm:w-auto px-8 sm:px-12 py-4 sm:py-5 border-2 border-slate-900 dark:border-white text-slate-900 dark:text-white text-lg font-bold rounded-3xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-all"
-            >
-              Acceder a simuladores
-            </button>
-          </div>
+          <button
+            onClick={handleExplorarModelos}
+            className="inline-flex items-center gap-2 px-8 sm:px-12 py-4 sm:py-5 bg-blue-600 text-white text-lg sm:text-xl font-black rounded-3xl hover:bg-blue-500 hover:shadow-2xl hover:scale-105 transition-all duration-300"
+          >
+            Ir a simuladores
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </button>
         </div>
       </section>
 

@@ -63,12 +63,10 @@ export default function ComoFunciona({ onProbarClick }: { onProbarClick?: (e: Re
           })}
         </div>
         {onProbarClick && (
-          <div className="mt-14 text-center flex flex-wrap justify-center gap-4">
-            <button onClick={onProbarClick} className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-indigo-600 text-white text-base font-bold hover:bg-indigo-500 transition-colors shadow-lg">
-              Crear cuenta gratis
-            </button>
-            <button onClick={onProbarClick} className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl border-2 border-indigo-300 dark:border-indigo-600 text-indigo-600 dark:text-indigo-400 text-base font-bold hover:bg-indigo-50 dark:hover:bg-indigo-950/30 transition-colors">
+          <div className="mt-14 text-center">
+            <button onClick={onProbarClick} className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-blue-600 text-white text-base font-bold hover:bg-blue-500 transition-colors shadow-lg">
               Ir a simuladores
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </button>
           </div>
         )}
