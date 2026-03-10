@@ -17,8 +17,8 @@ La exportación y creación de reportes financieros no nos cuesta directamente, 
 
 1. **Stripe Integration & Paywall de Exportación:**
    - La funcionalidad actual de **Exportar a PDF**, Enlaces interactivos o Reportes de Valuación será gratuita **solo para los primeros 2 o 3 exportes del mes** por usuario.
-   - El sistema ya lleva una contabilidad secreta en Prisma (el campo `exportsCount` y la tabla `ExportLog`) que rastrea cuántas veces un usuario oprime "Exportar" en el Valuador o el Simulador de Inflación.
-   - Cuando el usuario cruza el límite (ej. `exportsCount > 3`), en vez de descargar el PDF, se abrirá un *Modal* que invite a adquirir la cuenta **PRO Financiero** (Ej: $7.99/mes o $49/anual).
+   - El sistema usa créditos: cada exportación PDF consume 1 crédito. FREE: 10 créditos. Pro: 50/mes. Researcher: ilimitadas.
+   - Cuando el usuario no tiene créditos (credits < 1), se abre el modal de Pricing para invitar a Pro o Researcher.
 
 2. **Cálculos Avanzados (Tier Empresarial/Analistas):** 
    - A los modelos actuales añadiremos una capa "PRO". El simulador de Valuación tendrá herramientas de **Proyección DCF de 5 a 10 años**, métricas WACC y conexión con APIs Bursátiles en vivo. 

@@ -4,7 +4,7 @@ import autoTable from 'jspdf-autotable';
 const MARGIN = 15;
 
 export type FinanzasExportData = {
-    tipo: 'VPVF' | 'Bono' | 'Cetes' | 'Ahorro' | 'DCF' | 'BlackScholes' | 'Amortizacion' | 'VPNTIR' | 'WACC' | 'Forward' | 'BreakEven' | 'Portafolio2' | 'InteresSimpleCompuesto' | 'Regla72' | 'TasaEfectiva' | 'ImpactoNoticias' | 'CorrelacionFundamental' | 'Anualidad' | 'CAPM' | 'DuracionBono';
+    tipo: 'VPVF' | 'CalculadoraFinanciera' | 'Bono' | 'Cetes' | 'Ahorro' | 'DCF' | 'BlackScholes' | 'Amortizacion' | 'VPNTIR' | 'WACC' | 'BreakEven' | 'InteresSimpleCompuesto' | 'Regla72' | 'TasaEfectiva' | 'ImpactoNoticias' | 'CorrelacionFundamental' | 'Anualidad' | 'DuracionBono';
     titulo: string;
     variables: Array<{ label: string; valor: string }>;
     resultados: Array<{ label: string; valor: string }>;
@@ -77,8 +77,8 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
     let sensitivityBody: any[][] = [];
     let sensitivityHead: string[] = [];
 
-    if (data.tipo === 'VPVF') {
-        const vp = parseFloat(data.variables.find(v => v.label.includes('VP'))?.valor.replace('$', '') || '0');
+    if (data.tipo === 'VPVF' || data.tipo === 'CalculadoraFinanciera') {
+        const vp = parseFloat(data.variables.find(v => v.label.includes('Monto') || v.label.includes('principal'))?.valor.replace(/[$,\s]/g, '') || '0');
         const r = parseFloat(data.variables.find(v => v.label.includes('Tasa'))?.valor.replace('%', '') || '0') / 100;
         const n = parseFloat(data.variables.find(v => v.label.includes('Años'))?.valor || '0');
         sensitivityHead = ['Variación Tasa', 'Nueva Tasa', 'Nuevo VF', 'Cambio %'];
@@ -222,7 +222,16 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
 
     doc.setTextColor(30, 41, 59);
     doc.setFontSize(10);
-    const glosario = [
+    const glosario = data.tipo === 'CalculadoraFinanciera' ? [
+        ['VP (Valor Presente)', 'Valor hoy de una cantidad futura. VP = VF / (1 + r)ⁿ'],
+        ['VF (Valor Futuro)', 'Valor futuro de una cantidad hoy. VF = VP × (1 + r)ⁿ'],
+        ['Interés simple', 'VF = VP × (1 + r × n). No capitaliza intereses.'],
+        ['Interés compuesto', 'VF = VP × (1 + r)ⁿ. Reinvierte los intereses.'],
+        ['Regla del 72', 'Años para duplicar ≈ 72 / tasa (%). Aproximación rápida del interés compuesto.'],
+        ['Tasa efectiva', 'Rendimiento real anual considerando capitalización. (1 + i/n)ⁿ − 1'],
+        ['Anualidad', 'Serie de pagos iguales. VP = A × [1 − (1+r)⁻ⁿ] / r'],
+        ['Amortización', 'Tabla de pago de crédito: cuota fija, parte interés y parte principal.'],
+    ] : [
         ['DCF (Discounted Cash Flow)', 'Método de valuación que estima el valor hoy de flujos de caja futuros descontados a una tasa.'],
         ['WACC', 'Costo promedio ponderado de capital. Es la tasa de descuento para los flujos de la empresa.'],
         ['Black-Scholes', 'Modelo matemático para valuar primas de opciones financieras europeas.'],
@@ -263,5 +272,8 @@ export const exportarFinanzasAPdf = async (data: FinanzasExportData) => {
         );
     }
 
-    doc.save(`Econosfera_Finance_${data.tipo}_${new Date().toISOString().split('T')[0]}.pdf`);
+    const nombreArchivo = data.tipo === 'CalculadoraFinanciera'
+        ? `Econosfera_Calculadora_Financiera_${new Date().toISOString().split('T')[0]}.pdf`
+        : `Econosfera_Finance_${data.tipo}_${new Date().toISOString().split('T')[0]}.pdf`;
+    doc.save(nombreArchivo);
 };

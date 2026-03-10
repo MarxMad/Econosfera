@@ -2,8 +2,8 @@
 
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import { getScenarios, deleteScenario } from "@/lib/actions/scenarioActions";
-import { getUserStats } from "@/lib/actions/quizActions";
+import { getDashboardData } from "@/lib/actions/dashboardActions";
+import { deleteScenario } from "@/lib/actions/scenarioActions";
 import { Trash2, Calculator, TrendingUp, Landmark, Clock, Play, BrainCircuit, Flame, Sparkles, ArrowRight, CreditCard, Zap } from "lucide-react";
 import Link from "next/link";
 import ProfileCard from "@/components/ProfileCard";
@@ -74,9 +74,9 @@ export default function DashboardPage() {
 
     const loadData = async () => {
         setLoading(true);
-        const [data, s] = await Promise.all([getScenarios(), getUserStats()]);
+        const { user, scenarios: data } = await getDashboardData();
         setScenarios(data);
-        setStats(s);
+        setStats(user);
         setLoading(false);
     };
 
@@ -99,7 +99,7 @@ export default function DashboardPage() {
             </header>
 
             {/* Banner: sin créditos → CTA a Pro/Researcher */}
-            {(session.user.credits ?? 0) === 0 && (
+            {((stats?.credits ?? session.user.credits) ?? 0) === 0 && (
                 <div className="mb-6 p-4 sm:p-5 rounded-xl sm:rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <div className="p-2 rounded-xl bg-amber-100 dark:bg-amber-900/40">
@@ -120,7 +120,7 @@ export default function DashboardPage() {
                 {/* Left Column: Stats, Profile & Credits */}
                 <div className="space-y-6">
                     {/* Tarjeta de Perfil (datos, verificación) */}
-                    <ProfileCard onCreditsClaimed={loadData} />
+                    <ProfileCard profile={stats} loading={loading} onCreditsClaimed={loadData} />
 
                     {/* Tarjeta de Créditos e IA */}
                     <div className="bg-gradient-to-br from-blue-600 to-indigo-800 rounded-2xl sm:rounded-3xl p-4 sm:p-6 text-white shadow-xl relative overflow-hidden">
@@ -129,13 +129,13 @@ export default function DashboardPage() {
                         </div>
                         <h3 className="text-sm font-semibold uppercase tracking-wider opacity-80 mb-1 relative z-10">IA & Análisis</h3>
                         <div className="flex items-end gap-2 mb-4 relative z-10">
-                            <p className="text-5xl font-black">{session.user.credits ?? stats?.credits ?? 0}</p>
+                            <p className="text-5xl font-black">{stats?.credits ?? session.user.credits ?? 0}</p>
                             <span className="text-blue-200 mb-1">créditos</span>
                         </div>
 
                         <div className="space-y-4 relative z-10">
                             <CreditsByPlanCard
-                                credits={session.user.credits ?? 0}
+                                credits={stats?.credits ?? session.user.credits ?? 0}
                                 plan={(session.user.plan ?? "FREE").toUpperCase()}
                             />
 
@@ -194,7 +194,7 @@ export default function DashboardPage() {
                     {/* Tu siguiente paso */}
                     <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-900 rounded-xl sm:rounded-2xl p-4 sm:p-5 border border-blue-100 dark:border-slate-700">
                         <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">Tu siguiente paso</h3>
-                        {(session.user.credits ?? 0) > 0 ? (
+                        {((stats?.credits ?? session.user.credits) ?? 0) > 0 ? (
                             <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Usa tus créditos para exportar (1 por PDF). Pro: 50/mes. Solo Researcher tiene exportaciones ilimitadas y minutas IA.</p>
                         ) : (
                             <p className="text-slate-700 dark:text-slate-300 text-sm mb-4">Sin créditos. Pro: 50/mes. Researcher: exportaciones ilimitadas + minutas IA.</p>
@@ -203,7 +203,7 @@ export default function DashboardPage() {
                             <Link href="/simulador" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-bold hover:bg-blue-500 transition-colors">
                                 <Calculator className="w-4 h-4" /> Ir al simulador
                             </Link>
-                            {(session.user.credits ?? 0) === 0 && (
+                            {((stats?.credits ?? session.user.credits) ?? 0) === 0 && (
                                 <Link href="/pricing" className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 text-sm font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                                     Ver planes Pro
                                 </Link>

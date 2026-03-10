@@ -24,7 +24,7 @@ export function SimuladorValuacion({ initialData }: SimuladorValuacionProps) {
     const { data: session, update } = useSession();
     const [showPricing, setShowPricing] = useState(false);
 
-    const isLimitReached = (session?.user?.exportsCount || 0) >= 3;
+    const isLimitReached = (session?.user?.credits ?? 0) < 1;
 
     const res = useMemo(() => {
         const EPS = vars.utilidadNeta / vars.accionesEnCirculacion; // UPA
@@ -44,17 +44,20 @@ export function SimuladorValuacion({ initialData }: SimuladorValuacionProps) {
         setVars((p: typeof vars) => ({ ...p, [key]: val }));
     };
 
-    const handlePrint = () => {
+    const handlePrint = async () => {
         if (isLimitReached) {
             setShowPricing(true);
             return;
         }
-        fetch("/api/exports", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ type: "PRINT", module: "Valuacion" })
-        }).then(() => update()).catch(console.error);
-        window.print();
+        try {
+            const { registrarExportacion } = await import("@/lib/actions/exportActions");
+            await registrarExportacion("Finanzas Valuación", "PDF");
+            await update();
+            window.print();
+        } catch (e) {
+            if (String(e).includes("créditos")) setShowPricing(true);
+            else console.error(e);
+        }
     };
 
     return (

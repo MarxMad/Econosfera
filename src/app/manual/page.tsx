@@ -130,7 +130,7 @@ export default function ManualPage() {
                                 <li><strong>Básico:</strong> VP/VF, amortización, bonos, CETES, planes de ahorro.</li>
                                 <li><strong>Valuación:</strong> valuación por múltiplos,{" "}
                                     {slugDCF ? <Link href={`/glosario/${slugDCF}`} className="text-blue-600 dark:text-blue-400 hover:underline">DCF</Link> : "DCF"}, VPN/TIR, WACC.</li>
-                                <li><strong>Portafolios y derivados:</strong> Markowitz, portafolio 2 activos, Black-Scholes, curva de rendimientos, forwards, punto de equilibrio.</li>
+                                <li><strong>Portafolios y derivados:</strong> Markowitz, Black-Scholes, curva de rendimientos, punto de equilibrio.</li>
                                 <li><strong>Estructura y flujos:</strong> flujo del sistema financiero, mapa de instrumentos, mapa de estructura de capital.</li>
                             </ul>
                         </div>
@@ -245,7 +245,7 @@ export default function ManualPage() {
                                     <li><strong>Inflación:</strong> Reporte del escenario activo (variables, resultados, gráfico y, si aplica, análisis de minuta). Comparador de escenarios y reportes Taylor / Tasa real vs nominal.</li>
                                     <li><strong>Macro:</strong> Multiplicador keynesiano e IS-LM (tablas, resultados y gráficos). Curva de Phillips.</li>
                                     <li><strong>Micro:</strong> Mercado, elasticidad y resultados del módulo.</li>
-                                    <li><strong>Finanzas:</strong> VP/VF, amortización, bonos, CETES, ahorro, DCF, VPN/TIR, WACC, Markowitz, portafolio, Black-Scholes, curva de rendimientos, forwards, break-even.</li>
+                                    <li><strong>Finanzas:</strong> VP/VF, amortización, bonos, CETES, ahorro, DCF, VPN/TIR, WACC, Markowitz, Black-Scholes, curva de rendimientos, break-even.</li>
                                     <li><strong>Blockchain:</strong> Halving, trading, staking, AMM y demás simuladores del módulo.</li>
                                     <li><strong>Actuaría:</strong> Mortalidad, ruina, poder adquisitivo.</li>
                                     <li><strong>Estadística:</strong> Regresión lineal y Teorema del Límite Central.</li>

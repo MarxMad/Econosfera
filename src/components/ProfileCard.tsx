@@ -44,13 +44,15 @@ type ProfileData = {
 } | null;
 
 type ProfileCardProps = {
+    profile?: ProfileData | null;
+    loading?: boolean;
     onCreditsClaimed?: () => void;
 };
 
-export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
+export default function ProfileCard({ profile: initialProfile, loading: parentLoading, onCreditsClaimed }: ProfileCardProps) {
     const { data: session, status, update } = useSession();
-    const [profile, setProfile] = useState<ProfileData>(null);
-    const [loading, setLoading] = useState(true);
+    const [profile, setProfile] = useState<ProfileData | null>(initialProfile ?? null);
+    const [loading, setLoading] = useState(!initialProfile && !!session?.user?.id && !parentLoading);
     const [saving, setSaving] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
     const [emailLoading, setEmailLoading] = useState(false);
@@ -68,7 +70,18 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
     });
 
     useEffect(() => {
-        if (session?.user?.id) {
+        if (initialProfile) {
+            setProfile(initialProfile);
+            setForm({
+                name: initialProfile.name || (session?.user?.name as string) || "",
+                lastName: initialProfile.lastName || "",
+                institution: initialProfile.institution || "",
+                phone: initialProfile.phone || "",
+                occupation: initialProfile.occupation || "",
+                educationLevel: initialProfile.educationLevel || "",
+            });
+            setLoading(false);
+        } else if (session?.user?.id && (parentLoading === false || parentLoading === undefined)) {
             getProfile(session.user.id).then((p) => {
                 setProfile(p);
                 if (p) {
@@ -86,7 +99,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
         } else {
             setLoading(false);
         }
-    }, [session?.user?.id]);
+    }, [session?.user?.id, initialProfile, parentLoading]);
 
     const handleSaveProfile = async () => {
         if (!session?.user?.id) return;
@@ -120,7 +133,7 @@ export default function ProfileCard({ onCreditsClaimed }: ProfileCardProps) {
         setEmailLoading(false);
     };
 
-    if (status === "loading" || loading) {
+    if (status === "loading" || (parentLoading === true && !initialProfile) || (loading && !initialProfile)) {
         return (
             <div className="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-lg animate-pulse">
                 <div className="h-20 bg-slate-200 dark:bg-slate-700 rounded-2xl mb-4" />
