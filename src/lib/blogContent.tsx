@@ -214,7 +214,7 @@ function DCFPasoaPasoContent() {
 
       <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Paso 3: Valor terminal</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        El valor terminal captura el valor de los flujos más allá del horizonte explícito de proyección. Suele calcularse con crecimiento perpetuo: VT = FCF_{n+1} / (r - g), donde r es el WACC y g la tasa de crecimiento a largo plazo. La hipótesis de g debe ser conservadora (no superior al crecimiento de la economía).
+        El valor terminal captura el valor de los flujos más allá del horizonte explícito de proyección. Suele calcularse con crecimiento perpetuo: {"VT = FCF_{n+1} / (r - g)"}, donde r es el WACC y g la tasa de crecimiento a largo plazo. La hipótesis de g debe ser conservadora (no superior al crecimiento de la economía).
       </p>
 
       <FormulaBox
