@@ -80,9 +80,14 @@ export default function SimuladorApp() {
     setVariables(getEconomia(pais).variablesPorDefecto);
   };
 
+  const subTab = searchParams.get("tab");
+  const initialDataConTab = useMemo(() => {
+    if (!subTab) return loadedScenario;
+    return { ...loadedScenario, subType: subTab }; // Map 'tab' to 'subType' which most components use
+  }, [loadedScenario, subTab]);
+
   return (
     <div className="bg-slate-100 dark:bg-slate-950">
-
       <main className="max-w-6xl mx-auto px-4 py-6 sm:py-8">
         <div className="mb-6">
           <NavSimuladores modulo={modulo} onChange={setModulo} />
@@ -93,7 +98,7 @@ export default function SimuladorApp() {
         )}
 
         {modulo === "inflacion" && (
-          <Inflacion variables={variables} setVariables={setVariables} />
+          <Inflacion variables={variables} setVariables={setVariables} initialData={initialDataConTab} />
         )}
 
         {modulo === "monetaria" && (
@@ -103,13 +108,13 @@ export default function SimuladorApp() {
             resultados={resultados}
             datosAI={datosAI}
             setDatosAI={setDatosAI}
-            initialData={loadedScenario}
+            initialData={initialDataConTab}
           />
         )}
 
         {modulo === "macro" && (
           <>
-            <SimuladorMacro initialData={loadedScenario} />
+            <SimuladorMacro initialData={initialDataConTab} />
             <div className="mt-6">
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="macro" />
@@ -119,7 +124,7 @@ export default function SimuladorApp() {
         )}
         {modulo === "micro" && (
           <>
-            <SimuladorMicro initialData={loadedScenario} />
+            <SimuladorMicro initialData={initialDataConTab} />
             <div className="mt-6">
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="micro" />
@@ -130,7 +135,7 @@ export default function SimuladorApp() {
 
         {modulo === "finanzas" && (
           <>
-            <Finanzas onIrAModulo={setModulo} initialData={loadedScenario} />
+            <Finanzas onIrAModulo={setModulo} initialData={initialDataConTab} />
             <div className="mt-6">
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="finanzas" />
@@ -141,7 +146,7 @@ export default function SimuladorApp() {
 
         {modulo === "contadores" && (
           <>
-            <Contadores />
+            <Contadores initialData={initialDataConTab} />
             <div className="mt-6">
               <SeccionFuentesColapsable titulo="Referencias para profundizar" defaultAbierto={false}>
                 <ReferenciasAcademicas modulo="finanzas" />
@@ -151,19 +156,19 @@ export default function SimuladorApp() {
         )}
         {modulo === "actuaria" && (
           <>
-            <Actuaria />
+            <Actuaria initialData={initialDataConTab} />
           </>
         )}
 
         {modulo === "estadistica" && (
           <>
-            <Estadistica />
+            <Estadistica initialData={initialDataConTab} />
           </>
         )}
 
         {modulo === "blockchain" && (
           <>
-            <BlockchainEcon />
+            <BlockchainEcon initialData={initialDataConTab} />
           </>
         )}
 

@@ -126,6 +126,7 @@ export default function SimuladorMicro({ initialData }: { initialData?: any }) {
   useEffect(() => {
     if (initialData?.data?.mercado) setMercado(initialData.data.mercado);
     if (initialData?.data?.elasticidad) setElasticidad(initialData.data.elasticidad);
+    if (initialData?.subType) setActiveTab(initialData.subType as any);
   }, [initialData]);
   const [exportando, setExportando] = useState(false);
   const [guardando, setGuardando] = useState(false);

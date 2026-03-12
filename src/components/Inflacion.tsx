@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Percent, Scale, Wallet, Target, History } from "lucide-react";
 import SimulatorDropdown from "./SimulatorDropdown";
 import ComparadorEscenarios from "@/components/ComparadorEscenarios";
@@ -16,12 +16,20 @@ import SimulatorLocked from "@/components/SimulatorLocked";
 export default function Inflacion({
     variables,
     setVariables,
+    initialData
 }: {
     variables: any;
     setVariables: any;
+    initialData?: any;
 }) {
     const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState<"tasaReal" | "poderAdquisitivo" | "brecha" | "tasaRealExPost" | "comparador">("tasaReal");
+
+    useEffect(() => {
+        if (initialData?.subType) {
+            setActiveTab(initialData.subType as any);
+        }
+    }, [initialData?.subType]);
 
     return (
         <div className="space-y-6">

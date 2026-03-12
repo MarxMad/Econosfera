@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { LineChart, Brain, Calculator, Save, ArrowRightLeft, Zap, Scale } from "lucide-react";
 import SimulatorDropdown from "./SimulatorDropdown";
 import PanelVariables from "@/components/PanelVariables";
@@ -36,6 +36,12 @@ export default function Monetaria({
 }) {
     const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState<"core" | "taylor" | "ai" | "uip" | "canalesTransmision" | "comparadorPostura">("core");
+
+    useEffect(() => {
+        if (initialData?.subType) {
+            setActiveTab(initialData.subType as any);
+        }
+    }, [initialData?.subType]);
 
     const [guardando, setGuardando] = useState(false);
     const handleSave = async () => {

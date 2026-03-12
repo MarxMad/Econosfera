@@ -19,22 +19,23 @@ const SIMULADORES: {
   id: string;
   label: string;
   modulo: ModuloSimulador;
+  tab?: string;
   icon: React.ComponentType<{ className?: string }>;
   color: string;
 }[] = [
-  { id: "solow", label: "Solow", modulo: "macro", icon: TrendingUp, color: "blue" },
-  { id: "taylor", label: "Regla de Taylor", modulo: "monetaria", icon: Calculator, color: "indigo" },
-  { id: "blackscholes", label: "Black-Scholes", modulo: "finanzas", icon: Zap, color: "amber" },
-  { id: "dcf", label: "DCF", modulo: "finanzas", icon: BarChart2, color: "emerald" },
-  { id: "vpvf", label: "VP/VF", modulo: "finanzas", icon: Calculator, color: "indigo" },
-  { id: "islm", label: "IS-LM", modulo: "macro", icon: LineChart, color: "blue" },
-  { id: "minutas", label: "Minutas IA", modulo: "monetaria", icon: Brain, color: "violet" },
-  { id: "mercado", label: "Oferta y Demanda", modulo: "micro", icon: PieChart, color: "emerald" },
-  { id: "halving", label: "Halving", modulo: "blockchain", icon: Coins, color: "purple" },
-  { id: "regresion", label: "Regresión", modulo: "estadistica", icon: Percent, color: "cyan" },
-  { id: "inflacion", label: "Inflación", modulo: "inflacion", icon: Percent, color: "amber" },
-  { id: "contadores", label: "Contabilidad", modulo: "contadores", icon: Calculator, color: "teal" },
-];
+    { id: "solow", label: "Solow", modulo: "macro", tab: "solow", icon: TrendingUp, color: "blue" },
+    { id: "taylor", label: "Regla de Taylor", modulo: "monetaria", tab: "taylor", icon: Calculator, color: "indigo" },
+    { id: "blackscholes", label: "Black-Scholes", modulo: "finanzas", tab: "blackscholes", icon: Zap, color: "amber" },
+    { id: "dcf", label: "DCF", modulo: "finanzas", tab: "dcf", icon: BarChart2, color: "emerald" },
+    { id: "vpvf", label: "VP/VF", modulo: "finanzas", tab: "vpvf", icon: Calculator, color: "indigo" },
+    { id: "islm", label: "IS-LM", modulo: "macro", tab: "islm", icon: LineChart, color: "blue" },
+    { id: "minutas", label: "Minutas IA", modulo: "monetaria", tab: "ai", icon: Brain, color: "violet" },
+    { id: "mercado", label: "Oferta y Demanda", modulo: "micro", tab: "mercado", icon: PieChart, color: "emerald" },
+    { id: "halving", label: "Halving", modulo: "blockchain", tab: "halving", icon: Coins, color: "purple" },
+    { id: "regresion", label: "Regresión", modulo: "estadistica", tab: "regresion", icon: Percent, color: "cyan" },
+    { id: "inflacion", label: "Inflación", modulo: "inflacion", tab: "tasaReal", icon: Percent, color: "amber" },
+    { id: "contadores", label: "Contabilidad", modulo: "contadores", tab: "balances", icon: Calculator, color: "teal" },
+  ];
 
 const COLOR_CLASSES: Record<string, string> = {
   blue: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-500/20",
@@ -54,8 +55,9 @@ export default function GaleriaSimuladores({
 }) {
   const router = useRouter();
 
-  const handleClick = (modulo: ModuloSimulador) => {
-    router.push(`/simulador?modulo=${modulo}`);
+  const handleClick = (modulo: ModuloSimulador, tab?: string) => {
+    const url = tab ? `/simulador?modulo=${modulo}&tab=${tab}` : `/simulador?modulo=${modulo}`;
+    router.push(url);
   };
 
   return (
@@ -78,7 +80,7 @@ export default function GaleriaSimuladores({
               <button
                 key={s.id}
                 type="button"
-                onClick={() => handleClick(s.modulo)}
+                onClick={() => handleClick(s.modulo, s.tab)}
                 className={`group flex flex-col items-center justify-center gap-2 sm:gap-3 p-4 sm:p-5 rounded-2xl border transition-all duration-300 hover:scale-[1.03] hover:shadow-lg ${colorClass}`}
               >
                 <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center bg-white/50 dark:bg-black/20 group-hover:scale-110 transition-transform">

@@ -70,8 +70,12 @@ export default function Finanzas({ onIrAModulo, initialData }: { onIrAModulo?: (
 
   useEffect(() => {
     const subType = initialData?.subType;
-    if (subType && SUBTYPE_TO_TAB[subType]) {
-      setActiveTab(SUBTYPE_TO_TAB[subType]);
+    if (subType) {
+      if (TABS_FINANZAS.some(t => t.id === subType)) {
+        setActiveTab(subType);
+      } else if (SUBTYPE_TO_TAB[subType]) {
+        setActiveTab(SUBTYPE_TO_TAB[subType]);
+      }
     }
   }, [initialData?.subType]);
 
