@@ -105,17 +105,6 @@ const POSTS: BlogPost[] = [
     image: "/blog/elasticidad.png",
     metaDescription: "Microeconomía de consulta: Fórmulas y aplicaciones de la elasticidad precio de la demanda.",
   },
-  {
-    slug: "brecha-producto-estimacion",
-    title: "La Brecha de Producto: Estimación del PIB Potencial y Ciclo Económico",
-    excerpt: "Cómo miden los bancos centrales la capacidad ociosa de una nación. Filtros Hodrick-Prescott, NAIRU y la importancia de la brecha para la estabilidad de precios.",
-    date: "2025-02-12",
-    category: "macroeconomia",
-    author: "Econosfera Research",
-    readTimeMinutes: 12,
-    image: "/blog/is-lm.png",
-    metaDescription: "Guía técnica sobre la brecha de producto y el PIB potencial. Métodos de estimación y relevancia en política económica.",
-  },
 ];
 
 export function getBlogPosts(): BlogPost[] {

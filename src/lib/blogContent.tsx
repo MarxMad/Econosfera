@@ -369,52 +369,7 @@ function ElasticidadPrecioDemandaContent() {
   );
 }
 
-function BrechaProductoContent() {
-  return (
-    <>
-      <KeyTakeaways
-        points={[
-          "Mide la diferencia entre el PIB actual y el potencial.",
-          "Brecha Positiva: Presión inflacionaria (sobrecalentamiento).",
-          "Brecha Negativa: Holgura (recesión o bajo crecimiento).",
-          "Es una variable 'no observable' que requiere estimación."
-        ]}
-      />
 
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
-        La <strong>Brecha de Producto</strong> (Output Gap) es una de las variables más vigiladas por Banxico. Nos dice si la economía está "sobrecalentada" o si tiene capacidad ociosa que podría permitir un crecimiento sin inflación.
-      </p>
-
-      <h2 id="definicion">1. PIB Real vs. PIB Potencial</h2>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        El PIB Potencial es el nivel máximo de producción que un país puede alcanzar sin generar inflación excesiva, dado su capital, tecnología y mano de obra. La brecha es la desviación porcentual del PIB real respecto a este ideal.
-      </p>
-
-      <FormulaBox
-        formula="Gap = \frac{Y_{real} - Y_{pot}}{Y_{pot}} \times 100"
-        label="Cálculo de la Brecha de Producto"
-      />
-
-      <h2 id="consecuencias">2. Consecuencias para la Tasa de Interés</h2>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Si la brecha es positiva, la demanda está superando la capacidad de oferta. Banxico suele responder <strong>subiendo tasas</strong> para enfriar el consumo. Si es negativa, hay recursos desperdiciados (desempleo alto), lo que justifica <strong>bajar tasas</strong>.
-      </p>
-
-      <SimulatorCTA
-        title="Tablero Macro: Brecha y Taylor"
-        description="Explora cómo las variaciones en la brecha de producto obligan a ajustar la tasa de referencia en la Regla de Taylor."
-        href="/simulador?tab=macro&tool=gap"
-      />
-
-      <ReferencesList
-        references={[
-          { id: "1", text: "Banco de México (2024). Estimación de la brecha del producto y presiones inflacionarias.", href: "https://www.banxico.org.mx" },
-          { id: "2", text: "IMF. Output Gap: Understanding the Economy's Capacity.", href: "https://imf.org" },
-        ]}
-      />
-    </>
-  );
-}
 
 /** Mapa slug → componente de contenido. Añade aquí nuevos artículos. */
 export const BLOG_CONTENT: Record<string, () => JSX.Element> = {
@@ -424,5 +379,4 @@ export const BLOG_CONTENT: Record<string, () => JSX.Element> = {
   "modelo-is-lm-politica": ModeloISLMContent,
   "dcf-paso-a-paso": DCFPasoaPasoContent,
   "elasticidad-precio-demanda": ElasticidadPrecioDemandaContent,
-  "brecha-producto-estimacion": BrechaProductoContent,
 };
