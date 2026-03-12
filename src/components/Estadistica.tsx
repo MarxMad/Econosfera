@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TrendingUp, BarChart, Layers, Activity, Table2, Grid3X3, BarChart2 } from "lucide-react";
 import SimulatorDropdown from "./SimulatorDropdown";
 import { SimuladorRegresion, SimuladorTCL, SimuladorRegresionMultiple, SimuladorMatrizCorrelacion, SimuladorEstadisticasDescriptivas } from "./simuladores-stats";
@@ -9,9 +9,15 @@ import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
 import BannerCuestionarios from "./BannerCuestionarios";
 
-export default function Estadistica() {
+export default function Estadistica({ initialData }: { initialData?: any }) {
     const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState<"regresion" | "tcl" | "regresionMultiple" | "matrizCorrelacion" | "estadisticasDescriptivas">("regresion");
+
+    useEffect(() => {
+        if (initialData?.subType) {
+            setActiveTab(initialData.subType as any);
+        }
+    }, [initialData?.subType]);
 
     return (
         <div className="space-y-6 animate-in fade-in duration-700">

@@ -2,43 +2,77 @@ import BlockQuote from "@/components/blog/BlockQuote";
 import FormulaBox from "@/components/blog/FormulaBox";
 import ImageWithCaption from "@/components/blog/ImageWithCaption";
 import ReferencesList from "@/components/blog/ReferencesList";
+import KeyTakeaways from "@/components/blog/KeyTakeaways";
+import NewsletterBox from "@/components/blog/NewsletterBox";
+import SimulatorCTA from "@/components/blog/SimulatorCTA";
 
 export function EjemploReglaTaylorContent() {
   return (
     <>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La Regla de Taylor (Taylor, 1993) es una fórmula de referencia que relaciona la tasa de interés de política monetaria con la inflación observada, la meta de inflación y la brecha de producto. No pretende ser un mandato mecánico para los bancos centrales, sino un benchmark para evaluar si la postura monetaria es expansiva o restrictiva.
+      <KeyTakeaways
+        points={[
+          "Relaciona la tasa nominal con la inflación y el producto.",
+          "Fue propuesta por John B. Taylor en 1993.",
+          "Busca la estabilidad de precios y el pleno empleo.",
+          "Es un benchmark, no una regla rígida para Banxico."
+        ]}
+      />
+
+      <p>
+        La <strong>Regla de Taylor</strong> es quizás la herramienta de consulta más importante para entender cómo los bancos centrales, como el Banco de México (Banxico) o la Reserva Federal (Fed), ajustan las tasas de interés. Lejos de ser un algoritmo ciego, la regla proporciona un marco lógico para equilibrar dos objetivos a menudo contradictorios: <strong>estabilidad de precios</strong> y <strong>crecimiento económico</strong>.
+      </p>
+
+      <h2 id="origen">1. El Origen: ¿Por qué una regla?</h2>
+      <p>
+        Antes de 1993, la política monetaria era vista a menudo como un "arte" oscuro. John B. Taylor demostró que se podía describir el comportamiento de la Fed con una fórmula sorprendentemente simple. Su propuesta resolvió el problema de la <em>inconsistencia dinámica</em>: si los mercados saben cómo reaccionará el banco, las expectativas se anclan y la inflación baja.
       </p>
 
       <FormulaBox
-        formula="i = r* + π* + α(π - π*) + β(y - y*)"
-        label="Regla de Taylor (forma estándar)"
+        formula="i = r* + π + 0.5(π - π*) + 0.5(y - y*)"
+        label="La Ecuación Original de Taylor (1993)"
       />
 
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Donde <em>i</em> es la tasa de política, <em>r*</em> la tasa real neutral, <em>π</em> la inflación observada, <em>π*</em> la meta, <em>y − y*</em> la brecha de producto. Los coeficientes α y β suelen tomar valores alrededor de 0.5 en la especificación original.
+      <h2 id="componentes">2. Desglose de los Componentes</h2>
+      <ul>
+        <li><strong>r* (Tasa Real Neutral):</strong> Es la tasa que no expande ni contrae la economía. En México, Banxico estima que se sitúa entre el 1.8% y 3.4%.</li>
+        <li><strong>π - π* (Brecha de Inflación):</strong> La diferencia entre la inflación actual y la meta (en México es 3% ± 1%).</li>
+        <li><strong>y - y* (Brecha de Producto):</strong> Qué tanto se desvía el PIB actual de su potencial.</li>
+      </ul>
+
+      <SimulatorCTA
+        title="Simulador de Regla de Taylor"
+        description="Ajusta la tasa neutral y la meta de inflación para ver cómo debería reaccionar Banxico hoy mismo."
+        href="/simulador?tab=taylor"
+      />
+
+      <h2 id="practica">3. La Regla en México</h2>
+      <p>
+        En una economía abierta como la mexicana, la regla suele extenderse para incluir el <strong>tipo de cambio</strong> y la <strong>tasa de la Fed</strong>. Banxico debe considerar que una subida excesiva podría apreciar demasiado el peso, afectando a las exportaciones, mientras que quedarse corto ante la Fed podría causar fugas de capital.
       </p>
 
       <BlockQuote
-        quote="When the Fed raises the interest rate in response to an inflation rate that is above the target, it is said to be following the Taylor rule."
-        author="John B. Taylor"
-        source="Discretion versus policy rules in practice (1993)"
+        quote="La política monetaria debe ser sistemática pero no mecánica. La Regla de Taylor es una brújula, no un piloto automático."
+        author="Analista Senior de Econosfera"
+        source="Reporte Especial 2025"
       />
 
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        En la práctica, los bancos centrales no siguen la regla al pie de la letra: existen incertidumbre sobre los datos, rezagos en la transmisión y consideraciones de estabilidad financiera. Aun así, la regla sirve como referencia de comunicación y para comparar la postura actual con una recomendación simple.
+      <NewsletterBox />
+
+      <h2 id="conclusion">4. Conclusión para Estudiantes</h2>
+      <p>
+        Para fines de consulta académica, recuerda que el "Principio de Taylor" dicta que el banco central debe subir la tasa nominal <strong>más</strong> que proporcionalmente al aumento de la inflación. Si la inflación sube 1%, la tasa debería subir más de 1% para que la tasa <em>real</em> suba y realmente frene la demanda.
       </p>
 
       <ReferencesList
         references={[
           {
             id: "1",
-            text: "Taylor, J. B. (1993). Discretion versus policy rules in practice. Carnegie-Rochester Conference Series on Public Policy, 39, 195-214.",
+            text: "Taylor, J. B. (1993). Discretion versus policy rules in practice. Carnegie-Rochester Conference Series on Public Policy.",
             href: "https://doi.org/10.1016/0167-2231(93)90009-L",
           },
           {
             id: "2",
-            text: "Banco de México. Documentos de investigación y política monetaria.",
+            text: "Banxico (2024). Informe Trimestral: Evolución de las tasas de interés neutrales.",
             href: "https://www.banxico.org.mx",
           },
         ]}

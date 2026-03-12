@@ -48,6 +48,8 @@ const COLOR_CLASSES: Record<string, string> = {
   teal: "bg-teal-500/10 text-teal-600 dark:text-teal-400 border-teal-200 dark:border-teal-800 hover:bg-teal-500/20",
 };
 
+import InteractiveShowcase from "./InteractiveShowcase";
+
 export default function GaleriaSimuladores({
   onProbarClick,
 }: {
@@ -63,13 +65,24 @@ export default function GaleriaSimuladores({
   return (
     <section className="py-20 sm:py-28 bg-slate-50 dark:bg-slate-900/50">
       <div className="max-w-7xl mx-auto px-4">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white mb-4 tracking-tight">
-            Explora más de <span className="text-indigo-600 dark:text-indigo-400">60 simuladores</span>
+        <div className="text-center mb-16 px-4">
+          <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white mb-6 tracking-tight">
+            Laboratorio <span className="text-indigo-600 dark:text-indigo-400">Interactivo</span>
           </h2>
-          <p className="text-slate-500 dark:text-slate-400 text-lg max-w-2xl mx-auto">
-            Desde macro hasta blockchain. Cada modelo está listo para usar con un clic.
+          <p className="text-slate-500 dark:text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed">
+            No somos solo una base de datos. Somos una plataforma viva donde puedes manipular variables y visualizar el impacto económico en tiempo real.
           </p>
+        </div>
+
+        {/* Showcase Interactivo - El Gancho */}
+        <div className="mb-24">
+          <InteractiveShowcase />
+        </div>
+
+        <div className="text-center mb-10">
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-widest text-[11px] mb-8">
+            Y eso es solo el comienzo. Explora nuestra galería completa:
+          </h3>
         </div>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">

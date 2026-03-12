@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Calculator, Package, BarChart3, FileText, Scale, PieChart, Target } from "lucide-react";
 import SimulatorDropdown from "./SimulatorDropdown";
 import {
@@ -20,9 +20,15 @@ import BannerCuestionarios from "./BannerCuestionarios";
 
 type TabContadores = "depreciacion" | "costos" | "razones" | "estadoResultados" | "ecuacion" | "prorrateo" | "costoProduccion" | "puntoEquilibrio";
 
-export default function Contadores() {
+export default function Contadores({ initialData }: { initialData?: any }) {
   const { data: session } = useSession();
   const [activeTab, setActiveTab] = useState<TabContadores>("depreciacion");
+
+  useEffect(() => {
+    if (initialData?.subType) {
+      setActiveTab(initialData.subType as TabContadores);
+    }
+  }, [initialData?.subType]);
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700">

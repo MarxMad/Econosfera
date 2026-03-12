@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Shield, Heart } from "lucide-react";
 import SimulatorDropdown from "./SimulatorDropdown";
 import { SimuladorMortalidad, SimuladorRuina } from "./simuladores-actuaria";
@@ -9,9 +9,15 @@ import { canAccess, getRequiredPlan } from "@/lib/simulatorPlans";
 import SimulatorLocked from "./SimulatorLocked";
 import BannerCuestionarios from "./BannerCuestionarios";
 
-export default function Actuaria() {
+export default function Actuaria({ initialData }: { initialData?: any }) {
     const { data: session } = useSession();
     const [activeTab, setActiveTab] = useState<"mortalidad" | "ruina">("mortalidad");
+
+    useEffect(() => {
+        if (initialData?.subType) {
+            setActiveTab(initialData.subType as any);
+        }
+    }, [initialData?.subType]);
 
     return (
         <div className="space-y-6 animate-in fade-in duration-700">
