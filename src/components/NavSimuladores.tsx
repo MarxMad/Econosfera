@@ -3,9 +3,10 @@
 import { useState, useRef, useEffect } from "react";
 import { Menu, ChevronDown, Check } from "lucide-react";
 
-export type ModuloSimulador = "inflacion" | "monetaria" | "macro" | "micro" | "finanzas" | "contadores" | "actuaria" | "estadistica" | "blockchain" | "glosario" | "formulas";
+export type ModuloSimulador = "explorar" | "inflacion" | "monetaria" | "macro" | "micro" | "finanzas" | "contadores" | "actuaria" | "estadistica" | "blockchain" | "glosario" | "formulas";
 
 const TABS: { id: ModuloSimulador; label: string; short: string }[] = [
+  { id: "explorar", label: "🎨 Explorar todo", short: "Explorar" },
   { id: "finanzas", label: "Finanzas", short: "Finanzas" },
   { id: "contadores", label: "Contabilidad", short: "Contab." },
   { id: "inflacion", label: "Inflación", short: "Inflación" },
@@ -69,11 +70,10 @@ export default function NavSimuladores({ modulo, onChange }: NavSimuladoresProps
                   onChange(tab.id);
                   setIsOpen(false);
                 }}
-                className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-left text-sm font-semibold transition-all ${
-                  modulo === tab.id
+                className={`flex items-center justify-between w-full px-4 py-3 rounded-xl text-left text-sm font-semibold transition-all ${modulo === tab.id
                     ? "bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
                     : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50"
-                }`}
+                  }`}
               >
                 {tab.label}
                 {modulo === tab.id && <Check className="w-4 h-4" />}

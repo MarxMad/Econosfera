@@ -13,6 +13,7 @@ import SimuladorMicro from "@/components/SimuladorMicro";
 import Finanzas from "@/components/Finanzas";
 import BlockchainEcon from "@/components/BlockchainEcon";
 import Glosario from "@/components/Glosario";
+import SimuladorExplore from "@/components/SimuladorExplore";
 import Formulas from "@/components/Formulas";
 import Actuaria from "@/components/Actuaria";
 import Contadores from "@/components/Contadores";
@@ -29,7 +30,7 @@ const VARIABLES_INICIALES: VariablesSimulacion = getEconomia("mexico").variables
 export default function SimuladorApp() {
   const { data: session } = useSession();
   const searchParams = useSearchParams();
-  const [modulo, setModulo] = useState<ModuloSimulador>("finanzas");
+  const [modulo, setModulo] = useState<ModuloSimulador>("explorar");
   const [pais, setPais] = useState<PaisEconomia>("mexico");
   const [variables, setVariables] = useState<VariablesSimulacion>(VARIABLES_INICIALES);
   const resultados = useMemo(() => calcularResultados(variables), [variables]);
@@ -38,7 +39,7 @@ export default function SimuladorApp() {
 
   useEffect(() => {
     const moduloParam = searchParams.get("modulo") as ModuloSimulador | null;
-    const validModulos: ModuloSimulador[] = ["finanzas", "monetaria", "macro", "micro", "inflacion", "contadores", "actuaria", "estadistica", "blockchain"];
+    const validModulos: ModuloSimulador[] = ["explorar", "finanzas", "monetaria", "macro", "micro", "inflacion", "contadores", "actuaria", "estadistica", "blockchain"];
     if (moduloParam && validModulos.includes(moduloParam)) {
       setModulo(moduloParam);
     }
@@ -86,6 +87,10 @@ export default function SimuladorApp() {
         <div className="mb-6">
           <NavSimuladores modulo={modulo} onChange={setModulo} />
         </div>
+
+        {modulo === "explorar" && (
+          <SimuladorExplore onSelectModulo={setModulo} />
+        )}
 
         {modulo === "inflacion" && (
           <Inflacion variables={variables} setVariables={setVariables} />
