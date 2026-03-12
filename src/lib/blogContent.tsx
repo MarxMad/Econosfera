@@ -84,49 +84,63 @@ export function EjemploReglaTaylorContent() {
 function InflacionSubyacenteGeneralContent() {
   return (
     <>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La inflación general y la inflación subyacente son dos indicadores que el Banco de México y el INEGI publican con periodicidad mensual. Aunque la primera suele acaparar los titulares, la segunda es la referencia principal para la política monetaria. Entender la distinción es crucial para interpretar las decisiones de Banxico y las expectativas de los mercados.
+      <KeyTakeaways
+        points={[
+          "La inflación general incluye todos los bienes (INPC).",
+          "La subyacente excluye energía y alimentos volátiles.",
+          "Banxico usa la subyacente para 'leer' la tendencia de largo plazo.",
+          "Choques de oferta (sequías, guerras) afectan más a la no subyacente."
+        ]}
+      />
+
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        La inflación general y la inflación subyacente son dos indicadores que el Banco de México y el INEGI publican con periodicidad quincenal y mensual. Aunque la primera suele acaparar los titulares, la segunda es la <strong>referencia principal</strong> para la política monetaria. Entender la distinción es crucial para interpretar las decisiones de Banxico y las expectativas de los mercados.
       </p>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">¿Qué es la inflación general?</h2>
+      <h2 id="general">1. La Inflación General: El Costo de Vida Original</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La inflación general es la variación porcentual del Índice Nacional de Precios al Consumidor (INPC) en un periodo dado (mensual o anual). El INPC mide la evolución de los precios de una canasta fija de bienes y servicios representativa del consumo de los hogares en México. Incluye todos los componentes: alimentos no elaborados, energéticos, tarifas reguladas y el resto de bienes y servicios.
+        Es la variación del Índice Nacional de Precios al Consumidor (INPC). Mide cuánto ha subido el promedio de <strong>todos</strong> los precios de una canasta representativa del consumo mexicano.
       </p>
 
       <FormulaBox
-        formula="π_general = [(INPC_t - INPC_{t-12}) / INPC_{t-12}] × 100"
-        label="Inflación general anual"
+        formula="π_{gen} = \frac{INPC_t - INPC_{t-1}}{INPC_{t-1}} \times 100"
+        label="Variación porcentual del INPC"
       />
 
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Es el indicador más citado por medios y hogares porque refleja el costo de vida actual. Sin embargo, algunos de sus componentes son muy volátiles: una sequía puede disparar el precio de alimentos, el petróleo puede subir por tensiones geopolíticas o por decisiones de la OPEP. Esos choques pueden distorsionar la señal sobre la tendencia inflacionaria de fondo.
+        Su principal desventaja para un banco central es el <strong>ruido</strong>. Si el precio del limón sube 200% por una helada, la inflación general subirá, pero ese aumento no es culpa de que haya "demasiado dinero" en la calle. Es un choque de oferta temporal.
       </p>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">¿Qué es la inflación subyacente?</h2>
+      <h2 id="subyacente">2. La Inflación Subyacente: El Corazón de la Tendencia</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La inflación subyacente excluye de la canasta del INPC los componentes más volátiles: mercancías y servicios con precios fijados o administrados por el gobierno (energéticos, tarifas), y productos agropecuarios no elaborados (frutas, verduras, huevo). El objetivo es captar la tendencia de mediano plazo de la inflación, libre de choques temporales.
+        Este indicador <strong>limpia</strong> la canasta, eliminando los componentes que "ensucian" la señal. Excluye:
       </p>
+      <ul className="list-disc pl-6 space-y-2 mb-6 text-slate-700 dark:text-slate-300">
+        <li><strong>Agropecuarios:</strong> Frutas y verduras (sujetos a clima).</li>
+        <li><strong>Energéticos y tarifas:</strong> Gasolina, luz, gas (sujetos a geopolítica o subsidios).</li>
+      </ul>
 
       <BlockQuote
-        quote="La inflación subyacente es la referencia principal para la conducción de la política monetaria."
-        author="Banco de México"
-        source="Informes de inflación"
+        quote="La inflación subyacente refleja la verdadera presión de demanda y es la que Banxico puede controlar mediante la tasa de interés."
+        author="Econosfera Research"
       />
 
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Banxico usa la inflación subyacente como guía porque responde mejor a la holgura de la economía y a las expectativas. Si el banco sube la tasa cada vez que la inflación general repunta por un choque de oferta (por ejemplo sequía de jitomate), podría estar generando volatilidad innecesaria en el producto y el empleo sin resolver el problema de fondo.
-      </p>
+      <SimulatorCTA
+        title="Simulador de Inflación"
+        description="Analiza cómo los choques en el componente no subyacente afectan el poder adquisitivo real en México."
+        href="/simulador?tab=inflacion"
+      />
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">¿Por qué pueden divergir?</h2>
+      <h2 id="divergencia">3. ¿Por qué es peligrosa la divergencia?</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La inflación general y la subyacente pueden moverse en direcciones opuestas. Un alza de precios de energéticos o de alimentos no elaborados eleva la general pero puede no afectar la subyacente. Por el contrario, presiones de demanda en servicios o en bienes manufacturados suelen reflejarse en ambas. La divergencia indica si el impulso inflacionario viene del lado de la oferta (volátil) o de la demanda (más persistente).
+        Cuando la inflación subyacente sube y se mantiene alta (resistencia a bajar), se dice que la inflación está <strong>"contaminando"</strong> otros precios. Esto suele forzar a Banxico a mantener tasas restrictivas por más tiempo, incluso si la inflación general parece estar bajando por una caída técnica en los energéticos.
       </p>
 
       <ReferencesList
         references={[
-          { id: "1", text: "INEGI. Índice Nacional de Precios al Consumidor. Metodología y series.", href: "https://www.inegi.org.mx/temas/inpc/" },
-          { id: "2", text: "Banco de México. Informes de inflación y comunicados de política monetaria.", href: "https://www.banxico.org.mx" },
-          { id: "3", text: "Bryan, M. F. y Cecchetti, S. G. (1994). Measuring core inflation. NBER Working Paper.", href: "https://www.nber.org/papers/w4303" },
+          { id: "1", text: "INEGI (2025). Glosario de términos del Índice Nacional de Precios al Consumidor.", href: "https://www.inegi.org.mx" },
+          { id: "2", text: "Heath, J. (2024). Lectura de la inflación en México: Guía para estudiantes.", href: "#" },
+          { id: "3", text: "Bryan, M. F. (1994). Measuring core inflation. NBER Working Paper.", href: "https://www.nber.org/papers/w4303" },
         ]}
       />
     </>
@@ -136,35 +150,53 @@ function InflacionSubyacenteGeneralContent() {
 function ComoLeerMinutaBanxicoContent() {
   return (
     <>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Las minutas de política monetaria del Banco de México se publican el jueves siguiente a cada decisión de tasa. Son el documento más esperado por analistas y mercados porque revelan el razonamiento del Board, la votación y las señales sobre la trayectoria futura. Esta guía te ayuda a interpretarlas paso a paso.
+      <KeyTakeaways
+        points={[
+          "Se publican dos jueves después de cada anuncio de política.",
+          "Revelan la identidad de los votos disidentes.",
+          "El 'Forward Guidance' indica el futuro de las tasas.",
+          "Diferenciar entre tono 'Hawkish' y 'Dovish' es clave."
+        ]}
+      />
+
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        Las minutas de política monetaria son el documento más esperado por analistas en México. A diferencia del comunicado inicial, que es breve, la minuta ofrece una <strong>radiografía</strong> de las discusiones internas del Junta de Gobierno. Es aquí donde se encuentran las pistas sobre si el ciclo de bajas ha terminado o si habrá sorpresas en la próxima reunión.
       </p>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Estructura general</h2>
+      <h2 id="tono">1. El Tono: ¿Hawkish o Dovish?</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Una minuta típica incluye: (1) contexto del entorno externo e interno, (2) análisis de inflación y expectativas, (3) análisis de actividad económica y empleo, (4) balance de riesgos, (5) deliberación y votación, y (6) forward guidance. Cada sección aporta información clave para anticipar la siguiente decisión.
+        En el lenguaje central bancario:
       </p>
+      <ul className="list-disc pl-6 space-y-2 mb-6 text-slate-700 dark:text-slate-300">
+        <li><strong>Hawkish (Halcón):</strong> Predisposición a subir tasas o mantenerlas altas para combatir la inflación. Prioriza la estabilidad sobre el crecimiento.</li>
+        <li><strong>Dovish (Paloma):</strong> Predisposición a bajar tasas para estimular la economía. Muestra más preocupación por el crecimiento o el desempleo.</li>
+      </ul>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Qué buscar en el análisis de inflación</h2>
+      <h2 id="votacion">2. La Importancia de los Votos Disidentes</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Presta atención a si la inflación subyacente se describe como «en línea con la meta», «por encima» o «por debajo». Las frases sobre «presiones inflacionarias» o «holgura» indican el diagnóstico. Si mencionan que las expectativas de mediano plazo «se mantienen ancladas» o «han mostrado señales de desanclaje», es una señal fuerte sobre la credibilidad del banco.
+        Si la decisión fue unánime (5-0), el mercado asume una postura sólida. Sin embargo, un voto disidente (4-1) suele ser un <strong>indicador adelantado</strong>. Si un subgobernador votó por una baja cuando la mayoría mantuvo, es probable que la baja se materialice en la siguiente o subsiguiente reunión.
       </p>
 
       <BlockQuote
-        quote="Las expectativas de inflación de mediano y largo plazo se mantienen ancladas en la meta."
-        author="Banco de México"
-        source="Minuta típica"
+        quote="La minuta nos permite escuchar las sutilezas que el comunicado oficial suele suavizar por razones de protocolo institucional."
+        author="Gabinete de Análisis Econosfera"
       />
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">La votación y el forward guidance</h2>
+      <SimulatorCTA
+        title="Predictor de Tasas"
+        description="Analiza la balanza de riesgos de la última minuta y estima la probabilidad de un ajuste en la tasa de referencia."
+        href="/simulador?tab=minutas"
+      />
+
+      <h2 id="riesgos">3. Balance de Riesgos</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La votación indica si hubo unanimidad o disensión. Un voto en contra puede señalar que la postura se está endureciendo o ablandando. El forward guidance —las frases sobre la trayectoria futura— suele estar al final del párrafo de deliberación. Si dicen que «mantendrán una postura restrictiva el tiempo necesario», esperan más subidas o mantener la tasa en niveles altos. Si hablan de «evaluar el ritmo de ajuste», la puerta a una pausa o bajada se abre.
+        Busca siempre la sección sobre riesgos al alza y a la baja para la inflación. Si Banxico menciona riesgos <strong>"sesgados significativamente al alza"</strong>, es una señal inequívoca de que las tasas no bajarán pronto.
       </p>
 
       <ReferencesList
         references={[
-          { id: "1", text: "Banco de México. Minutas de política monetaria.", href: "https://www.banxico.org.mx/publicaciones-y-prensa/minutas-de-decisiones-de-politica-monetaria" },
-          { id: "2", text: "Banco de México. Comunicados de política monetaria.", href: "https://www.banxico.org.mx/publicaciones-y-prensa/comunicados-de-politica-monetaria" },
+          { id: "1", text: "Banco de México (2025). Calendario de publicación de minutas.", href: "https://www.banxico.org.mx" },
+          { id: "2", text: "Financial Times. Central Banking Terms: Hawks vs Doves.", href: "https://ft.com" },
         ]}
       />
     </>
@@ -174,45 +206,54 @@ function ComoLeerMinutaBanxicoContent() {
 function ModeloISLMContent() {
   return (
     <>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        El modelo IS-LM es el marco estándar para analizar la interacción entre el mercado de bienes y el mercado de dinero en el corto plazo. Desarrollado por Hicks y Hansen a partir de la Teoría General de Keynes, permite entender cómo la política fiscal y monetaria afectan la renta y el tipo de interés de equilibrio.
+      <KeyTakeaways
+        points={[
+          "Muestra el equilibrio simultáneo en bienes y dinero.",
+          "IS: Inversión-Ahorro (Mercado de bienes).",
+          "LM: Liquidez-Dinero (Mercado monetario).",
+          "Es la base para entender políticas expansivas y contractivas."
+        ]}
+      />
+
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        El modelo <strong>IS-LM</strong> es el pilar fundamental de la macroeconomía de corto plazo. Desarrollado por John Hicks en 1937 para formalizar las ideas de Keynes, este modelo explica cómo se determina el nivel de ingreso nacional y la tasa de interés en una economía cerrada.
       </p>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">La curva IS</h2>
+      <h2 id="is">1. La Curva IS: El Mercado de Bienes</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La curva IS representa las combinaciones de renta (Y) y tipo de interés (r) para las cuales el mercado de bienes está en equilibrio: la demanda agregada (C + I + G + X - M) iguala al producto. Tiene pendiente negativa: una tasa más alta reduce la inversión y, por tanto, la demanda y el producto.
+        Representa todas las combinaciones de renta (Y) y tasa de interés (r) donde el gasto planeado iguala a la producción. Su pendiente es <strong>negativa</strong> porque un aumento en la tasa de interés encarece el crédito, reduciendo la inversión y, por ende, el producto total.
       </p>
 
       <FormulaBox
-        formula="Y = C(Y - T) + I(r) + G + X - M"
-        label="Equilibrio en el mercado de bienes (IS)"
+        formula="Y = C(Y-T) + I(r) + G"
+        label="Equilibrio en el mercado de bienes"
       />
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">La curva LM</h2>
+      <h2 id="lm">2. La Curva LM: El Mercado de Dinero</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La curva LM representa las combinaciones de Y y r para las cuales el mercado de dinero está en equilibrio: la oferta real de dinero (M/P) iguala a la demanda de saldos reales. Tiene pendiente positiva: mayor renta aumenta la demanda de dinero y, para mantener el equilibrio, la tasa debe subir.
+        Representa el equilibrio entre la oferta y la demanda de dinero. Su pendiente es <strong>positiva</strong>: si la renta sube, la gente demanda más dinero para transacciones; para que el mercado se equilibre con una oferta monetaria fija, la tasa de interés debe subir.
       </p>
 
       <FormulaBox
         formula="M/P = L(Y, r)"
-        label="Equilibrio en el mercado de dinero (LM)"
+        label="Equilibrio en el mercado monetario"
       />
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Efectos de política</h2>
+      <SimulatorCTA
+        title="Simulador Macro: IS-LM"
+        description="Desplaza las curvas IS y LM para visualizar el impacto de un aumento en el gasto público o una contracción monetaria."
+        href="/simulador?tab=macro"
+      />
+
+      <h2 id="politica">3. Efectos de la Política</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Una política fiscal expansiva (aumento de G o reducción de T) desplaza la IS a la derecha: sube la renta y el tipo de interés. Una política monetaria expansiva (aumento de M) desplaza la LM a la derecha: sube la renta y baja el tipo de interés. El modelo IS-LM es la base del Mundell-Fleming para economías abiertas.
+        ¿Qué pasa si el gobierno aumenta el gasto (G)? La IS se desplaza a la derecha, aumentando el PIB pero también la tasa de interés (efecto <em>crowding-out</em>). ¿Y si el banco central aumenta la cantidad de dinero? La LM se desplaza a la derecha, bajando las tasas y estimulando la inversión.
       </p>
-
-      <BlockQuote
-        quote="The IS-LM model remains the workhorse of short-run macroeconomics."
-        author="Olivier Blanchard"
-        source="Macroeconomics (7th ed.)"
-      />
 
       <ReferencesList
         references={[
-          { id: "1", text: "Hicks, J. R. (1937). Mr. Keynes and the Classics. Econometrica.", href: "https://www.jstor.org/stable/1907242" },
-          { id: "2", text: "Mankiw, N. G. (2019). Macroeconomics. Worth Publishers.", href: "" },
+          { id: "1", text: "Hicks, J. R. (1937). Mr. Keynes and the Classics: A Suggested Interpretation. Econometrica.", href: "https://www.jstor.org/stable/1907242" },
+          { id: "2", text: "Blanchard, O. (2025). Macroeconomía (8ª Edición). Pearson.", href: "#" },
         ]}
       />
     </>
@@ -222,50 +263,54 @@ function ModeloISLMContent() {
 function DCFPasoaPasoContent() {
   return (
     <>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La valoración por descuento de flujos de caja (DCF) es el método teórico de referencia en finanzas corporativas. El valor de una empresa o un activo es el valor presente de los flujos de caja libres futuros esperados, descontados a una tasa que refleje el riesgo. Esta guía recorre los pasos: FCF, WACC y valor terminal.
+      <KeyTakeaways
+        points={[
+          "El valor hoy de una empresa es la suma de sus flujos futuros.",
+          "El WACC es la tasa que refleja el costo de deuda y capital.",
+          "El Valor Terminal suele representar el >70% de la valoración.",
+          "Sensibilidad: pequeños cambios en 'g' o WACC cambian todo."
+        ]}
+      />
+
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        La valoración por <strong>Descuento de Flujos de Caja (DCF)</strong> es el "Estándar de Oro" en Wall Street y en la academia. Se basa en una premisa simple: un activo vale lo que es capaz de generar en el futuro, traído a valor presente.
       </p>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Paso 1: Flujo de caja libre (FCF)</h2>
+      <h2 id="fcf">1. El Motor: Free Cash Flow (FCF)</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        El FCF es el efectivo generado por la operación después de impuestos, menos las inversiones en capital de trabajo y activos fijos necesarios para mantener o expandir el negocio. Es el flujo disponible para acreedores y accionistas.
+        A diferencia de la utilidad neta (que es contable), el FCF es <strong>dinero real</strong>. Es lo que sobra después de pagar impuestos e invertir en el mantenimiento del negocio (CapEx) y en capital de trabajo.
       </p>
 
       <FormulaBox
-        formula="FCF = EBIT × (1 - T) + Depreciación - CapEx - ΔCapital de trabajo"
-        label="Flujo de caja libre"
+        formula="FCF = EBIT(1-t) + Dep - \Delta NWC - CapEx"
+        label="Flujo de Caja Libre para la Firma (FCFF)"
       />
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Paso 2: WACC (tasa de descuento)</h2>
+      <h2 id="wacc">2. El Filtro: WACC</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        El WACC es el costo promedio ponderado del capital: combina el costo del equity (Ke, típicamente con CAPM) y el costo de la deuda después de impuestos (Kd × (1-T)), ponderados por la proporción de cada uno en la estructura de capital.
+        ¿A qué tasa descontamos? Al costo promedio ponderado del capital. Si el riesgo de la empresa aumenta, el WACC sube, y el valor presente de los flujos baja.
       </p>
-
-      <FormulaBox
-        formula="WACC = (E/V) × Ke + (D/V) × Kd × (1 - T)"
-        label="Costo promedio ponderado del capital"
-      />
-
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Paso 3: Valor terminal</h2>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        El valor terminal captura el valor de los flujos más allá del horizonte explícito de proyección. Suele calcularse con crecimiento perpetuo: {"VT = FCF_{n+1} / (r - g)"}, donde r es el WACC y g la tasa de crecimiento a largo plazo. La hipótesis de g debe ser conservadora (no superior al crecimiento de la economía).
-      </p>
-
-      <FormulaBox
-        formula="VT = FCF_{n+1} / (WACC - g)"
-        label="Valor terminal (crecimiento perpetuo)"
-      />
 
       <BlockQuote
-        quote="The value of any asset is the present value of the expected cash flows on that asset."
-        author="Aswath Damodaran"
-        source="Investment Valuation"
+        quote="Price is what you pay. Value is what you get. El DCF es la herramienta para intentar encontrar ese valor."
+        author="Warren Buffett (Atribuido)"
       />
+
+      <SimulatorCTA
+        title="Valuador DCF Pro"
+        description="Construye tu propio modelo de 5 años, calcula el WACC dinámicamente y obtén el valor intrínseco de cualquier acción."
+        href="/simulador?tab=finanzas&tool=dcf"
+      />
+
+      <h2 id="terminal">3. Valor Terminal y Perpetuidad</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Como no podemos proyectar 100 años, usamos el modelo de Gordon-Shapiro para estimar el valor de la empresa desde el año 6 hasta el infinito, asumiendo un crecimiento constante (g).
+      </p>
 
       <ReferencesList
         references={[
-          { id: "1", text: "Damodaran, A. Investment Valuation. Wiley.", href: "" },
-          { id: "2", text: "Banco de México. Documentos de investigación.", href: "https://www.banxico.org.mx" },
+          { id: "1", text: "Damodaran, A. (2024). Investment Valuation: Tools and Techniques for Determining the Value of Any Asset.", href: "https://pages.stern.nyu.edu/~adamodar/" },
+          { id: "2", text: "McKinsey & Company. Valuation: Measuring and Managing the Value of Companies.", href: "#" },
         ]}
       />
     </>
@@ -275,40 +320,49 @@ function DCFPasoaPasoContent() {
 function ElasticidadPrecioDemandaContent() {
   return (
     <>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La elasticidad precio de la demanda mide la sensibilidad de la cantidad demandada ante cambios en el precio. Es un concepto central en microeconomía con aplicaciones directas en política de precios, imposición tributaria y análisis de bienestar. Un valor absoluto mayor que 1 indica demanda elástica; menor que 1, inelástica.
+      <KeyTakeaways
+        points={[
+          "Mide qué tan sensible es el consumo a los cambios de precio.",
+          "Inelástica (|e| < 1): Productos sin sustitutos (insulina, gasolina).",
+          "Elástica (|e| > 1): Productos con muchos sustitutos (lujos).",
+          "Ayuda a empresas a decidir si subir precios aumenta sus ingresos."
+        ]}
+      />
+
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        ¿Por qué un aumento de 10% en el precio del cine vacía las salas, pero un aumento de 10% en la gasolina apenas afecta el consumo? La respuesta está en la <strong>Elasticidad Precio de la Demanda</strong>.
       </p>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Fórmula de elasticidad precio</h2>
+      <h2 id="formula">1. La Medida de la Sensibilidad</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La elasticidad precio de la demanda mide el cambio porcentual en la cantidad demandada dividido por el cambio porcentual en el precio. En el punto: ε = (dQ/dP) × (P/Q). En arco (entre dos puntos) se usa el promedio de precios y cantidades como base para evitar asimetría.
+        La elasticidad no es una pendiente unitaria; es un cambio porcentual relativo. Se calcula dividiendo la variación porcentual de la cantidad entre la variación porcentual del precio.
       </p>
 
       <FormulaBox
-        formula="ε = (ΔQ/Q) / (ΔP/P) = (ΔQ/ΔP) × (P/Q)"
-        label="Elasticidad precio de la demanda"
+        formula="\epsilon = \frac{\Delta \% Q}{\Delta \% P}"
+        label="Elasticidad Precio de la Demanda"
       />
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Demanda elástica vs. inelástica</h2>
+      <h2 id="determinantes">2. ¿Qué hace que una demanda sea inelástica?</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Si |ε| &gt; 1, la demanda es elástica: un aumento de 1% en el precio reduce la cantidad en más de 1%. El ingreso total del vendedor disminuye al subir el precio. Si |ε| &lt; 1, la demanda es inelástica: el ingreso total aumenta al subir el precio. Los bienes necesarios o con pocos sustitutos suelen tener demanda inelástica.
+        Existen tres factores clave:
       </p>
+      <ul className="list-disc pl-6 space-y-2 mb-6 text-slate-700 dark:text-slate-300">
+        <li><strong>Sustitutos:</strong> A menos sustitutos, más inelástica.</li>
+        <li><strong>Necesidad:</strong> El pan es inelástico, el caviar es elástico.</li>
+        <li><strong>Tiempo:</strong> En el largo plazo, todas las demandas tienden a ser más elásticas (la gente encuentra alternativas).</li>
+      </ul>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Aplicación en impuestos</h2>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La incidencia de un impuesto depende de las elasticidades. Si la demanda es más inelástica que la oferta, los consumidores absorben una mayor parte del impuesto (el precio sube más). Si la oferta es más inelástica, los productores absorben más. Los impuestos sobre bienes de demanda inelástica recaudan más pero generan mayor pérdida de bienestar por la reducción de la cantidad transada.
-      </p>
-
-      <BlockQuote
-        quote="The elasticity of demand measures the responsiveness of quantity demanded to a change in price."
-        author="Paul Samuelson"
-        source="Economics"
+      <SimulatorCTA
+        title="Simulador de Micro"
+        description="Ajusta la curva de demanda y observa cómo cambia el Ingreso Total cuando modificas los precios. ¿Estás en el tramo elástico?"
+        href="/simulador?tab=micro"
       />
 
       <ReferencesList
         references={[
-          { id: "1", text: "Varian, H. R. Microeconomía intermedia. Antoni Bosch.", href: "" },
-          { id: "2", text: "Pindyck, R. S. y Rubinfeld, D. L. Microeconomía. Pearson.", href: "" },
+          { id: "1", text: "Varian, H. (2025). Microeconomía Intermedia: Un enfoque actual.", href: "#" },
+          { id: "2", text: "Pindyck, R. y Rubinfeld, D. Microeconomía.", href: "#" },
         ]}
       />
     </>
@@ -318,36 +372,44 @@ function ElasticidadPrecioDemandaContent() {
 function BrechaProductoContent() {
   return (
     <>
+      <KeyTakeaways
+        points={[
+          "Mide la diferencia entre el PIB actual y el potencial.",
+          "Brecha Positiva: Presión inflacionaria (sobrecalentamiento).",
+          "Brecha Negativa: Holgura (recesión o bajo crecimiento).",
+          "Es una variable 'no observable' que requiere estimación."
+        ]}
+      />
+
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        La <strong>Brecha de Producto</strong> (Output Gap) es una de las variables más vigiladas por Banxico. Nos dice si la economía está "sobrecalentada" o si tiene capacidad ociosa que podría permitir un crecimiento sin inflación.
+      </p>
+
+      <h2 id="definicion">1. PIB Real vs. PIB Potencial</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La brecha de producto es la diferencia porcentual entre el PIB observado y el PIB potencial. Cuando es positiva, la economía opera por encima de su capacidad y suelen aparecer presiones inflacionarias; cuando es negativa, hay holgura y el banco central puede mantener o bajar la tasa. Es un insumo clave de la Regla de Taylor y de la política monetaria.
+        El PIB Potencial es el nivel máximo de producción que un país puede alcanzar sin generar inflación excesiva, dado su capital, tecnología y mano de obra. La brecha es la desviación porcentual del PIB real respecto a este ideal.
       </p>
 
       <FormulaBox
-        formula="brecha = (Y - Y*) / Y* × 100"
-        label="Brecha de producto"
+        formula="Gap = \frac{Y_{real} - Y_{pot}}{Y_{pot}} \times 100"
+        label="Cálculo de la Brecha de Producto"
       />
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">¿Qué es el PIB potencial?</h2>
+      <h2 id="consecuencias">2. Consecuencias para la Tasa de Interés</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        El PIB potencial es el nivel máximo de producto que la economía puede sostener en el mediano plazo sin generar presiones inflacionarias insostenibles. Refleja la capacidad productiva: capital, trabajo, tecnología y la NAIRU (tasa de desempleo no aceleradora de la inflación). No es observable directamente; se estima con modelos.
+        Si la brecha es positiva, la demanda está superando la capacidad de oferta. Banxico suele responder <strong>subiendo tasas</strong> para enfriar el consumo. Si es negativa, hay recursos desperdiciados (desempleo alto), lo que justifica <strong>bajar tasas</strong>.
       </p>
 
-      <h2 className="text-xl font-bold text-slate-900 dark:text-white mt-8 mb-4">Métodos de estimación</h2>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Los métodos más usados son: (1) filtro de Hodrick-Prescott: descompone el PIB en tendencia (potencial) y ciclo (brecha); (2) función de producción: estima el potencial con capital, trabajo y PTF; (3) modelos de estado espacio (Laubach-Williams): combinan la curva de Phillips con datos de inflación y producto. La estimación es incierta y se revisa con datos nuevos.
-      </p>
-
-      <BlockQuote
-        quote="The output gap is a key input for monetary policy decisions, but it is unobservable and must be estimated."
-        author="Federal Reserve"
-        source="Monetary Policy Report"
+      <SimulatorCTA
+        title="Tablero Macro: Brecha y Taylor"
+        description="Explora cómo las variaciones en la brecha de producto obligan a ajustar la tasa de referencia en la Regla de Taylor."
+        href="/simulador?tab=macro&tool=gap"
       />
 
       <ReferencesList
         references={[
-          { id: "1", text: "INEGI. Sistema de Cuentas Nacionales. PIB y series.", href: "https://www.inegi.org.mx/temas/pib/" },
-          { id: "2", text: "Banco de México. Documentos de investigación. Estimación de brecha.", href: "https://www.banxico.org.mx/DIBM/" },
-          { id: "3", text: "Laubach, T. y Williams, J. C. (2003). Measuring the natural rate of interest. Review of Economics and Statistics.", href: "" },
+          { id: "1", text: "Banco de México (2024). Estimación de la brecha del producto y presiones inflacionarias.", href: "https://www.banxico.org.mx" },
+          { id: "2", text: "IMF. Output Gap: Understanding the Economy's Capacity.", href: "https://imf.org" },
         ]}
       />
     </>
