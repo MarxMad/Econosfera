@@ -96,32 +96,21 @@ const USE_CASES = [
         task: "Quiero entender cómo funciona un AMM",
         target: "blockchain",
         tab: "amm"
-    }
-];
-
-const QUESTIONS = [
-    {
-        question: "¿Qué perfil describe mejor tu interés?",
-        options: [
-            { label: "💰 Inversión y Valores", value: "finanzas" },
-            { label: "🏛️ Política y Economía Global", value: "macro" },
-            { label: "⚡ Tecnología y Cripto", value: "blockchain" },
-            { label: "📈 Personal y Ahorro", value: "inflacion" }
-        ]
     },
     {
-        question: "¿Qué nivel de complejidad buscas?",
-        options: [
-            { label: "🌱 Básico / Educativo", value: "basic" },
-            { label: "🛠️ Aplicado / Profesional", value: "advanced" }
-        ]
+        title: "Soy Analista",
+        task: "Quiero calcular el punto de equilibrio",
+        target: "contadores"
+    },
+    {
+        title: "Soy Actuario",
+        task: "Quiero modelar riesgos y seguros",
+        target: "actuaria"
     }
 ];
 
 export default function SimuladorExplore({ onSelectModulo }: SimuladorExploreProps) {
     const [search, setSearch] = useState("");
-    const [step, setStep] = useState(0);
-    const [answers, setAnswers] = useState<string[]>([]);
 
     const filteredCategories = useMemo(() => {
         if (!search) return CATEGORIES;
@@ -132,17 +121,6 @@ export default function SimuladorExplore({ onSelectModulo }: SimuladorExplorePro
             c.featured.some(f => f.toLowerCase().includes(s))
         );
     }, [search]);
-
-    const handleRecommendation = (val: string) => {
-        const newAnswers = [...answers, val];
-        if (step < QUESTIONS.length - 1) {
-            setAnswers(newAnswers);
-            setStep(step + 1);
-        } else {
-            // Lógica de recomendación: por ahora usamos la primera respuesta para el módulo
-            onSelectModulo(newAnswers[0] as ModuloSimulador);
-        }
-    };
 
     return (
         <div className="space-y-10 animate-in fade-in duration-700 pb-10">
@@ -171,45 +149,6 @@ export default function SimuladorExplore({ onSelectModulo }: SimuladorExplorePro
                             onChange={(e) => setSearch(e.target.value)}
                             className="w-full pl-12 pr-4 py-4 rounded-2xl bg-slate-800 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all shadow-2xl"
                         />
-                    </div>
-                </div>
-            </div>
-
-            {/* Smart Recommender Section */}
-            <div className="space-y-6">
-                <h2 className="text-2xl font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                    <Activity className="w-6 h-6 text-emerald-500" />
-                    Recomendador Inteligente
-                </h2>
-
-                <div className="p-8 rounded-[2.5rem] bg-gradient-to-br from-slate-900 to-indigo-900 text-white border border-slate-800 shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 p-10 opacity-10">
-                        <Target className="w-40 h-40" />
-                    </div>
-
-                    <div className="relative z-10 max-w-2xl">
-                        {step < QUESTIONS.length ? (
-                            <div className="space-y-6 animate-in slide-in-from-right duration-300">
-                                <div className="flex items-center gap-4 mb-2">
-                                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-xs font-bold">
-                                        {step + 1}
-                                    </span>
-                                    <p className="text-blue-400 font-bold uppercase tracking-widest text-xs">Paso {step + 1} de {QUESTIONS.length}</p>
-                                </div>
-                                <h3 className="text-2xl font-black">{QUESTIONS[step].question}</h3>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                    {QUESTIONS[step].options.map((opt) => (
-                                        <button
-                                            key={opt.value}
-                                            onClick={() => handleRecommendation(opt.value)}
-                                            className="px-6 py-4 rounded-2xl bg-white/10 border border-white/10 hover:bg-white/20 transition-all font-bold text-left hover:scale-[1.02] active:scale-[0.98]"
-                                        >
-                                            {opt.label}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                        ) : null}
                     </div>
                 </div>
             </div>
@@ -268,14 +207,17 @@ export default function SimuladorExplore({ onSelectModulo }: SimuladorExplorePro
                     </div>
                 </div>
 
-                <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                     {USE_CASES.map((uc, i) => (
                         <button
                             key={i}
                             onClick={() => onSelectModulo(uc.target as ModuloSimulador)}
-                            className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-indigo-100 dark:border-indigo-800 hover:shadow-md transition-all text-left"
+                            className="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-indigo-100 dark:border-indigo-800 hover:shadow-md transition-all text-left group"
                         >
-                            <p className="text-[10px] font-black uppercase text-indigo-500 mb-1">{uc.title}</p>
+                            <div className="flex items-center justify-between mb-1">
+                                <p className="text-[10px] font-black uppercase text-indigo-500">{uc.title}</p>
+                                <ArrowRight className="w-3 h-3 text-indigo-300 group-hover:translate-x-1 transition-transform" />
+                            </div>
                             <h4 className="text-sm font-bold text-slate-800 dark:text-slate-200">{uc.task}</h4>
                         </button>
                     ))}
