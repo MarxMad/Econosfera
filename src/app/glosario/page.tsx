@@ -1,4 +1,5 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import React from "react";
 import Glosario from "@/components/Glosario";
 import GlosarioAdLayout from "@/components/GlosarioAdSidebars";
 import { TERMINOS, getSlugDeTermino, getDefinicionSEO } from "@/lib/glosario";
@@ -111,7 +112,9 @@ export default function GlosarioPage() {
       <GlosarioJsonLd />
       <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
         <GlosarioAdLayout compact={false}>
-          <Glosario standalone />
+          <React.Suspense fallback={<div className="p-8 text-center text-slate-500">Cargando glosario...</div>}>
+            <Glosario standalone />
+          </React.Suspense>
         </GlosarioAdLayout>
       </div>
     </div>
