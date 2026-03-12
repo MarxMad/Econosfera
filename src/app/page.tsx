@@ -10,6 +10,7 @@ import MiniSimulatorSeguros from "@/components/home/MiniSimulatorSeguros";
 import AuthModal from "@/components/home/AuthModal";
 import GaleriaSimuladores from "@/components/home/GaleriaSimuladores";
 import ComoFunciona from "@/components/home/ComoFunciona";
+import TimelineLanding from "@/components/home/TimelineLanding";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -119,7 +120,7 @@ export default function Home() {
                     <MiniValuacion />
                   </div>
                 </div>
-                        <div className="px-3 sm:px-4 py-2.5 bg-slate-800/50 border-t border-white/5 flex items-center justify-between gap-2">
+                <div className="px-3 sm:px-4 py-2.5 bg-slate-800/50 border-t border-white/5 flex items-center justify-between gap-2">
                   <span className="text-[10px] sm:text-xs text-slate-500 font-medium">Vista previa</span>
                   <button
                     type="button"
@@ -180,25 +181,25 @@ export default function Home() {
       <div className="bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800 py-6 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4">
           <div className="flex flex-wrap justify-between items-center gap-8 mb-6">
-          <div className="flex flex-col">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">2.4k+</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Usuarios Activos</span>
-          </div>
-          <div className="w-px h-10 bg-slate-200 dark:bg-slate-800 hidden md:block" />
-          <div className="flex flex-col">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">150+</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Países Impactados</span>
-          </div>
-          <div className="w-px h-10 bg-slate-200 dark:bg-slate-800 hidden md:block" />
-          <div className="flex flex-col">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">12s</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Tiempo de Valuación</span>
-          </div>
-          <div className="w-px h-10 bg-slate-200 dark:bg-slate-800 hidden md:block" />
-          <div className="flex flex-col">
-            <span className="text-3xl font-black text-slate-900 dark:text-white">99%</span>
-            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Satisfacción</span>
-          </div>
+            <div className="flex flex-col">
+              <span className="text-3xl font-black text-slate-900 dark:text-white">2.4k+</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Usuarios Activos</span>
+            </div>
+            <div className="w-px h-10 bg-slate-200 dark:bg-slate-800 hidden md:block" />
+            <div className="flex flex-col">
+              <span className="text-3xl font-black text-slate-900 dark:text-white">150+</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Países Impactados</span>
+            </div>
+            <div className="w-px h-10 bg-slate-200 dark:bg-slate-800 hidden md:block" />
+            <div className="flex flex-col">
+              <span className="text-3xl font-black text-slate-900 dark:text-white">12s</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Tiempo de Valuación</span>
+            </div>
+            <div className="w-px h-10 bg-slate-200 dark:bg-slate-800 hidden md:block" />
+            <div className="flex flex-col">
+              <span className="text-3xl font-black text-slate-900 dark:text-white">99%</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Satisfacción</span>
+            </div>
           </div>
         </div>
       </div>
@@ -244,6 +245,9 @@ export default function Home() {
 
       {/* Cómo funciona */}
       <ComoFunciona onProbarClick={handleProbarClick} />
+
+      {/* Cronología Histórica (Crisis, Nobels, Teorías) */}
+      <TimelineLanding />
 
       {/* Galería de simuladores */}
       <GaleriaSimuladores onProbarClick={handleProbarClick} />

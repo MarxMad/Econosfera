@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { BookOpen, Award, BookMarked, AlertTriangle } from "lucide-react";
 import { buscarTerminos, getSlugDeTermino, getLetraInicial, getDefinicionSEO, FUENTES_CONCEPTOS, type TerminoGlosario } from "@/lib/glosario";
@@ -20,8 +21,17 @@ const MODULO_LABEL: Record<string, string> = {
 };
 
 export default function Glosario({ moduloActivo, onIrAModulo, standalone }: GlosarioProps) {
+  const searchParams = useSearchParams();
   const [busqueda, setBusqueda] = useState("");
   const [filtroModulo, setFiltroModulo] = useState<"todos" | ModuloSimulador | "general" | "teorias" | "nobel" | "contadores" | "crises">("todos");
+
+  useEffect(() => {
+    const filtro = searchParams.get("filtro");
+    const validFiltros = ["teorias", "nobel", "crises", "contadores", "general"];
+    if (filtro && validFiltros.includes(filtro)) {
+      setFiltroModulo(filtro as any);
+    }
+  }, [searchParams]);
 
   const terminosFiltrados = useMemo(() => {
     let resultado = buscarTerminos(busqueda);
