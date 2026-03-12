@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
-import { BookOpen, Award, BookMarked } from "lucide-react";
+import { BookOpen, Award, BookMarked, AlertTriangle } from "lucide-react";
 import { buscarTerminos, getSlugDeTermino, getLetraInicial, getDefinicionSEO, FUENTES_CONCEPTOS, type TerminoGlosario } from "@/lib/glosario";
 import { getLineaTiempoCompleta } from "@/lib/teoriasEconomicas";
 import type { ModuloSimulador } from "./NavSimuladores";
@@ -21,11 +21,11 @@ const MODULO_LABEL: Record<string, string> = {
 
 export default function Glosario({ moduloActivo, onIrAModulo, standalone }: GlosarioProps) {
   const [busqueda, setBusqueda] = useState("");
-  const [filtroModulo, setFiltroModulo] = useState<"todos" | ModuloSimulador | "general" | "teorias" | "nobel" | "contadores">("todos");
+  const [filtroModulo, setFiltroModulo] = useState<"todos" | ModuloSimulador | "general" | "teorias" | "nobel" | "contadores" | "crises">("todos");
 
   const terminosFiltrados = useMemo(() => {
     let resultado = buscarTerminos(busqueda);
-    if (filtroModulo !== "todos" && filtroModulo !== "teorias" && filtroModulo !== "nobel") {
+    if (filtroModulo !== "todos" && filtroModulo !== "teorias" && filtroModulo !== "nobel" && filtroModulo !== "crises") {
       resultado = resultado.filter((t) => t.modulo === filtroModulo);
     }
     return resultado;
@@ -53,13 +53,15 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
   const lineaTiempoFiltrada = useMemo(() => {
     if (filtroModulo === "teorias") return lineaTiempoCompleta.filter((e) => e.tipo === "teoria");
     if (filtroModulo === "nobel") return lineaTiempoCompleta.filter((e) => e.tipo === "nobel");
+    if (filtroModulo === "crises") return lineaTiempoCompleta.filter((e) => e.tipo === "crisis");
     return lineaTiempoCompleta;
   }, [lineaTiempoCompleta, filtroModulo]);
 
-  const modulos: Array<{ id: "todos" | ModuloSimulador | "general" | "teorias" | "nobel" | "contadores"; label: string; icon?: React.ReactNode; destacado?: "teorias" | "nobel" }> = [
+  const modulos: Array<{ id: "todos" | ModuloSimulador | "general" | "teorias" | "nobel" | "contadores" | "crises"; label: string; icon?: React.ReactNode; destacado?: "teorias" | "nobel" | "crises" }> = [
     { id: "todos", label: "Todos" },
     { id: "teorias", label: "Teorías", icon: <BookMarked className="w-3.5 h-3.5" />, destacado: "teorias" },
     { id: "nobel", label: "Nobel", icon: <Award className="w-3.5 h-3.5" />, destacado: "nobel" },
+    { id: "crises", label: "Crisis", icon: <AlertTriangle className="w-3.5 h-3.5" />, destacado: "crises" },
     { id: "inflacion", label: "Inflación" },
     { id: "monetaria", label: "Teoría monetaria" },
     { id: "macro", label: "Macro" },
@@ -102,19 +104,24 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
         {modulos.map((mod) => {
           const isTeorias = mod.destacado === "teorias";
           const isNobel = mod.destacado === "nobel";
+          const isCrises = mod.id === "crises";
           const isActive = filtroModulo === mod.id;
           const activeClass = isTeorias && isActive
             ? "bg-indigo-600 text-white shadow shadow-indigo-200 dark:shadow-indigo-900/50"
             : isNobel && isActive
               ? "bg-amber-500 text-amber-950 shadow shadow-amber-200 dark:shadow-amber-900/50"
-              : isActive
-                ? "bg-blue-600 text-white shadow"
-                : "";
+              : isCrises && isActive
+                ? "bg-rose-600 text-white shadow shadow-rose-200 dark:shadow-rose-900/50"
+                : isActive
+                  ? "bg-blue-600 text-white shadow"
+                  : "";
           const inactiveClass = isTeorias && !isActive
             ? "bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50"
             : isNobel && !isActive
               ? "bg-amber-50 dark:bg-amber-950/30 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800 hover:bg-amber-100 dark:hover:bg-amber-900/40"
-              : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600";
+              : isCrises && !isActive
+                ? "bg-rose-50 dark:bg-rose-950/30 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800 hover:bg-rose-100 dark:hover:bg-rose-900/40"
+                : "bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-600";
           return (
             <button
               key={mod.id}
@@ -128,20 +135,29 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
           );
         })}
       </div>
-      {/* Línea de tiempo: sección destacada cuando Teorías o Nobel */}
-      {(filtroModulo === "teorias" || filtroModulo === "nobel") && (
-        <div className="mb-6 rounded-3xl border-2 border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-slate-900 p-6 sm:p-8 shadow-xl overflow-hidden">
+      {/* Línea de tiempo: sección destacada cuando Teorías, Nobel o Crisis */}
+      {(filtroModulo === "teorias" || filtroModulo === "nobel" || filtroModulo === "crises") && (
+        <div className={`mb-6 rounded-3xl border-2 p-6 sm:p-8 shadow-xl overflow-hidden ${filtroModulo === "crises" ? "border-rose-200 dark:border-rose-800 bg-gradient-to-br from-rose-50 to-orange-50 dark:from-rose-950/40 dark:to-slate-900" :
+          "border-indigo-200 dark:border-indigo-800 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/40 dark:to-slate-900"
+          }`}>
           <div className="flex items-center gap-3 mb-6">
-            <div className={`p-3 rounded-2xl ${filtroModulo === "nobel" ? "bg-amber-100 dark:bg-amber-900/40" : "bg-indigo-100 dark:bg-indigo-900/40"}`}>
+            <div className={`p-3 rounded-2xl ${filtroModulo === "nobel" ? "bg-amber-100 dark:bg-amber-900/40" :
+              filtroModulo === "crises" ? "bg-rose-100 dark:bg-rose-900/40" :
+                "bg-indigo-100 dark:bg-indigo-900/40"
+              }`}>
               {filtroModulo === "nobel" ? (
                 <Award className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+              ) : filtroModulo === "crises" ? (
+                <AlertTriangle className="w-8 h-8 text-rose-600 dark:text-rose-400" />
               ) : (
                 <BookMarked className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
               )}
             </div>
             <div>
               <h3 className="text-xl sm:text-2xl font-black text-slate-900 dark:text-white">
-                {filtroModulo === "nobel" ? "Premios Nobel de Economía" : "Línea de tiempo: Teorías económicas"}
+                {filtroModulo === "nobel" ? "Premios Nobel de Economía" :
+                  filtroModulo === "crises" ? "Historia de las Crisis Financieras" :
+                    "Línea de tiempo: Teorías económicas"}
               </h3>
               {filtroModulo === "nobel" && (
                 <Link href="/premios-nobel-economia" className="inline-block mt-1 text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline">
@@ -151,24 +167,39 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 {filtroModulo === "nobel"
                   ? `${lineaTiempoFiltrada.length} galardonados desde 1969`
-                  : `${lineaTiempoFiltrada.length} hitos desde 1758`}
+                  : filtroModulo === "crises"
+                    ? `${lineaTiempoFiltrada.length} grandes pánicos desde 1637`
+                    : `${lineaTiempoFiltrada.length} hitos desde 1758`}
               </p>
             </div>
           </div>
           <div className="relative border-l-2 border-indigo-300 dark:border-indigo-700 pl-6 sm:pl-8 space-y-6 max-h-[70vh] overflow-y-auto">
             {lineaTiempoFiltrada.map((evento, idx) => (
               <div key={idx} className="relative">
-                <div className="absolute -left-[29px] sm:-left-[33px] top-0 w-4 h-4 rounded-full border-2 border-indigo-400 dark:border-indigo-600 bg-white dark:bg-slate-900" />
+                <div className={`absolute -left-[29px] sm:-left-[33px] top-0 w-4 h-4 rounded-full border-2 bg-white dark:bg-slate-900 ${evento.tipo === "crisis" ? "border-rose-400 dark:border-rose-600" : "border-indigo-400 dark:border-indigo-600"
+                  }`} />
                 {evento.tipo === "nobel" && (
                   <div className="absolute -left-[31px] sm:-left-[35px] top-0 w-6 h-6 rounded-full bg-amber-400 dark:bg-amber-500 flex items-center justify-center shadow-md">
                     <Award className="w-3 h-3 text-amber-900" />
                   </div>
                 )}
-                <div className={`rounded-xl border p-4 sm:p-5 transition-shadow hover:shadow-md ${evento.tipo === "nobel" ? "border-amber-200 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/30" : "border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800/50"}`}>
+                {evento.tipo === "crisis" && (
+                  <div className="absolute -left-[31px] sm:-left-[35px] top-0 w-6 h-6 rounded-full bg-rose-500 dark:bg-rose-600 flex items-center justify-center shadow-md">
+                    <AlertTriangle className="w-3 h-3 text-white" />
+                  </div>
+                )}
+                <div className={`rounded-xl border p-4 sm:p-5 transition-shadow hover:shadow-md ${evento.tipo === "nobel" ? "border-amber-200 dark:border-amber-800 bg-amber-50/80 dark:bg-amber-950/30" :
+                  evento.tipo === "crisis" ? "border-rose-200 dark:border-rose-800 bg-rose-50/80 dark:bg-rose-950/30" :
+                    "border-indigo-200 dark:border-indigo-800 bg-white dark:bg-slate-800/50"
+                  }`}>
                   <div className="flex flex-wrap items-baseline gap-2 mb-1">
-                    <span className="font-mono text-base font-black text-indigo-600 dark:text-indigo-400">{evento.year}</span>
+                    <span className={`font-mono text-base font-black ${evento.tipo === "crisis" ? "text-rose-600 dark:text-rose-400" : "text-indigo-600 dark:text-indigo-400"
+                      }`}>{evento.year}</span>
                     {evento.tipo === "nobel" && (
                       <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-amber-200 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">Nobel Economía</span>
+                    )}
+                    {evento.tipo === "crisis" && (
+                      <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase bg-rose-200 text-rose-800 dark:bg-rose-900/50 dark:text-rose-300">Crisis Financiera</span>
                     )}
                   </div>
                   <h4 className="font-bold text-lg text-slate-800 dark:text-slate-100">{evento.nombre}</h4>
@@ -188,7 +219,7 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
         </div>
       )}
 
-      <div className={`p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-y-auto ${(filtroModulo === "teorias" || filtroModulo === "nobel") ? "hidden" : ""} ${standalone ? "min-h-[60vh]" : "max-h-[600px]"}`}>
+      <div className={`p-6 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-y-auto ${(filtroModulo === "teorias" || filtroModulo === "nobel" || filtroModulo === "crises") ? "hidden" : ""} ${standalone ? "min-h-[60vh]" : "max-h-[600px]"}`}>
         {terminosFiltrados.length === 0 ? (
           <p className="text-slate-500 dark:text-slate-400 text-center py-8">
             No se encontraron términos con "{busqueda}"
@@ -207,56 +238,56 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
                 </div>
                 <div className="space-y-4">
                   {terminos.map((termino, idx) => {
-              const slug = getSlugDeTermino(termino.termino);
-              const isLink = Boolean(slug && standalone);
-              const content = (
-                <>
-                  <div className="flex items-start justify-between gap-3 mb-2">
-                    <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">{termino.termino}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
-                        {MODULO_LABEL[termino.modulo] ?? termino.modulo}
-                      </span>
-                      {onIrAModulo && !standalone && termino.modulo !== "general" && termino.modulo !== "teorias" && termino.modulo !== moduloActivo && (
-                        <button
-                          type="button"
-                          onClick={() => onIrAModulo(termino.modulo as ModuloSimulador)}
-                          className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                        >
-                          Ir →
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                  <p className="text-slate-600 dark:text-slate-400 mb-2">{getDefinicionSEO(termino)}</p>
-                  {termino.formula && (
-                    <div className="mt-2 p-3 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 overflow-x-auto">
-                      <p className="text-sm font-mono text-slate-800 dark:text-slate-200 whitespace-nowrap">{termino.formula}</p>
-                    </div>
-                  )}
-                  {termino.ejemplo && (
-                    <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 italic">
-                      <strong>Ejemplo:</strong> {termino.ejemplo}
-                    </p>
-                  )}
-                  {isLink && (
-                    <p className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium">
-                      Ver definición completa →
-                    </p>
-                  )}
-                </>
-              );
-              const className = `p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30 hover:shadow-md transition-shadow ${isLink ? "block" : ""}`;
-              return isLink && slug ? (
-                <Link key={`${letra}-${idx}`} href={`/glosario/${slug}`} className={className}>
-                  {content}
-                </Link>
-              ) : (
-                <div key={`${letra}-${idx}`} className={className}>
-                  {content}
-                </div>
-              );
-            })}
+                    const slug = getSlugDeTermino(termino.termino);
+                    const isLink = Boolean(slug && standalone);
+                    const content = (
+                      <>
+                        <div className="flex items-start justify-between gap-3 mb-2">
+                          <h3 className="font-bold text-slate-800 dark:text-slate-100 text-lg">{termino.termino}</h3>
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300">
+                              {MODULO_LABEL[termino.modulo] ?? termino.modulo}
+                            </span>
+                            {onIrAModulo && !standalone && termino.modulo !== "general" && termino.modulo !== "teorias" && termino.modulo !== moduloActivo && (
+                              <button
+                                type="button"
+                                onClick={() => onIrAModulo(termino.modulo as ModuloSimulador)}
+                                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                              >
+                                Ir →
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        <p className="text-slate-600 dark:text-slate-400 mb-2">{getDefinicionSEO(termino)}</p>
+                        {termino.formula && (
+                          <div className="mt-2 p-3 rounded-lg bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 overflow-x-auto">
+                            <p className="text-sm font-mono text-slate-800 dark:text-slate-200 whitespace-nowrap">{termino.formula}</p>
+                          </div>
+                        )}
+                        {termino.ejemplo && (
+                          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400 italic">
+                            <strong>Ejemplo:</strong> {termino.ejemplo}
+                          </p>
+                        )}
+                        {isLink && (
+                          <p className="mt-2 text-xs text-blue-600 dark:text-blue-400 font-medium">
+                            Ver definición completa →
+                          </p>
+                        )}
+                      </>
+                    );
+                    const className = `p-4 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/30 hover:shadow-md transition-shadow ${isLink ? "block" : ""}`;
+                    return isLink && slug ? (
+                      <Link key={`${letra}-${idx}`} href={`/glosario/${slug}`} className={className}>
+                        {content}
+                      </Link>
+                    ) : (
+                      <div key={`${letra}-${idx}`} className={className}>
+                        {content}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}

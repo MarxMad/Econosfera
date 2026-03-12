@@ -3,7 +3,7 @@
  * Referencia: manuales de historia del pensamiento económico, Nobel Prize official.
  */
 
-export type TipoEvento = "teoria" | "nobel";
+export type TipoEvento = "teoria" | "nobel" | "crisis";
 
 export interface EventoTeoria {
   year: number;
@@ -22,7 +22,15 @@ export interface EventoNobel {
   tipo: "nobel";
 }
 
-export type EventoLinea = EventoTeoria | EventoNobel;
+export interface EventoCrisis {
+  year: number;
+  autor: string;
+  nombre: string;
+  descripcion: string;
+  tipo: "crisis";
+}
+
+export type EventoLinea = EventoTeoria | EventoNobel | EventoCrisis;
 
 /** Principales teorías y obras de la economía (orden cronológico). */
 export const TEORIAS_ECONOMICAS: EventoTeoria[] = [
@@ -92,8 +100,22 @@ export const NOBELES_ECONOMIA: EventoNobel[] = [
   { year: 2024, autor: "Daron Acemoglu, Simon Johnson, James Robinson", nombre: "Nobel Economía", descripcion: "Estudio de cómo se forman las instituciones y afectan la prosperidad.", tipo: "nobel" },
 ];
 
+/** Principales crisis financieras de la historia. */
+export const CRISIS_FINANCIERAS: EventoCrisis[] = [
+  { year: 1637, autor: "Especulación en Holanda", nombre: "Manía de los Tulipanes", descripcion: "Considerada la primera gran burbuja financiera de la historia. El precio de los bulbos de tulipán alcanzó niveles astronómicos antes de colapsar repentinamente.", tipo: "crisis" },
+  { year: 1720, autor: "Reino Unido", nombre: "Burbuja de los Mares del Sur", descripcion: "Especulación masiva en acciones de la South Sea Company, basada en el monopolio del comercio con las colonias españolas en América.", tipo: "crisis" },
+  { year: 1720, autor: "Francia / John Law", nombre: "Burbuja del Mississippi", descripcion: "John Law creó una burbuja de papel moneda respaldada por acciones de la Compañía de Occidente, resultando en un colapso total de la confianza financiera.", tipo: "crisis" },
+  { year: 1873, autor: "EE.UU. / Europa", nombre: "Gran Pánico de 1873", descripcion: "Colapso del banco Jay Cooke & Co. y de la expansión ferroviaria, marcando el inicio de la 'Larga Depresión' que duró dos décadas.", tipo: "crisis" },
+  { year: 1929, autor: "Mundial", nombre: "La Gran Depresión", descripcion: "El Crack de Wall Street de octubre de 1929 desencadenó la crisis más severa del capitalismo en el siglo XX, con desempleo y deflación masiva.", tipo: "crisis" },
+  { year: 1987, autor: "Global", nombre: "Lunes Negro", descripcion: "El 19 de octubre de 1987, los mercados bursátiles mundiales sufrieron una caída repentina y estrepitosa, la mayor pérdida porcentual en un día.", tipo: "crisis" },
+  { year: 1997, autor: "Sudeste Asiático", nombre: "Crisis Financiera Asiática", descripcion: "Devaluación del baht tailandés que provocó un efecto dominó en mercados emergentes y replanteó la movilidad de capitales globales.", tipo: "crisis" },
+  { year: 2000, autor: "Tecnología / Internet", nombre: "Burbuja Dot-com", descripcion: "Colapso masivo de las empresas punto-com tras años de valoraciones infladas sin ingresos reales, afectando la inversión en tecnología.", tipo: "crisis" },
+  { year: 2008, autor: "Crisis Subprime", nombre: "La Gran Recesión", descripcion: "Crisis sistémica originada en hipotecas tóxicas en EE.UU. que llevó al colapso de Lehman Brothers y la mayor crisis financiera desde 1929.", tipo: "crisis" },
+  { year: 2020, autor: "Pandemia Global", nombre: "Shock del COVID-19", descripcion: "El cierre repentino de la economía global causó una recesión instantánea y masiva, seguida de una recuperación volátil con alta inflación.", tipo: "crisis" },
+];
+
 /** Eventos unificados y ordenados por año para la línea de tiempo. */
 export function getLineaTiempoCompleta(): EventoLinea[] {
-  const todos: EventoLinea[] = [...TEORIAS_ECONOMICAS, ...NOBELES_ECONOMIA];
+  const todos: EventoLinea[] = [...TEORIAS_ECONOMICAS, ...NOBELES_ECONOMIA, ...CRISIS_FINANCIERAS];
   return todos.sort((a, b) => a.year - b.year);
 }
