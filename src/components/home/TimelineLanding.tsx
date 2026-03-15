@@ -39,8 +39,8 @@ export default function TimelineLanding() {
 
             {/* Marquee Header - Absolute dynamism */}
             <div className="w-full overflow-hidden bg-slate-50/50 dark:bg-slate-900/30 border-y border-slate-100 dark:border-slate-800 py-3 mb-16">
-                <div className="flex whitespace-nowrap animate-marquee gap-10">
-                    {lineaTiempo.slice(0, 20).map((e, i) => (
+                <div className="flex w-max animate-marquee gap-10">
+                    {lineaTiempo.slice(0, 30).map((e, i) => (
                         <div key={i} className="flex items-center gap-3">
                             <span className="text-xs font-black text-slate-400 dark:text-slate-600">{e.year}</span>
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tighter">{e.nombre}</span>
@@ -48,7 +48,7 @@ export default function TimelineLanding() {
                         </div>
                     ))}
                     {/* Duplicate for infinite effect */}
-                    {lineaTiempo.slice(0, 20).map((e, i) => (
+                    {lineaTiempo.slice(0, 30).map((e, i) => (
                         <div key={`dup-${i}`} className="flex items-center gap-3">
                             <span className="text-xs font-black text-slate-400 dark:text-slate-600">{e.year}</span>
                             <span className="text-xs font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tighter">{e.nombre}</span>
@@ -179,15 +179,6 @@ export default function TimelineLanding() {
                 </div>
             </div>
 
-            <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 40s linear infinite;
-        }
-      `}</style>
         </section>
     );
 }
