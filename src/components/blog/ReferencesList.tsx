@@ -19,20 +19,20 @@ export default function ReferencesList({ references, title = "Referencias", clas
       <h3 className="text-sm font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
         {title}
       </h3>
-      <ol className="space-y-2 text-sm text-slate-600 dark:text-slate-300 list-decimal list-inside">
+      <ol className="space-y-2 text-sm text-slate-600 dark:text-slate-300 list-decimal list-inside break-words min-w-0">
         {references.map((ref) => (
-          <li key={ref.id} id={`ref-${ref.id}`}>
+          <li key={ref.id} id={`ref-${ref.id}`} className="break-words">
             {ref.href ? (
               <a
                 href={ref.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-blue-600 dark:hover:text-blue-400 underline underline-offset-2"
+                className="hover:text-blue-600 dark:hover:text-blue-400 underline underline-offset-2 break-words"
               >
                 {ref.text}
               </a>
             ) : (
-              <span>{ref.text}</span>
+              <span className="break-words">{ref.text}</span>
             )}
           </li>
         ))}

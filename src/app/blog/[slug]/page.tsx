@@ -38,16 +38,16 @@ export default async function BlogArticlePage({ params }: Props) {
   const ContentComponent = BLOG_CONTENT[post.slug];
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] selection:bg-blue-500/30">
+    <div className="min-h-screen bg-slate-50 dark:bg-[#020617] selection:bg-blue-500/30 overflow-x-hidden">
       {/* Reading Progress Bar (Client Component needed for real interactivity, but for now we skip or use CSS) */}
       <div className="fixed top-0 left-0 h-1.5 bg-blue-600 z-[100] transition-all" style={{ width: '0%' }} id="reading-progress" />
 
       {/* Hero Header Section */}
-      <div className="relative w-full overflow-hidden pt-20 pb-12 sm:pb-20">
+      <div className="relative w-full overflow-hidden pt-16 sm:pt-20 pb-10 sm:pb-20">
         <div className="absolute inset-0 bg-slate-100 dark:bg-slate-900/50" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(37,99,235,0.05),transparent)]" />
 
-        <div className="max-w-5xl mx-auto px-4 relative z-10">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 relative z-10 min-w-0">
           <nav aria-label="Breadcrumb" className="mb-12">
             <Link
               href="/blog"
@@ -58,7 +58,7 @@ export default async function BlogArticlePage({ params }: Props) {
             </Link>
           </nav>
 
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             <div className="space-y-8">
               <div className="flex items-center gap-3">
                 <span className="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-blue-600 text-white shadow-xl shadow-blue-500/30">
@@ -72,7 +72,7 @@ export default async function BlogArticlePage({ params }: Props) {
                 </div>
               </div>
 
-              <h1 className="text-4xl sm:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-[1.15] tracking-tight break-words">
                 {post.title}
               </h1>
 
@@ -93,9 +93,9 @@ export default async function BlogArticlePage({ params }: Props) {
               </div>
             </div>
 
-            <div className="relative">
+            <div className="relative min-w-0 hidden sm:block">
               <div className="absolute inset-0 bg-blue-600 blur-[100px] opacity-20 -z-10" />
-              <div className="aspect-[4/5] rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative rotate-3 hover:rotate-0 transition-all duration-700">
+              <div className="aspect-[4/5] rounded-2xl sm:rounded-[2.5rem] overflow-hidden border border-white/10 shadow-2xl relative rotate-0 sm:rotate-3 hover:rotate-0 transition-all duration-700">
                 {post.image ? (
                   <img src={post.image} alt={post.title} className="w-full h-full object-cover scale-110 hover:scale-100 transition-transform duration-1000" />
                 ) : (
@@ -110,14 +110,15 @@ export default async function BlogArticlePage({ params }: Props) {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto px-4 grid lg:grid-cols-[1fr_300px] gap-16 py-12">
-        <article className="prose prose-slate dark:prose-invert prose-lg max-w-none 
-          prose-headings:font-black prose-headings:tracking-tighter prose-headings:text-slate-900 dark:prose-headings:text-white
-          prose-p:leading-relaxed prose-p:text-slate-600 dark:prose-p:text-slate-400
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-10 lg:gap-16 py-10 sm:py-12">
+        <article className="min-w-0 prose prose-slate dark:prose-invert prose-sm sm:prose-base lg:prose-lg max-w-none
+          prose-headings:font-black prose-headings:tracking-tighter prose-headings:text-slate-900 dark:prose-headings:text-white prose-headings:break-words
+          prose-p:leading-relaxed prose-p:text-slate-600 dark:prose-p:text-slate-400 prose-p:break-words
           prose-strong:text-slate-900 dark:prose-strong:text-white
-          prose-img:rounded-[2.5rem] prose-img:shadow-2xl
-          prose-code:text-blue-600 dark:prose-code:text-blue-400
-          prose-a:no-underline hover:prose-a:underline
+          prose-img:rounded-2xl sm:prose-img:rounded-[2.5rem] prose-img:shadow-2xl prose-img:max-w-full prose-img:h-auto
+          prose-code:text-blue-600 dark:prose-code:text-blue-400 prose-code:text-sm prose-code:break-all
+          prose-a:no-underline hover:prose-a:underline prose-a:break-words
+          prose-ul:break-words prose-li:break-words
         ">
           {ContentComponent ? (
             <ContentComponent />
@@ -131,8 +132,8 @@ export default async function BlogArticlePage({ params }: Props) {
           )}
         </article>
 
-        <aside className="space-y-12">
-          <div className="sticky top-24 space-y-12">
+        <aside className="space-y-12 order-first lg:order-none min-w-0">
+          <div className="lg:sticky lg:top-24 space-y-12">
             {/* TOC Placeholder or Dynamic Sections can go here */}
 
             <div className="p-8 rounded-[2rem] bg-slate-900 text-white space-y-6">
@@ -149,7 +150,7 @@ export default async function BlogArticlePage({ params }: Props) {
       </div>
 
       {/* Final Call To Action */}
-      <div className="max-w-5xl mx-auto px-4 pb-20">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 pb-16 sm:pb-20">
         <footer className="mt-14 pt-12 border-t border-slate-200 dark:border-slate-800">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-8">
             <Link

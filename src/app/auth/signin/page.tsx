@@ -25,12 +25,14 @@ function SignInContent() {
     const verifyError = searchParams.get("error");
     const loginToken = searchParams.get("loginToken");
     const errorFromUrl = searchParams.get("error");
+    const callbackUrl = searchParams.get("callbackUrl") || "/simulador";
 
     useEffect(() => {
         if (status === "authenticated") {
-            router.push("/simulador");
+            const url = typeof callbackUrl === "string" && callbackUrl.startsWith("/") ? callbackUrl : "/simulador";
+            window.location.href = url;
         }
-    }, [status, router]);
+    }, [status, callbackUrl]);
 
     useEffect(() => {
         if (errorFromUrl === "CredentialsSignin") setError("Email o contraseña incorrectos");
@@ -48,8 +50,7 @@ function SignInContent() {
             });
             if (cancelled) return;
             if (res?.ok) {
-                router.push("/simulador");
-                router.refresh();
+                window.location.href = "/simulador";
             } else {
                 router.replace("/auth/signin?verified=1");
             }
@@ -65,12 +66,13 @@ function SignInContent() {
             const res = await signIn("credentials", {
                 email,
                 password,
-                callbackUrl: "/simulador",
+                callbackUrl: callbackUrl,
                 redirect: false,
             });
             if (res?.ok) {
-                router.push("/simulador");
-                router.refresh();
+                const url = typeof callbackUrl === "string" && callbackUrl.startsWith("/") ? callbackUrl : "/simulador";
+                window.location.href = url;
+                return;
             } else {
                 const msg = res?.error === "CredentialsSignin"
                     ? "Email o contraseña incorrectos"

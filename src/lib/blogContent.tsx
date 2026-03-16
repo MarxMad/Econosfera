@@ -49,6 +49,14 @@ export function EjemploReglaTaylorContent() {
       <p>
         En una economía abierta como la mexicana, la regla suele extenderse para incluir el <strong>tipo de cambio</strong> y la <strong>tasa de la Fed</strong>. Banxico debe considerar que una subida excesiva podría apreciar demasiado el peso, afectando a las exportaciones, mientras que quedarse corto ante la Fed podría causar fugas de capital.
       </p>
+      <p>
+        Los documentos de investigación del Banco de México publican periódicamente estimaciones de la tasa neutral (r*) y de la brecha de producto. Los analistas del mercado suelen comparar la tasa de fondeo vigente con la que arrojaría una regla de Taylor "estándar" o "modificada" para México, lo que genera expectativas sobre el sesgo de la siguiente decisión (alcista, neutral o recortes).
+      </p>
+
+      <h2 id="limitaciones">4. Limitaciones y Críticas</h2>
+      <p>
+        La regla no captura shocks financieros ni riesgos de cola; tampoco sustituye el juicio del comité. En épocas de crisis, los bancos centrales pueden desviarse deliberadamente de la regla para evitar una recesión profunda o para dar prioridad a la estabilidad financiera. Por eso se dice que la regla es una <strong>referencia</strong>, no un mandato mecánico.
+      </p>
 
       <BlockQuote
         quote="La política monetaria debe ser sistemática pero no mecánica. La Regla de Taylor es una brújula, no un piloto automático."
@@ -58,7 +66,7 @@ export function EjemploReglaTaylorContent() {
 
       <NewsletterBox />
 
-      <h2 id="conclusion">4. Conclusión para Estudiantes</h2>
+      <h2 id="conclusion">5. Conclusión para Estudiantes</h2>
       <p>
         Para fines de consulta académica, recuerda que el "Principio de Taylor" dicta que el banco central debe subir la tasa nominal <strong>más</strong> que proporcionalmente al aumento de la inflación. Si la inflación sube 1%, la tasa debería subir más de 1% para que la tasa <em>real</em> suba y realmente frene la demanda.
       </p>
@@ -110,15 +118,21 @@ function InflacionSubyacenteGeneralContent() {
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         Su principal desventaja para un banco central es el <strong>ruido</strong>. Si el precio del limón sube 200% por una helada, la inflación general subirá, pero ese aumento no es culpa de que haya "demasiado dinero" en la calle. Es un choque de oferta temporal.
       </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        El INEGI publica la inflación general cada quincena (las dos primeras quincenas del mes) y mensualmente. Los medios suelen destacar este número porque refleja el costo de vida que perciben los hogares; sin embargo, para tomar decisiones de política monetaria, Banxico pone mayor peso en la inflación subyacente.
+      </p>
 
       <h2 id="subyacente">2. La Inflación Subyacente: El Corazón de la Tendencia</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         Este indicador <strong>limpia</strong> la canasta, eliminando los componentes que "ensucian" la señal. Excluye:
       </p>
-      <ul className="list-disc pl-6 space-y-2 mb-6 text-slate-700 dark:text-slate-300">
+      <ul className="list-disc pl-6 space-y-2 mb-4 text-slate-700 dark:text-slate-300">
         <li><strong>Agropecuarios:</strong> Frutas y verduras (sujetos a clima).</li>
         <li><strong>Energéticos y tarifas:</strong> Gasolina, luz, gas (sujetos a geopolítica o subsidios).</li>
       </ul>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        Al excluir estos componentes, el indicador subyacente refleja mejor la presión de demanda y las expectativas de inflación que el banco central puede influir con la tasa de interés. En México, la meta de inflación de Banxico (3% ± 1%) se interpreta en la práctica como una meta sobre la inflación subyacente en el mediano plazo.
+      </p>
 
       <BlockQuote
         quote="La inflación subyacente refleja la verdadera presión de demanda y es la que Banxico puede controlar mediante la tasa de interés."
@@ -134,6 +148,14 @@ function InflacionSubyacenteGeneralContent() {
       <h2 id="divergencia">3. ¿Por qué es peligrosa la divergencia?</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         Cuando la inflación subyacente sube y se mantiene alta (resistencia a bajar), se dice que la inflación está <strong>"contaminando"</strong> otros precios. Esto suele forzar a Banxico a mantener tasas restrictivas por más tiempo, incluso si la inflación general parece estar bajando por una caída técnica en los energéticos.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Por el contrario, cuando la general está muy por encima de la subyacente (por ejemplo, por un spike en gasolina o en alimentos), el banco central puede optar por no reaccionar con subidas agresivas si considera que el choque es transitorio. La comunicación del banco suele hacer explícita esta distinción para anclar expectativas.
+      </p>
+
+      <h2 id="uso">4. Uso en la práctica: qué mirar cada quincena</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        El día de publicación del INPC, los mercados observan tanto la general como la subyacente. Si la subyacente se mantiene estable o baja mientras la general repunta por energéticos, la reacción de tasas suele ser moderada. Si la subyacente acelera, aumenta la probabilidad de que Banxico mantenga o suba la tasa en la siguiente decisión.
       </p>
 
       <ReferencesList
@@ -193,6 +215,16 @@ function ComoLeerMinutaBanxicoContent() {
         Busca siempre la sección sobre riesgos al alza y a la baja para la inflación. Si Banxico menciona riesgos <strong>"sesgados significativamente al alza"</strong>, es una señal inequívoca de que las tasas no bajarán pronto.
       </p>
 
+      <h2 id="forward">4. El Forward Guidance: pistas sobre el siguiente movimiento</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Las frases sobre la trayectoria futura de la tasa suelen aparecer al final del párrafo de deliberación. Expresiones como "mantendrán una postura restrictiva el tiempo necesario" indican que no hay prisa por bajar; "evaluarán el ritmo de ajuste" deja abierta la puerta a una pausa o a un recorte en reuniones futuras. Comparar el lenguaje de una minuta con la anterior es un ejercicio útil para detectar cambios de tono.
+      </p>
+
+      <h2 id="calendario">5. Calendario y fuentes</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Las minutas se publican dos jueves después de cada decisión de política monetaria en el sitio del Banco de México. Conviene tener a mano el calendario anual de reuniones y el de publicaciones para no perderse ninguna fecha clave.
+      </p>
+
       <ReferencesList
         references={[
           { id: "1", text: "Banco de México (2025). Calendario de publicación de minutas.", href: "https://www.banxico.org.mx" },
@@ -248,6 +280,16 @@ function ModeloISLMContent() {
       <h2 id="politica">3. Efectos de la Política</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         ¿Qué pasa si el gobierno aumenta el gasto (G)? La IS se desplaza a la derecha, aumentando el PIB pero también la tasa de interés (efecto <em>crowding-out</em>). ¿Y si el banco central aumenta la cantidad de dinero? La LM se desplaza a la derecha, bajando las tasas y estimulando la inversión.
+      </p>
+
+      <h2 id="extension">4. Extensiones: economía abierta y Mundell-Fleming</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        En economía abierta se añade el mercado de divisas y el tipo de cambio. El modelo Mundell-Fleming muestra que la eficacia de la política fiscal y monetaria depende del régimen cambiario (tipo de cambio fijo vs flexible). En un régimen flexible, la política monetaria gana efectividad para mover el producto, mientras que la política fiscal puede verse limitada por la apreciación del tipo de cambio y la caída de las exportaciones netas.
+      </p>
+
+      <h2 id="relevancia">5. Relevancia actual</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Aunque el IS-LM es un modelo de corto plazo con supuestos simplificadores (precios rígidos, economía cerrada en su versión básica), sigue siendo la columna vertebral de muchos cursos de macroeconomía y de los informes de bancos centrales que analizan el impacto de un cambio en G o M sobre el producto y las tasas. Dominarlo facilita entender modelos más avanzados como los DSGE.
       </p>
 
       <ReferencesList
@@ -307,6 +349,16 @@ function DCFPasoaPasoContent() {
         Como no podemos proyectar 100 años, usamos el modelo de Gordon-Shapiro para estimar el valor de la empresa desde el año 6 hasta el infinito, asumiendo un crecimiento constante (g).
       </p>
 
+      <h2 id="pasos">4. Pasos prácticos para armar un DCF</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        En la práctica se proyectan entre 5 y 10 años de FCF explícitos, se calcula el valor terminal (normalmente con crecimiento perpetuo o múltiplo de salida), se descuenta todo al WACC y se suma. El valor de la firma (Enterprise Value) menos la deuda neta y más el efectivo nos da el valor patrimonial; dividido entre las acciones en circulación, el valor por acción.
+      </p>
+
+      <h2 id="sensibilidad">5. Análisis de sensibilidad</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Dado que el valor terminal suele representar más del 70% del valor total, pequeños cambios en la tasa de crecimiento a largo plazo (g) o en el WACC pueden mover mucho la valoración. Por eso es habitual construir una tabla de sensibilidad (WACC en filas, g en columnas) para ver el rango de valores razonables y comunicar la incertidumbre a quien toma la decisión.
+      </p>
+
       <ReferencesList
         references={[
           { id: "1", text: "Damodaran, A. (2024). Investment Valuation: Tools and Techniques for Determining the Value of Any Asset.", href: "https://pages.stern.nyu.edu/~adamodar/" },
@@ -347,11 +399,21 @@ function ElasticidadPrecioDemandaContent() {
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         Existen tres factores clave:
       </p>
-      <ul className="list-disc pl-6 space-y-2 mb-6 text-slate-700 dark:text-slate-300">
+      <ul className="list-disc pl-6 space-y-2 mb-4 text-slate-700 dark:text-slate-300">
         <li><strong>Sustitutos:</strong> A menos sustitutos, más inelástica.</li>
         <li><strong>Necesidad:</strong> El pan es inelástico, el caviar es elástico.</li>
         <li><strong>Tiempo:</strong> En el largo plazo, todas las demandas tienden a ser más elásticas (la gente encuentra alternativas).</li>
       </ul>
+
+      <h2 id="aplicaciones">3. Aplicaciones: precios e impuestos</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Una empresa con demanda inelástica puede subir precios y aumentar ingresos; con demanda elástica, una subida de precios reduce el ingreso total. En política tributaria, los impuestos sobre bienes inelásticos (tabaco, gasolina) recaen más en el consumidor y generan ingresos estables para el fisco, pero con menor pérdida de bienestar en cantidad transada que cuando se gravan bienes elásticos.
+      </p>
+
+      <h2 id="elasticidad-cruzada">4. Elasticidad cruzada e ingreso</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Además de la elasticidad precio, se estudia la elasticidad cruzada (cómo cambia la cantidad demandada de un bien cuando cambia el precio de otro) y la elasticidad ingreso (cómo cambia la demanda cuando cambia la renta). Los bienes normales tienen elasticidad ingreso positiva; los inferiores, negativa. Estos conceptos son útiles para segmentar mercados y para diseño de política pública.
+      </p>
 
       <SimulatorCTA
         title="Simulador de Micro"
