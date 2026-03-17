@@ -246,52 +246,59 @@ export default function SimuladorExplore({ onSelectModulo }: SimuladorExplorePro
                 </div>
             </div>
 
-            {/* Redesigned Use Cases Section - atractivo en modo claro y oscuro */}
+            {/* Carrusel / ticker: ¿No sabes por dónde empezar? */}
             <div className="relative p-1.5 rounded-[2.5rem] bg-gradient-to-br from-indigo-400/30 via-blue-400/20 to-violet-400/30 dark:from-indigo-500/20 dark:via-slate-900/50 dark:to-blue-500/20 shadow-lg shadow-indigo-500/10 dark:shadow-none">
                 <div className="bg-white dark:bg-[#020617]/90 backdrop-blur-xl p-8 sm:p-12 rounded-[2.2rem] border border-slate-200/80 dark:border-white/10">
-                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-10">
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-8">
                         <div className="space-y-2">
                             <h2 className="text-3xl font-black text-slate-900 dark:text-white leading-tight">¿No sabes por dónde empezar?</h2>
-                            <p className="text-slate-600 dark:text-indigo-300 font-medium text-base">Flujos de trabajo por perfil: elige tu objetivo y te llevamos al simulador indicado.</p>
+                            <p className="text-slate-600 dark:text-indigo-300 font-medium text-base">Desliza y elige tu perfil — te llevamos al simulador indicado.</p>
                         </div>
                         <div className="hidden sm:flex p-4 rounded-2xl bg-indigo-500 text-white shadow-lg shadow-indigo-500/30">
                             <Sparkles className="w-8 h-8" />
                         </div>
                     </div>
 
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                        {USE_CASES.map((uc, i) => {
-                            const accents: Record<number, string> = {
-                                0: "from-blue-500/15 to-indigo-500/10 border-blue-200 dark:border-blue-500/30 hover:shadow-blue-500/15",
-                                1: "from-emerald-500/15 to-teal-500/10 border-emerald-200 dark:border-emerald-500/30 hover:shadow-emerald-500/15",
-                                2: "from-amber-500/15 to-orange-500/10 border-amber-200 dark:border-amber-500/30 hover:shadow-amber-500/15",
-                                3: "from-violet-500/15 to-purple-500/10 border-violet-200 dark:border-violet-500/30 hover:shadow-violet-500/15",
-                            };
-                            const accentColors: Record<number, string> = {
-                                0: "text-blue-600 dark:text-blue-400",
-                                1: "text-emerald-600 dark:text-emerald-400",
-                                2: "text-amber-600 dark:text-amber-400",
-                                3: "text-violet-600 dark:text-violet-400",
-                            };
-                            const acc = accents[i % 4];
-                            const accText = accentColors[i % 4];
-                            return (
-                                <button
-                                    key={i}
-                                    onClick={() => handleSelect(uc.target as ModuloSimulador, uc.tab)}
-                                    className={`group p-6 rounded-2xl bg-gradient-to-br ${acc} border hover:shadow-xl transition-all text-left relative overflow-hidden`}
-                                >
-                                    <div className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${i % 4 === 0 ? "from-blue-500 to-indigo-500" : i % 4 === 1 ? "from-emerald-500 to-teal-500" : i % 4 === 2 ? "from-amber-500 to-orange-500" : "from-violet-500 to-purple-500"} opacity-80 group-hover:opacity-100 transition-opacity`} />
-                                    <div className="flex items-center justify-between mb-3">
-                                        <span className={`text-[10px] font-black uppercase ${accText} tracking-[0.15em]`}>{uc.title}</span>
-                                        <div className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all shadow-sm">
-                                            <ArrowRight className="w-4 h-4" />
-                                        </div>
-                                    </div>
-                                    <h4 className="text-base font-bold text-slate-800 dark:text-slate-100 leading-relaxed pr-2">{uc.task}</h4>
-                                </button>
-                            );
-                        })}
+                    {/* Carrusel horizontal con scroll suave */}
+                    <div className="relative -mx-2 sm:-mx-4">
+                        <div className="overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory pb-2">
+                            <div className="flex gap-4 min-w-0 px-1" style={{ width: "max-content" }}>
+                                {USE_CASES.map((uc, i) => {
+                                    const accents: Record<number, string> = {
+                                        0: "from-blue-500/15 to-indigo-500/10 border-blue-200 dark:border-blue-500/30 hover:shadow-blue-500/15",
+                                        1: "from-emerald-500/15 to-teal-500/10 border-emerald-200 dark:border-emerald-500/30 hover:shadow-emerald-500/15",
+                                        2: "from-amber-500/15 to-orange-500/10 border-amber-200 dark:border-amber-500/30 hover:shadow-amber-500/15",
+                                        3: "from-violet-500/15 to-purple-500/10 border-violet-200 dark:border-violet-500/30 hover:shadow-violet-500/15",
+                                    };
+                                    const accentColors: Record<number, string> = {
+                                        0: "text-blue-600 dark:text-blue-400",
+                                        1: "text-emerald-600 dark:text-emerald-400",
+                                        2: "text-amber-600 dark:text-amber-400",
+                                        3: "text-violet-600 dark:text-violet-400",
+                                    };
+                                    const acc = accents[i % 4];
+                                    const accText = accentColors[i % 4];
+                                    return (
+                                        <button
+                                            key={i}
+                                            onClick={() => handleSelect(uc.target as ModuloSimulador, uc.tab)}
+                                            className={`group flex-shrink-0 w-[280px] sm:w-[300px] snap-center p-6 rounded-2xl bg-gradient-to-br ${acc} border hover:shadow-xl transition-all text-left relative overflow-hidden`}
+                                        >
+                                            <div className={`absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b ${i % 4 === 0 ? "from-blue-500 to-indigo-500" : i % 4 === 1 ? "from-emerald-500 to-teal-500" : i % 4 === 2 ? "from-amber-500 to-orange-500" : "from-violet-500 to-purple-500"} opacity-80 group-hover:opacity-100 transition-opacity`} />
+                                            <div className="flex items-center justify-between mb-3">
+                                                <span className={`text-[10px] font-black uppercase ${accText} tracking-[0.15em]`}>{uc.title}</span>
+                                                <div className="p-1.5 rounded-lg bg-white/80 dark:bg-slate-800/80 text-slate-600 dark:text-slate-300 opacity-0 group-hover:opacity-100 group-hover:translate-x-0 -translate-x-2 transition-all shadow-sm">
+                                                    <ArrowRight className="w-4 h-4" />
+                                                </div>
+                                            </div>
+                                            <h4 className="text-base font-bold text-slate-800 dark:text-slate-100 leading-relaxed pr-2">{uc.task}</h4>
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        {/* Gradiente suave a la derecha para indicar más contenido */}
+                        <div className="absolute top-0 right-0 bottom-2 w-12 sm:w-16 bg-gradient-to-l from-white dark:from-[#020617] to-transparent pointer-events-none rounded-r-lg opacity-90" aria-hidden />
                     </div>
                 </div>
             </div>

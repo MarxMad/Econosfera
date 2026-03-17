@@ -99,83 +99,87 @@ export default function TimelineLanding() {
                     </div>
                 </div>
 
-                {/* Timeline Grid with Dynamic Reveal */}
-                <div key={activeType} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 relative">
-                    {filteredEvents.map((evento, idx) => (
-                        <div
-                            key={idx}
-                            className="group relative p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500 dark:hover:border-blue-500/50 transition-all duration-500 hover:shadow-[0_20px_50px_-15px_rgba(59,130,246,0.15)] overflow-hidden animate-in fade-in slide-in-from-bottom-8 fill-mode-both"
-                            style={{ animationDelay: `${idx * 150}ms` }}
-                        >
-                            <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 dark:bg-slate-800/50 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-700" />
+                {/* Carrusel horizontal: hitos (mismo estilo que "No sabes por dónde empezar") */}
+                <div key={activeType} className="relative -mx-2 sm:-mx-4">
+                    <div className="overflow-x-auto overflow-y-hidden scroll-smooth snap-x snap-mandatory pb-2" style={{ width: "100%" }}>
+                        <div className="flex gap-6 min-w-0 px-1" style={{ width: "max-content" }}>
+                            {filteredEvents.map((evento, idx) => (
+                                <div
+                                    key={idx}
+                                    className="group relative flex-shrink-0 w-[300px] sm:w-[340px] snap-center p-8 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500 dark:hover:border-blue-500/50 transition-all duration-500 hover:shadow-[0_20px_50px_-15px_rgba(59,130,246,0.15)] overflow-hidden"
+                                >
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-slate-50 dark:bg-slate-800/50 rounded-bl-[5rem] -mr-10 -mt-10 group-hover:scale-125 group-hover:-rotate-12 transition-transform duration-700" />
 
-                            {/* Hover Backdrop Glow */}
-                            <div className={`absolute inset-0 bg-gradient-to-br from-${accentColor}-500/0 to-${accentColor}-500/0 group-hover:from-${accentColor}-500/5 group-hover:to-transparent transition-all duration-700`} />
+                                    <div className={`absolute inset-0 bg-gradient-to-br from-${accentColor}-500/0 to-${accentColor}-500/0 group-hover:from-${accentColor}-500/5 group-hover:to-transparent transition-all duration-700`} />
 
-                            <div className="relative z-10">
-                                <div className="flex items-center justify-between mb-8">
-                                    <div className={`p-4 rounded-[1.5rem] bg-${accentColor}-50 dark:bg-${accentColor}-900/20 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500`}>
-                                        {evento.tipo === "crisis" && <AlertTriangle className="w-7 h-7 text-rose-500" />}
-                                        {evento.tipo === "teoria" && <BookMarked className="w-7 h-7 text-indigo-500" />}
-                                        {evento.tipo === "nobel" && <Award className="w-7 h-7 text-amber-500" />}
+                                    <div className="relative z-10">
+                                        <div className="flex items-center justify-between mb-8">
+                                            <div className={`p-4 rounded-[1.5rem] bg-${accentColor}-50 dark:bg-${accentColor}-900/20 group-hover:rotate-12 group-hover:scale-110 transition-all duration-500`}>
+                                                {evento.tipo === "crisis" && <AlertTriangle className="w-7 h-7 text-rose-500" />}
+                                                {evento.tipo === "teoria" && <BookMarked className="w-7 h-7 text-indigo-500" />}
+                                                {evento.tipo === "nobel" && <Award className="w-7 h-7 text-amber-500" />}
+                                            </div>
+                                            <span className={`text-3xl font-black text-slate-200 dark:text-slate-800 group-hover:text-${accentColor}-500/40 transition-colors duration-500`}>
+                                                {evento.year}
+                                            </span>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight mt-2 min-h-[3rem] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                                                {evento.nombre}
+                                            </h3>
+                                            <div className="flex items-center gap-2">
+                                                <div className={`w-1 h-4 bg-${accentColor}-500 rounded-full group-hover:h-6 transition-all duration-500`} />
+                                                <p className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest">
+                                                    {evento.autor}
+                                                </p>
+                                            </div>
+                                            <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium line-clamp-4 group-hover:line-clamp-none transition-all duration-500">
+                                                {evento.descripcion}
+                                            </p>
+                                        </div>
+
+                                        <div className="pt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                            <button
+                                                onClick={() => router.push(`/glosario?filtro=${activeType}`)}
+                                                className={`flex items-center gap-2 text-xs font-black text-${accentColor}-600 uppercase tracking-widest`}
+                                            >
+                                                Leer más en Glosario
+                                                <ArrowRight className="w-4 h-4" />
+                                            </button>
+                                        </div>
                                     </div>
-                                    <span className={`text-3xl font-black text-slate-200 dark:text-slate-800 group-hover:text-${accentColor}-500/40 transition-colors duration-500`}>
-                                        {evento.year}
-                                    </span>
                                 </div>
+                            ))}
 
-                                <div className="space-y-4">
-                                    <h3 className="text-2xl font-black text-slate-900 dark:text-white leading-tight mt-2 min-h-[3rem] group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                                        {evento.nombre}
-                                    </h3>
-                                    <div className="flex items-center gap-2">
-                                        <div className={`w-1 h-4 bg-${accentColor}-500 rounded-full group-hover:h-6 transition-all duration-500`} />
-                                        <p className="text-xs font-black text-slate-900 dark:text-slate-100 uppercase tracking-widest">
-                                            {evento.autor}
+                            {/* CTA card dentro del carrusel */}
+                            <div className="flex-shrink-0 w-[300px] sm:w-[340px] snap-center p-1">
+                                <div className="relative h-full min-h-[320px] w-full rounded-[2.5rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-indigo-700 p-8 flex flex-col justify-between items-start text-white overflow-hidden shadow-2xl">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-3xl -mr-20 -mt-20 rounded-full" />
+
+                                    <div className="relative z-10 w-full">
+                                        <div className="p-3 rounded-2xl bg-white/20 w-fit mb-6">
+                                            <History className="w-8 h-8 text-white" />
+                                        </div>
+                                        <h3 className="text-2xl font-black mb-2">Descubre todo el Glosario</h3>
+                                        <p className="text-sm text-blue-100/80 font-medium">
+                                            Más de 300 términos, teorías y biografías de ganadores del Nobel organizados cronológicamente.
                                         </p>
                                     </div>
-                                    <p className="text-[13px] text-slate-500 dark:text-slate-400 leading-relaxed font-medium line-clamp-4 group-hover:line-clamp-none transition-all duration-500">
-                                        {evento.descripcion}
-                                    </p>
-                                </div>
 
-                                <div className="pt-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                     <button
-                                        onClick={() => router.push(`/glosario?filtro=${activeType}`)}
-                                        className={`flex items-center gap-2 text-xs font-black text-${accentColor}-600 uppercase tracking-widest`}
+                                        onClick={handleVerMas}
+                                        className="mt-8 relative z-10 px-8 py-4 bg-white text-blue-600 rounded-2xl font-black text-sm hover:bg-blue-50 transition-all flex items-center gap-2 group/btn shadow-xl shadow-blue-900/20 active:scale-95"
                                     >
-                                        Leer más en Glosario
-                                        <ArrowRight className="w-4 h-4" />
+                                        Explorar Glosario Completo
+                                        <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    ))}
-
-                    {/* Special CTA Card */}
-                    <div className="group relative p-1 lg:col-span-1">
-                        <div className="h-full w-full rounded-[2.5rem] bg-gradient-to-br from-blue-600 via-indigo-600 to-indigo-700 p-8 flex flex-col justify-between items-start text-white overflow-hidden shadow-2xl">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 blur-3xl -mr-20 -mt-20 rounded-full" />
-
-                            <div className="relative z-10 w-full">
-                                <div className="p-3 rounded-2xl bg-white/20 w-fit mb-6">
-                                    <History className="w-8 h-8 text-white" />
-                                </div>
-                                <h3 className="text-2xl font-black mb-2">Descubre todo el Glosario</h3>
-                                <p className="text-sm text-blue-100/80 font-medium">
-                                    Más de 300 términos, teorías y biografías de ganadores del Nobel organizados cronológicamente.
-                                </p>
-                            </div>
-
-                            <button
-                                onClick={handleVerMas}
-                                className="mt-8 relative z-10 px-8 py-4 bg-white text-blue-600 rounded-2xl font-black text-sm hover:bg-blue-50 transition-all flex items-center gap-2 group/btn shadow-xl shadow-blue-900/20 active:scale-95"
-                            >
-                                Explorar Glosario Completo
-                                <ArrowRight className="w-5 h-5 group-hover/btn:translate-x-1 transition-transform" />
-                            </button>
-                        </div>
                     </div>
+                    {/* Gradiente a la derecha para indicar más contenido */}
+                    <div className="absolute top-0 right-0 bottom-2 w-12 sm:w-20 bg-gradient-to-l from-white dark:from-slate-950 to-transparent pointer-events-none rounded-r-lg opacity-90" aria-hidden />
                 </div>
             </div>
 
