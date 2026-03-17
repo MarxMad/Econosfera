@@ -61,25 +61,25 @@ export default function MiniSimulator() {
     }, [equilibrio.Q, a, bSafe]);
 
     return (
-        <div className="bg-slate-900/60 backdrop-blur-xl border border-blue-500/20 rounded-3xl p-6 shadow-2xl text-white">
+        <div className="bg-white dark:bg-slate-900/80 backdrop-blur-xl border border-slate-200 dark:border-blue-500/20 rounded-3xl p-6 shadow-xl dark:shadow-2xl text-slate-900 dark:text-white">
             <div className="flex items-center gap-3 mb-4">
                 <div className="p-2 bg-blue-500 rounded-lg">
                     <BarChart3 className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                    <h3 className="font-bold text-lg">Oferta y Demanda</h3>
-                    <p className="text-xs text-slate-400">Fórmulas: Demanda P = a − b·Q · Oferta P = c + d·Q</p>
+                    <h3 className="font-bold text-lg text-slate-900 dark:text-white">Oferta y Demanda</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Fórmulas: Demanda P = a − b·Q · Oferta P = c + d·Q</p>
                 </div>
             </div>
 
             {/* Variables de la fórmula */}
             <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className="space-y-1.5">
-                    <p className="text-[10px] uppercase font-bold text-blue-400 tracking-wider">Demanda</p>
+                    <p className="text-[10px] uppercase font-bold text-blue-600 dark:text-blue-400 tracking-wider">Demanda</p>
                     <div className="space-y-1">
-                        <div className="flex justify-between text-[10px] text-slate-400">
+                        <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                             <span>Ordenada al origen (a)</span>
-                            <span className="font-mono text-blue-300">{a}</span>
+                            <span className="font-mono text-blue-600 dark:text-blue-300">{a}</span>
                         </div>
                         <input
                             type="range"
@@ -88,11 +88,11 @@ export default function MiniSimulator() {
                             step={5}
                             value={a}
                             onChange={(e) => setA(Number(e.target.value))}
-                            className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                            className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
                         />
-                        <div className="flex justify-between text-[10px] text-slate-400">
+                        <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                             <span>Pendiente (b)</span>
-                            <span className="font-mono text-blue-300">{b}</span>
+                            <span className="font-mono text-blue-600 dark:text-blue-300">{b}</span>
                         </div>
                         <input
                             type="range"
@@ -101,16 +101,16 @@ export default function MiniSimulator() {
                             step={0.1}
                             value={b}
                             onChange={(e) => setB(Number(e.target.value))}
-                            className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                            className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
                         />
                     </div>
                 </div>
                 <div className="space-y-1.5">
-                    <p className="text-[10px] uppercase font-bold text-emerald-400 tracking-wider">Oferta</p>
+                    <p className="text-[10px] uppercase font-bold text-emerald-600 dark:text-emerald-400 tracking-wider">Oferta</p>
                     <div className="space-y-1">
-                        <div className="flex justify-between text-[10px] text-slate-400">
+                        <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                             <span>Ordenada al origen (c)</span>
-                            <span className="font-mono text-emerald-300">{c}</span>
+                            <span className="font-mono text-emerald-600 dark:text-emerald-300">{c}</span>
                         </div>
                         <input
                             type="range"
@@ -119,11 +119,11 @@ export default function MiniSimulator() {
                             step={2}
                             value={c}
                             onChange={(e) => setC(Number(e.target.value))}
-                            className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                            className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                         />
-                        <div className="flex justify-between text-[10px] text-slate-400">
+                        <div className="flex justify-between text-[10px] text-slate-500 dark:text-slate-400">
                             <span>Pendiente (d)</span>
-                            <span className="font-mono text-emerald-300">{d}</span>
+                            <span className="font-mono text-emerald-600 dark:text-emerald-300">{d}</span>
                         </div>
                         <input
                             type="range"
@@ -132,7 +132,7 @@ export default function MiniSimulator() {
                             step={0.1}
                             value={d}
                             onChange={(e) => setD(Number(e.target.value))}
-                            className="w-full h-1.5 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                            className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
                         />
                     </div>
                 </div>
@@ -178,23 +178,23 @@ export default function MiniSimulator() {
             </div>
 
             {/* Precio y cantidad de equilibrio */}
-            <div className="flex gap-4 p-4 bg-slate-800/50 rounded-2xl border border-slate-700">
+            <div className="flex gap-4 p-4 bg-slate-100 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700">
                 <div className="flex-1">
-                    <p className="text-[10px] uppercase font-bold text-slate-400 mb-1 flex items-center gap-1">
+                    <p className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 mb-1 flex items-center gap-1">
                         <TrendingUp className="w-3 h-3" /> Precio equilibrio P*
                     </p>
-                    <p className="text-xl font-black text-amber-400">${equilibrio.P.toFixed(2)}</p>
+                    <p className="text-xl font-black text-amber-600 dark:text-amber-400">${equilibrio.P.toFixed(2)}</p>
                 </div>
                 <div className="flex-1 text-right">
-                    <p className="text-[10px] uppercase font-bold text-slate-400 mb-1 flex items-center justify-end gap-1">
+                    <p className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 mb-1 flex items-center justify-end gap-1">
                         <Package className="w-3 h-3" /> Cantidad equilibrio Q*
                     </p>
-                    <p className="text-xl font-black text-emerald-400">{equilibrio.Q.toFixed(1)} unds</p>
+                    <p className="text-xl font-black text-emerald-600 dark:text-emerald-400">{equilibrio.Q.toFixed(1)} unds</p>
                 </div>
             </div>
 
             {/* Fórmulas actuales */}
-            <div className="mt-3 text-[10px] text-slate-500 font-mono space-y-0.5">
+            <div className="mt-3 text-[10px] text-slate-500 dark:text-slate-500 font-mono space-y-0.5">
                 <p>Demanda: P = {a} − {b}·Q</p>
                 <p>Oferta: P = {c} + {d}·Q</p>
             </div>

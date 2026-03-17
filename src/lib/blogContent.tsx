@@ -21,10 +21,16 @@ export function EjemploReglaTaylorContent() {
       <p>
         La <strong>Regla de Taylor</strong> es quizás la herramienta de consulta más importante para entender cómo los bancos centrales, como el Banco de México (Banxico) o la Reserva Federal (Fed), ajustan las tasas de interés. Lejos de ser un algoritmo ciego, la regla proporciona un marco lógico para equilibrar dos objetivos a menudo contradictorios: <strong>estabilidad de precios</strong> y <strong>crecimiento económico</strong>.
       </p>
+      <p>
+        En este artículo revisamos el origen de la regla, el significado de cada variable, su aplicación en México y las limitaciones que deben tener en cuenta tanto estudiantes como profesionales que siguen las decisiones del Banxico.
+      </p>
 
       <h2 id="origen">1. El Origen: ¿Por qué una regla?</h2>
       <p>
         Antes de 1993, la política monetaria era vista a menudo como un "arte" oscuro. John B. Taylor demostró que se podía describir el comportamiento de la Fed con una fórmula sorprendentemente simple. Su propuesta resolvió el problema de la <em>inconsistencia dinámica</em>: si los mercados saben cómo reaccionará el banco, las expectativas se anclan y la inflación baja.
+      </p>
+      <p>
+        La regla no fue diseñada como una prescripción obligatoria, sino como una <strong>descripción</strong> de una política monetaria coherente. Cuando el banco central sigue una regla creíble, los agentes forman expectativas de inflación más estables y el trade-off entre inflación y desempleo mejora. Por eso hoy forma parte del lenguaje común de los informes de inflación y de las minutas de política.
       </p>
 
       <FormulaBox
@@ -33,11 +39,17 @@ export function EjemploReglaTaylorContent() {
       />
 
       <h2 id="componentes">2. Desglose de los Componentes</h2>
+      <p>
+        Cada término de la ecuación tiene un rol preciso. La tasa nominal recomendada (i) se construye a partir de la tasa real neutral, la inflación actual y dos correcciones: una por la brecha de inflación y otra por la brecha de producto.
+      </p>
       <ul>
-        <li><strong>r* (Tasa Real Neutral):</strong> Es la tasa que no expande ni contrae la economía. En México, Banxico estima que se sitúa entre el 1.8% y 3.4%.</li>
-        <li><strong>π - π* (Brecha de Inflación):</strong> La diferencia entre la inflación actual y la meta (en México es 3% ± 1%).</li>
-        <li><strong>y - y* (Brecha de Producto):</strong> Qué tanto se desvía el PIB actual de su potencial.</li>
+        <li><strong>r* (Tasa Real Neutral):</strong> Es la tasa que no expande ni contrae la economía. En México, Banxico estima que se sitúa entre el 1.8% y 3.4%. No es observable directamente; se obtiene con modelos o filtros estadísticos y puede variar en el tiempo por cambios en la productividad o en la demografía.</li>
+        <li><strong>π - π* (Brecha de Inflación):</strong> La diferencia entre la inflación actual (o esperada) y la meta. En México la meta es 3% con banda de ±1%. Una brecha positiva indica que la inflación está por encima del objetivo y suele justificar una subida de tasa.</li>
+        <li><strong>y - y* (Brecha de Producto):</strong> El porcentaje en que el PIB observado se desvía del PIB potencial. Se estima con filtros (Hodrick-Prescott, por ejemplo) o con modelos de producción. Una brecha positiva implica que la economía está "sobrecalentada" y refuerza el argumento para tasas más altas.</li>
       </ul>
+      <p>
+        Los coeficientes 0.5 en la ecuación original indican que el banco reacciona igual de fuerte a desviaciones de inflación y a desviaciones del producto. En la práctica muchos bancos usan coeficientes distintos; lo importante es que el coeficiente de la brecha de inflación sea <strong>mayor que 1</strong> (Principio de Taylor) para que la tasa real suba cuando la inflación sube y la política sea estabilizadora.
+      </p>
 
       <SimulatorCTA
         title="Simulador de Regla de Taylor"
@@ -47,15 +59,21 @@ export function EjemploReglaTaylorContent() {
 
       <h2 id="practica">3. La Regla en México</h2>
       <p>
-        En una economía abierta como la mexicana, la regla suele extenderse para incluir el <strong>tipo de cambio</strong> y la <strong>tasa de la Fed</strong>. Banxico debe considerar que una subida excesiva podría apreciar demasiado el peso, afectando a las exportaciones, mientras que quedarse corto ante la Fed podría causar fugas de capital.
+        En una economía abierta como la mexicana, la regla suele extenderse para incluir el <strong>tipo de cambio</strong> y la <strong>tasa de la Fed</strong>. Banxico debe considerar que una subida excesiva podría apreciar demasiado el peso, afectando a las exportaciones, mientras que quedarse corto ante la Fed podría causar fugas de capital y depreciación.
       </p>
       <p>
         Los documentos de investigación del Banco de México publican periódicamente estimaciones de la tasa neutral (r*) y de la brecha de producto. Los analistas del mercado suelen comparar la tasa de fondeo vigente con la que arrojaría una regla de Taylor "estándar" o "modificada" para México, lo que genera expectativas sobre el sesgo de la siguiente decisión (alcista, neutral o recortes).
+      </p>
+      <p>
+        Cuando la tasa vigente está por <strong>debajo</strong> de la que sugiere la regla, se dice que la política está "acomodaticia" respecto a la regla y existe espacio para subidas si la inflación no cede. Cuando está por <strong>encima</strong>, el sesgo podría ser hacia pausas o recortes en el siguiente ciclo. Esta comparación no sustituye el análisis de las minutas y del forward guidance, pero da un primer marco cuantitativo.
       </p>
 
       <h2 id="limitaciones">4. Limitaciones y Críticas</h2>
       <p>
         La regla no captura shocks financieros ni riesgos de cola; tampoco sustituye el juicio del comité. En épocas de crisis, los bancos centrales pueden desviarse deliberadamente de la regla para evitar una recesión profunda o para dar prioridad a la estabilidad financiera. Por eso se dice que la regla es una <strong>referencia</strong>, no un mandato mecánico.
+      </p>
+      <p>
+        Otras críticas habituales: la brecha de producto es difícil de estimar en tiempo real y se revisa mucho ex post; la tasa neutral también es incierta; y la regla no incorpora el tipo de cambio ni las condiciones financieras globales. Aun así, dominar la regla de Taylor permite leer con más criterio los informes de inflación y las declaraciones de los banqueros centrales.
       </p>
 
       <BlockQuote
@@ -69,6 +87,9 @@ export function EjemploReglaTaylorContent() {
       <h2 id="conclusion">5. Conclusión para Estudiantes</h2>
       <p>
         Para fines de consulta académica, recuerda que el "Principio de Taylor" dicta que el banco central debe subir la tasa nominal <strong>más</strong> que proporcionalmente al aumento de la inflación. Si la inflación sube 1%, la tasa debería subir más de 1% para que la tasa <em>real</em> suba y realmente frene la demanda.
+      </p>
+      <p>
+        En resumen: la regla de Taylor es una brújula para interpretar si la política monetaria es restrictiva o expansiva respecto a un benchmark simple. Combinarla con la lectura de las minutas y con las expectativas del mercado te dará una visión más completa de hacia dónde pueden moverse las tasas en México y en el mundo.
       </p>
 
       <ReferencesList
@@ -104,6 +125,9 @@ function InflacionSubyacenteGeneralContent() {
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
         La inflación general y la inflación subyacente son dos indicadores que el Banco de México y el INEGI publican con periodicidad quincenal y mensual. Aunque la primera suele acaparar los titulares, la segunda es la <strong>referencia principal</strong> para la política monetaria. Entender la distinción es crucial para interpretar las decisiones de Banxico y las expectativas de los mercados.
       </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        En este artículo se explica qué mide cada indicador, por qué los bancos centrales prestan más atención a la subyacente, y cómo usar ambos números el día de la publicación del INPC para formarse una idea del sesgo de la siguiente decisión de política monetaria.
+      </p>
 
       <h2 id="general">1. La Inflación General: El Costo de Vida Original</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
@@ -130,8 +154,11 @@ function InflacionSubyacenteGeneralContent() {
         <li><strong>Agropecuarios:</strong> Frutas y verduras (sujetos a clima).</li>
         <li><strong>Energéticos y tarifas:</strong> Gasolina, luz, gas (sujetos a geopolítica o subsidios).</li>
       </ul>
-      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         Al excluir estos componentes, el indicador subyacente refleja mejor la presión de demanda y las expectativas de inflación que el banco central puede influir con la tasa de interés. En México, la meta de inflación de Banxico (3% ± 1%) se interpreta en la práctica como una meta sobre la inflación subyacente en el mediano plazo.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        La subyacente se calcula con la misma metodología que la general (variación porcentual del índice correspondiente), pero el índice excluye los genéricos volátiles. El INEGI y Banxico publican ambos indicadores en el mismo comunicado, lo que permite comparar de inmediato la trayectoria de cada uno y detectar si un repunte de la general es "ruido" o si la subyacente también está acelerando.
       </p>
 
       <BlockQuote
@@ -156,6 +183,14 @@ function InflacionSubyacenteGeneralContent() {
       <h2 id="uso">4. Uso en la práctica: qué mirar cada quincena</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         El día de publicación del INPC, los mercados observan tanto la general como la subyacente. Si la subyacente se mantiene estable o baja mientras la general repunta por energéticos, la reacción de tasas suele ser moderada. Si la subyacente acelera, aumenta la probabilidad de que Banxico mantenga o suba la tasa en la siguiente decisión.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Conviene seguir también la inflación subyacente por <strong>componentes</strong> (mercancías vs servicios): en muchos ciclos recientes, la inflación de servicios ha sido más persistente que la de mercancías, y Banxico suele citar este desglose en sus informes. Por último, las expectativas de inflación a 12 y 24 meses (encuestas de Banxico y CEMLA) complementan la lectura: si la subyacente sube pero las expectativas se mantienen ancladas, el banco puede ser más paciente.
+      </p>
+
+      <h2 id="resumen">5. Resumen</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        La inflación general mide el costo de vida y es la que más resuena en la opinión pública; la subyacente es la brújula del banco central porque filtra choques temporales. Entender ambas y su posible divergencia te permite anticipar mejor el tono de las minutas y las decisiones de tasa en México.
       </p>
 
       <ReferencesList
@@ -182,21 +217,30 @@ function ComoLeerMinutaBanxicoContent() {
       />
 
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
-        Las minutas de política monetaria son el documento más esperado por analistas en México. A diferencia del comunicado inicial, que es breve, la minuta ofrece una <strong>radiografía</strong> de las discusiones internas del Junta de Gobierno. Es aquí donde se encuentran las pistas sobre si el ciclo de bajas ha terminado o si habrá sorpresas en la próxima reunión.
+        Las minutas de política monetaria son el documento más esperado por analistas en México. A diferencia del comunicado inicial, que es breve, la minuta ofrece una <strong>radiografía</strong> de las discusiones internas de la Junta de Gobierno. Es aquí donde se encuentran las pistas sobre si el ciclo de bajas ha terminado o si habrá sorpresas en la próxima reunión.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        Este artículo te guía por la estructura típica de una minuta de Banxico, el significado del tono (hawkish vs dovish), la importancia de los votos disidentes, la sección de riesgos y el forward guidance. Con estos elementos podrás extraer señales de mercado de forma sistemática.
       </p>
 
       <h2 id="tono">1. El Tono: ¿Hawkish o Dovish?</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         En el lenguaje central bancario:
       </p>
-      <ul className="list-disc pl-6 space-y-2 mb-6 text-slate-700 dark:text-slate-300">
-        <li><strong>Hawkish (Halcón):</strong> Predisposición a subir tasas o mantenerlas altas para combatir la inflación. Prioriza la estabilidad sobre el crecimiento.</li>
-        <li><strong>Dovish (Paloma):</strong> Predisposición a bajar tasas para estimular la economía. Muestra más preocupación por el crecimiento o el desempleo.</li>
+      <ul className="list-disc pl-6 space-y-2 mb-4 text-slate-700 dark:text-slate-300">
+        <li><strong>Hawkish (Halcón):</strong> Predisposición a subir tasas o mantenerlas altas para combatir la inflación. Prioriza la estabilidad de precios sobre el crecimiento. Lenguaje típico: "riesgos al alza para la inflación", "postura restrictiva el tiempo necesario", "vigilancia ante presiones".</li>
+        <li><strong>Dovish (Paloma):</strong> Predisposición a bajar tasas para estimular la economía. Muestra más preocupación por el crecimiento o el desempleo. Lenguaje típico: "evaluar el ritmo de ajuste", "holgura en la economía", "riesgos a la baja para el crecimiento".</li>
       </ul>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        Una misma minuta puede mezclar elementos de ambos: por ejemplo, reconocer que la inflación sigue alta (hawkish) pero que el crecimiento se está desacelerando (dovish). Lo que importa es el <strong>balance neto</strong> y si ese balance cambió respecto a la minuta anterior.
+      </p>
 
       <h2 id="votacion">2. La Importancia de los Votos Disidentes</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Si la decisión fue unánime (5-0), el mercado asume una postura sólida. Sin embargo, un voto disidente (4-1) suele ser un <strong>indicador adelantado</strong>. Si un subgobernador votó por una baja cuando la mayoría mantuvo, es probable que la baja se materialice en la siguiente o subsiguiente reunión.
+        Si la decisión fue unánime (5-0), el mercado asume una postura sólida. Sin embargo, un voto disidente (4-1) suele ser un <strong>indicador adelantado</strong>. Si un subgobernador votó por una baja cuando la mayoría mantuvo, es probable que la baja se materialice en la siguiente o subsiguiente reunión. A la inversa, si alguien votó por una subida cuando la mayoría recortó, puede indicar que el espacio para más recortes es limitado.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        La minuta suele indicar explícitamente quién votó en sentido distinto y, en ocasiones, el razonamiento de los disidentes. Esa información es valiosa para calibrar la probabilidad de un cambio de postura en la próxima reunión.
       </p>
 
       <BlockQuote
@@ -224,6 +268,9 @@ function ComoLeerMinutaBanxicoContent() {
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         Las minutas se publican dos jueves después de cada decisión de política monetaria en el sitio del Banco de México. Conviene tener a mano el calendario anual de reuniones y el de publicaciones para no perderse ninguna fecha clave.
       </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        <strong>Checklist rápido para leer una minuta:</strong> (1) Identificar el balance de riesgos para la inflación (al alza / equilibrado / a la baja). (2) Revisar si hubo votos disidentes y en qué sentido. (3) Buscar en el párrafo de deliberación las frases sobre la trayectoria futura de la tasa (forward guidance). (4) Comparar el tono con la minuta anterior: ¿más hawkish, más dovish o sin cambios? Con estos cuatro puntos tendrás una lectura operativa para tus pronósticos de tasa.
+      </p>
 
       <ReferencesList
         references={[
@@ -250,10 +297,16 @@ function ModeloISLMContent() {
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
         El modelo <strong>IS-LM</strong> es el pilar fundamental de la macroeconomía de corto plazo. Desarrollado por John Hicks en 1937 para formalizar las ideas de Keynes, este modelo explica cómo se determina el nivel de ingreso nacional y la tasa de interés en una economía cerrada.
       </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        Aunque simplificado (precios dados, economía cerrada en su versión básica), el IS-LM sigue siendo la base de muchos informes de bancos centrales y de cursos de macro. Aquí revisamos las dos curvas, los efectos de la política fiscal y monetaria, y la extensión a economía abierta (Mundell-Fleming).
+      </p>
 
       <h2 id="is">1. La Curva IS: El Mercado de Bienes</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Representa todas las combinaciones de renta (Y) y tasa de interés (r) donde el gasto planeado iguala a la producción. Su pendiente es <strong>negativa</strong> porque un aumento en la tasa de interés encarece el crédito, reduciendo la inversión y, por ende, el producto total.
+        La curva IS representa todas las combinaciones de renta (Y) y tasa de interés (r) donde el gasto planeado iguala a la producción. Equivale a decir que el ahorro planeado iguala a la inversión planeada. Su pendiente es <strong>negativa</strong>: un aumento en la tasa de interés encarece el crédito, reduce la inversión y, por tanto, la demanda agregada y el producto de equilibrio.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        La IS se desplaza cuando cambia el gasto autónomo: un aumento del gasto público (G) o una rebaja de impuestos (T) que eleve el consumo desplazan la IS a la derecha; una caída de la confianza que reduzca la inversión autónoma la desplaza a la izquierda.
       </p>
 
       <FormulaBox
@@ -263,7 +316,10 @@ function ModeloISLMContent() {
 
       <h2 id="lm">2. La Curva LM: El Mercado de Dinero</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Representa el equilibrio entre la oferta y la demanda de dinero. Su pendiente es <strong>positiva</strong>: si la renta sube, la gente demanda más dinero para transacciones; para que el mercado se equilibre con una oferta monetaria fija, la tasa de interés debe subir.
+        La curva LM representa el equilibrio entre la oferta real de dinero (M/P) y la demanda de saldos reales L(Y, r). La demanda de dinero aumenta con la renta (más transacciones) y disminuye con la tasa de interés (mayor costo de oportunidad de mantener efectivo). Por tanto, la LM tiene pendiente <strong>positiva</strong>: si la renta sube, la demanda de dinero sube; para que el mercado vuelva al equilibrio con M/P fijo, la tasa de interés debe subir para reducir la demanda.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        La LM se desplaza cuando cambia la oferta monetaria nominal (M) o el nivel de precios (P). Una expansión monetaria (M sube) o una caída de P desplaza la LM a la derecha; una contracción monetaria la desplaza a la izquierda.
       </p>
 
       <FormulaBox
@@ -279,7 +335,13 @@ function ModeloISLMContent() {
 
       <h2 id="politica">3. Efectos de la Política</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        ¿Qué pasa si el gobierno aumenta el gasto (G)? La IS se desplaza a la derecha, aumentando el PIB pero también la tasa de interés (efecto <em>crowding-out</em>). ¿Y si el banco central aumenta la cantidad de dinero? La LM se desplaza a la derecha, bajando las tasas y estimulando la inversión.
+        <strong>Política fiscal expansiva</strong> (sube G o baja T): la IS se desplaza a la derecha. El nuevo equilibrio tiene mayor renta (Y) y mayor tasa de interés (r). El aumento de r "desplaza" parte de la inversión privada: es el efecto <em>crowding-out</em>. En el modelo básico sin sector exterior, el multiplicador del gasto es menor que en el modelo 45° keynesiano porque la subida de la tasa frena la inversión.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        <strong>Política monetaria expansiva</strong> (sube M): la LM se desplaza a la derecha. La tasa de interés baja y la renta sube. La bajada de r estimula la inversión. Por tanto, en el IS-LM la política monetaria es efectiva para mover el producto a través del canal de la tasa de interés.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        En el <strong>tramo de liquidez</strong> (LM muy plana a tasas muy bajas), la política monetaria pierde efectividad porque la demanda de dinero se vuelve muy sensible a la tasa; la política fiscal, en cambio, gana efectividad porque casi no hay crowding-out. Este caso es relevante para episodios de tasas cercanas a cero (zero lower bound).
       </p>
 
       <h2 id="extension">4. Extensiones: economía abierta y Mundell-Fleming</h2>
@@ -290,6 +352,9 @@ function ModeloISLMContent() {
       <h2 id="relevancia">5. Relevancia actual</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         Aunque el IS-LM es un modelo de corto plazo con supuestos simplificadores (precios rígidos, economía cerrada en su versión básica), sigue siendo la columna vertebral de muchos cursos de macroeconomía y de los informes de bancos centrales que analizan el impacto de un cambio en G o M sobre el producto y las tasas. Dominarlo facilita entender modelos más avanzados como los DSGE.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        En resumen: la intersección IS-LM determina Y y r de equilibrio. La política fiscal mueve la IS; la política monetaria mueve la LM. El crowding-out de la política fiscal y la efectividad de la política monetaria dependen de la pendiente de la LM (y en economía abierta, del régimen cambiario). Usa el simulador para ver estos desplazamientos en vivo y fijar la intuición.
       </p>
 
       <ReferencesList
@@ -317,10 +382,16 @@ function DCFPasoaPasoContent() {
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
         La valoración por <strong>Descuento de Flujos de Caja (DCF)</strong> es el "Estándar de Oro" en Wall Street y en la academia. Se basa en una premisa simple: un activo vale lo que es capaz de generar en el futuro, traído a valor presente.
       </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        En este artículo se revisan los conceptos de flujo de caja libre (FCFF), el costo promedio ponderado del capital (WACC), el valor terminal y las mejores prácticas para armar un DCF y comunicar la incertidumbre con tablas de sensibilidad.
+      </p>
 
       <h2 id="fcf">1. El Motor: Free Cash Flow (FCF)</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        A diferencia de la utilidad neta (que es contable), el FCF es <strong>dinero real</strong>. Es lo que sobra después de pagar impuestos e invertir en el mantenimiento del negocio (CapEx) y en capital de trabajo.
+        A diferencia de la utilidad neta (que es contable y está sujeta a criterios de reconocimiento), el FCF es <strong>dinero real</strong> que la empresa puede repartir a acreedores y accionistas sin comprometer su operación. Es lo que sobra después de pagar impuestos, invertir en el mantenimiento del negocio (CapEx) y en capital de trabajo (ΔNWC).
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Se distingue entre <strong>FCFF</strong> (flujo para la firma, antes de deuda) y <strong>FCFE</strong> (flujo para el accionista, después de intereses y reembolsos de deuda). Para valorar el Enterprise Value se usa el FCFF y se descuenta al WACC; para valorar solo el patrimonio (equity) se usa el FCFE y se descuenta al costo del capital propio (Ke).
       </p>
 
       <FormulaBox
@@ -330,7 +401,10 @@ function DCFPasoaPasoContent() {
 
       <h2 id="wacc">2. El Filtro: WACC</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        ¿A qué tasa descontamos? Al costo promedio ponderado del capital. Si el riesgo de la empresa aumenta, el WACC sube, y el valor presente de los flujos baja.
+        ¿A qué tasa descontamos los FCFF? Al <strong>costo promedio ponderado del capital (WACC)</strong>: el promedio ponderado del costo de la deuda (Kd, después de impuestos) y del costo del capital propio (Ke). Si el riesgo de la empresa aumenta, el Ke y por tanto el WACC suben, y el valor presente de los flujos baja.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        El Ke se suele estimar con el modelo CAPM (Ke = Rf + β × (Rm - Rf)); el Kd con el rendimiento al vencimiento de la deuda o con el spread sobre la tasa libre de riesgo. Las ponderaciones (E/V y D/V) pueden ser a valor de mercado o a valor objetivo si se asume una estructura de capital óptima. En la práctica, pequeños cambios en el WACC tienen un impacto grande en el valor por acción, por eso es clave documentar los supuestos y hacer sensibilidad.
       </p>
 
       <BlockQuote
@@ -346,7 +420,10 @@ function DCFPasoaPasoContent() {
 
       <h2 id="terminal">3. Valor Terminal y Perpetuidad</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Como no podemos proyectar 100 años, usamos el modelo de Gordon-Shapiro para estimar el valor de la empresa desde el año 6 hasta el infinito, asumiendo un crecimiento constante (g).
+        Como no podemos proyectar 100 años, usamos el modelo de <strong>Gordon-Shapiro</strong> (crecimiento perpetuo) para estimar el valor de la empresa desde el año siguiente al último explícito hasta el infinito, asumiendo un crecimiento constante (g). La fórmula es VT = FCF del primer año después del horizonte explícito dividido entre (WACC - g). La hipótesis de g debe ser conservadora: en el largo plazo, g no puede superar de forma sostenida el crecimiento de la economía.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Una alternativa al crecimiento perpetuo es el <strong>múltiplo de salida</strong>: se aplica un múltiplo (por ejemplo EV/EBITDA) al último año explícito para estimar el valor terminal. Es útil cuando la empresa se espera vender o cuando el crecimiento a largo plazo es muy incierto. En ambos casos, el valor terminal suele representar una fracción muy alta del valor total (a menudo más del 70%), por lo que los supuestos de terminal son críticos.
       </p>
 
       <h2 id="pasos">4. Pasos prácticos para armar un DCF</h2>
@@ -357,6 +434,9 @@ function DCFPasoaPasoContent() {
       <h2 id="sensibilidad">5. Análisis de sensibilidad</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
         Dado que el valor terminal suele representar más del 70% del valor total, pequeños cambios en la tasa de crecimiento a largo plazo (g) o en el WACC pueden mover mucho la valoración. Por eso es habitual construir una tabla de sensibilidad (WACC en filas, g en columnas) para ver el rango de valores razonables y comunicar la incertidumbre a quien toma la decisión.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        Errores frecuentes al hacer un DCF: usar un g mayor que el crecimiento de la economía a largo plazo; ignorar la necesidad de reinversión (el FCF debe ser sostenible); no ajustar el Beta por apalancamiento cuando la estructura de capital cambia; y no triangular el valor con otros métodos (múltiplos comparables, transacciones) para validar el resultado.
       </p>
 
       <ReferencesList
@@ -384,10 +464,16 @@ function ElasticidadPrecioDemandaContent() {
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
         ¿Por qué un aumento de 10% en el precio del cine vacía las salas, pero un aumento de 10% en la gasolina apenas afecta el consumo? La respuesta está en la <strong>Elasticidad Precio de la Demanda</strong>.
       </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-6">
+        En este artículo se define la elasticidad precio (punto y arco), sus determinantes, la relación con el ingreso total del vendedor, y las aplicaciones en política de precios e impuestos. También se mencionan la elasticidad cruzada y la elasticidad ingreso para una visión más completa.
+      </p>
 
       <h2 id="formula">1. La Medida de la Sensibilidad</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        La elasticidad no es una pendiente unitaria; es un cambio porcentual relativo. Se calcula dividiendo la variación porcentual de la cantidad entre la variación porcentual del precio.
+        La elasticidad no es la pendiente de la curva de demanda (que depende de las unidades). Es un <strong>cambio porcentual relativo</strong>: cuánto varía la cantidad demandada en porcentaje cuando el precio varía 1%. Se calcula como el cociente entre la variación porcentual de la cantidad y la variación porcentual del precio. En valor absoluto, si es mayor que 1 la demanda es elástica; si es menor que 1, inelástica.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        La <strong>elasticidad arco</strong> se usa entre dos puntos (se toma el promedio de precios y cantidades como base para evitar asimetría). La <strong>elasticidad en un punto</strong> se define con derivadas: ε = (dQ/dP) × (P/Q). En una curva de demanda lineal, la elasticidad varía a lo largo de la curva: es elástica en precios altos e inelástica en precios bajos.
       </p>
 
       <FormulaBox
@@ -412,7 +498,15 @@ function ElasticidadPrecioDemandaContent() {
 
       <h2 id="elasticidad-cruzada">4. Elasticidad cruzada e ingreso</h2>
       <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
-        Además de la elasticidad precio, se estudia la elasticidad cruzada (cómo cambia la cantidad demandada de un bien cuando cambia el precio de otro) y la elasticidad ingreso (cómo cambia la demanda cuando cambia la renta). Los bienes normales tienen elasticidad ingreso positiva; los inferiores, negativa. Estos conceptos son útiles para segmentar mercados y para diseño de política pública.
+        La <strong>elasticidad cruzada</strong> mide cómo cambia la cantidad demandada del bien A cuando cambia el precio del bien B. Si es positiva, los bienes son sustitutos (ej. café y té); si es negativa, son complementarios (ej. café y leche). Si es cercana a cero, los bienes son independientes. Las empresas usan este concepto para predecir el efecto de cambios en precios de competidores o complementos.
+      </p>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        La <strong>elasticidad ingreso</strong> mide cómo cambia la demanda cuando cambia la renta del consumidor. Los bienes normales tienen elasticidad ingreso positiva; los bienes de lujo suelen tener elasticidad ingreso mayor que 1; los bienes inferiores (ej. cierto tipo de papas o transporte en autobús cuando sube el ingreso) tienen elasticidad ingreso negativa. Esto es útil para segmentar mercados y para proyectar demanda en distintas fases del ciclo económico.
+      </p>
+
+      <h2 id="resumen">5. Resumen</h2>
+      <p className="leading-relaxed text-slate-700 dark:text-slate-300 mb-4">
+        La elasticidad precio de la demanda resume la sensibilidad del consumo al precio y determina si una subida de precios aumenta o reduce el ingreso total del vendedor. Sus determinantes (sustitutos, necesidad, horizonte temporal) y las elasticidades cruzada e ingreso permiten aplicar la microeconomía a estrategia de precios, política tributaria y pronósticos de demanda.
       </p>
 
       <SimulatorCTA
