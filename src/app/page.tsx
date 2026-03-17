@@ -16,7 +16,6 @@ export default function Home() {
   const { data: session } = useSession();
   const router = useRouter();
   const [authModalOpen, setAuthModalOpen] = useState(false);
-  const [unamLogoError, setUnamLogoError] = useState(false);
 
   const handleProbarClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -133,13 +132,19 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 opacity-40 grayscale hover:grayscale-0 transition-all duration-500 mt-6">
-              <span className="text-xs font-black uppercase tracking-[0.2em] break-words">Usada por alumnos de:</span>
-              <div className="flex flex-wrap gap-4 sm:gap-6 items-center w-full">
-                <div className="font-serif italic font-bold text-sm sm:text-base">ITAM</div>
-                <div className="font-serif italic font-bold text-sm sm:text-base">UNAM</div>
-                <div className="font-serif italic font-bold text-sm sm:text-base">TEC</div>
-                <div className="font-serif italic font-bold text-sm sm:text-base">IBERO</div>
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 opacity-50 hover:opacity-80 transition-all duration-500 mt-6">
+              <span className="text-xs font-black uppercase tracking-[0.2em] break-words text-slate-500">
+                Usada por
+              </span>
+              <div className="flex flex-wrap gap-3 sm:gap-4 items-center w-full">
+                {["Analistas", "Inversionistas", "Consultores", "Estudiantes"].map((t) => (
+                  <span
+                    key={t}
+                    className="text-xs sm:text-sm font-bold text-slate-300 bg-white/5 border border-white/10 px-3 py-1.5 rounded-full backdrop-blur"
+                  >
+                    {t}
+                  </span>
+                ))}
               </div>
             </div>
           </div>
@@ -204,7 +209,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Banner UNAM - alumn@s */}
+      {/* Banner (mantener color, ampliar enfoque) */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-amber-500/90 via-yellow-400/95 to-amber-500/90 dark:from-amber-600/95 dark:via-amber-500/95 dark:to-amber-600/95" />
         <div className="relative max-w-7xl mx-auto px-4 py-5 sm:py-6 flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6">
@@ -214,29 +219,23 @@ export default function Home() {
             className="flex-1 w-full sm:w-auto text-left group"
           >
             <p className="text-slate-900 font-black text-lg sm:text-xl md:text-2xl leading-tight drop-shadow-sm">
-              ¿Eres alumn@ de UNAM?
+              ¿Estudias o trabajas en finanzas y economía?
             </p>
             <p className="text-slate-800 font-bold text-base sm:text-lg mt-0.5">
-              Tenemos una sorpresa para ti — Crea tu cuenta ahora.
+              Empieza gratis y prueba los simuladores en minutos.
             </p>
             <span className="inline-flex items-center gap-1.5 mt-2 text-slate-800 font-bold text-sm group-hover:gap-2 transition-all">
               Ir a simuladores
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
             </span>
           </button>
-          <div className="flex-shrink-0 w-32 h-16 sm:w-40 sm:h-20 flex items-center justify-center bg-white/20 rounded-xl border-2 border-white/40 shadow-lg overflow-hidden">
-            {!unamLogoError ? (
-              <img
-                src="/Unam-Logo.jpg"
-                alt="UNAM"
-                className="max-w-full max-h-full object-contain"
-                onError={() => setUnamLogoError(true)}
-              />
-            ) : (
-              <span className="w-full h-full flex items-center justify-center text-slate-800 font-black text-sm sm:text-base bg-white/30">
-                UNAM
-              </span>
-            )}
+          <div className="flex-shrink-0 w-full sm:w-auto flex items-center gap-2 sm:gap-3">
+            <span className="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-white/25 border border-white/40 text-slate-900 font-black text-xs sm:text-sm shadow-lg">
+              Para profesionales
+            </span>
+            <span className="inline-flex items-center justify-center px-3 py-2 rounded-xl bg-white/25 border border-white/40 text-slate-900 font-black text-xs sm:text-sm shadow-lg">
+              Para estudiantes
+            </span>
           </div>
         </div>
         {/* Brillo luminoso */}

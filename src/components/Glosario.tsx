@@ -238,7 +238,7 @@ export default function Glosario({ moduloActivo, onIrAModulo, standalone }: Glos
           <div className="space-y-8">
             {terminosPorLetra.map(([letra, terminos]) => (
               <div key={letra}>
-                <div className="sticky top-0 z-10 py-2 mb-3 flex items-center gap-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+                <div className="py-2 mb-3 flex items-center gap-2 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
                   <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white text-lg font-bold shadow">
                     {letra}
                   </span>
