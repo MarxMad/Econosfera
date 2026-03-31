@@ -26,7 +26,6 @@ const NAV_LINKS = [
   { href: "/", label: "Home", icon: Home },
   { href: "/simulador", label: "Simuladores", icon: Cpu },
   { href: "/glosario", label: "Glosario", icon: null },
-  { href: "/manual", label: "Manual", icon: null },
   { href: "/pricing", label: "Precios", icon: null },
   { href: "/blog", label: "Blog", icon: null },
 ] as const;
