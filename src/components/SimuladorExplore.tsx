@@ -149,12 +149,12 @@ export default function SimuladorExplore({ onSelectModulo }: SimuladorExplorePro
                         <Zap className="w-3 h-3" /> Explora Econosfera
                     </div>
 
-                    <h1 className="text-4xl sm:text-7xl font-black text-white leading-[1.1] tracking-tighter">
-                        ¿Qué quieres <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 animate-gradient">simular</span> hoy?
+                    <h1 className="text-4xl sm:text-6xl font-black text-white leading-[1.1] tracking-tighter">
+                        Empieza por <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-400 to-emerald-400 animate-gradient">un área</span>
                     </h1>
 
                     <p className="text-slate-400 text-lg sm:text-xl max-w-2xl mx-auto font-medium leading-relaxed">
-                        Entra en el laboratorio financiero más avanzado. Modela mercados, proyecta inflaciones y domina la teoría con herramientas profesionales.
+                        Elige una categoría abajo; dentro encontrarás los modelos concretos (Taylor, IS-LM, DCF, etc.). Así evitas ver decenas de opciones de golpe.
                     </p>
 
                     <div className="relative max-w-2xl mx-auto pt-6 group">
@@ -165,7 +165,7 @@ export default function SimuladorExplore({ onSelectModulo }: SimuladorExplorePro
                             </div>
                             <input
                                 type="text"
-                                placeholder="Busca por simulador, teoría o concepto..."
+                                placeholder="Buscar categoría o palabra clave..."
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                                 className="w-full pl-4 pr-6 py-5 bg-transparent text-white placeholder-slate-500 font-bold focus:outline-none transition-all"
@@ -178,14 +178,9 @@ export default function SimuladorExplore({ onSelectModulo }: SimuladorExplorePro
                         </div>
                     </div>
 
-                    {/* Quick Stats/Badges */}
-                    <div className="flex flex-wrap justify-center gap-4 pt-4 opacity-50">
-                        {["60+ Modelos", "IA Avanzada", "Exportación PDF", "RT Data"].map((tag) => (
-                            <span key={tag} className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                                • {tag}
-                            </span>
-                        ))}
-                    </div>
+                    <p className="text-center text-xs text-slate-500 max-w-lg mx-auto pt-2">
+                        Tip: si ya sabes qué buscas, usa el buscador; si no, basta con abrir una categoría.
+                    </p>
                 </div>
 
                 {/* Decorative Compass Icon - Moving */}
@@ -204,7 +199,7 @@ export default function SimuladorExplore({ onSelectModulo }: SimuladorExplorePro
                             </div>
                             Explorar por Categoría
                         </h2>
-                        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Selecciona un área de estudio para ver los simuladores disponibles.</p>
+                        <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Cada tarjeta agrupa varios modelos; no tienes que elegirlos todos ahora.</p>
                     </div>
                 </div>
 

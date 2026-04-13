@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Calculator,
@@ -37,6 +38,16 @@ const SIMULADORES: {
     { id: "contadores", label: "Contabilidad", modulo: "contadores", tab: "balances", icon: Calculator, color: "teal" },
   ];
 
+/** En home solo mostramos estos de entrada; el resto va tras “Ver más” para no saturar. */
+const FEATURED_SIMULATOR_IDS = new Set([
+  "taylor",
+  "islm",
+  "mercado",
+  "dcf",
+  "inflacion",
+  "minutas",
+]);
+
 const COLOR_CLASSES: Record<string, string> = {
   blue: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800 hover:bg-blue-500/20",
   indigo: "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-200 dark:border-indigo-800 hover:bg-indigo-500/20",
@@ -56,6 +67,10 @@ export default function GaleriaSimuladores({
   onProbarClick: (e: React.MouseEvent) => void;
 }) {
   const router = useRouter();
+  const [showMoreLabs, setShowMoreLabs] = useState(false);
+
+  const simuladoresDestacados = SIMULADORES.filter((s) => FEATURED_SIMULATOR_IDS.has(s.id));
+  const simuladoresExtra = SIMULADORES.filter((s) => !FEATURED_SIMULATOR_IDS.has(s.id));
 
   const handleClick = (modulo: ModuloSimulador, tab?: string) => {
     const url = tab ? `/simulador?modulo=${modulo}&tab=${tab}` : `/simulador?modulo=${modulo}`;
@@ -70,7 +85,7 @@ export default function GaleriaSimuladores({
             Laboratorio <span className="text-indigo-600 dark:text-indigo-400">Interactivo</span>
           </h2>
           <p className="text-slate-500 dark:text-slate-400 text-lg max-w-3xl mx-auto leading-relaxed">
-            No somos solo una base de datos. Somos una plataforma viva donde puedes manipular variables y visualizar el impacto económico en tiempo real.
+            Prueba una demo abajo y, cuando quieras ir al detalle, entra al simulador completo. No hace falta conocer todos los modelos de memoria: van organizados por área.
           </p>
         </div>
 
@@ -79,14 +94,17 @@ export default function GaleriaSimuladores({
           <InteractiveShowcase />
         </div>
 
-        <div className="text-center mb-10">
-          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-200 uppercase tracking-widest text-[11px] mb-8">
-            Y eso es solo el comienzo. Explora nuestra galería completa:
+        <div className="text-center mb-8">
+          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300 mb-1">
+            Accesos rápidos
           </h3>
+          <p className="text-xs text-slate-500 dark:text-slate-500 max-w-md mx-auto">
+            Seis modelos muy usados. El resto está un clic más abajo o dentro de <strong className="text-slate-600 dark:text-slate-400">Simuladores</strong>.
+          </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-          {SIMULADORES.map((s) => {
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3 sm:gap-4 max-w-5xl mx-auto">
+          {simuladoresDestacados.map((s) => {
             const Icon = s.icon;
             const colorClass = COLOR_CLASSES[s.color] ?? COLOR_CLASSES.blue;
             return (
@@ -105,6 +123,40 @@ export default function GaleriaSimuladores({
               </button>
             );
           })}
+        </div>
+
+        <div className="mt-6 flex flex-col items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setShowMoreLabs((v) => !v)}
+            className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline underline-offset-4"
+            aria-expanded={showMoreLabs}
+          >
+            {showMoreLabs ? "Ocultar más modelos" : `Ver más modelos (${simuladoresExtra.length})`}
+          </button>
+          {showMoreLabs && (
+            <div className="w-full grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 pt-2 animate-in fade-in duration-300">
+              {simuladoresExtra.map((s) => {
+                const Icon = s.icon;
+                const colorClass = COLOR_CLASSES[s.color] ?? COLOR_CLASSES.blue;
+                return (
+                  <button
+                    key={s.id}
+                    type="button"
+                    onClick={() => handleClick(s.modulo, s.tab)}
+                    className={`group flex flex-col items-center justify-center gap-2 sm:gap-3 p-4 sm:p-5 rounded-2xl border transition-all duration-300 hover:scale-[1.03] hover:shadow-lg ${colorClass}`}
+                  >
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center bg-white/50 dark:bg-black/20 group-hover:scale-110 transition-transform">
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <span className="text-xs sm:text-sm font-bold text-center leading-tight line-clamp-2">
+                      {s.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
 
         <div className="mt-10 text-center">

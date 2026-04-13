@@ -5,7 +5,6 @@ import {
     TrendingUp,
     Calculator,
     Activity,
-    ShieldCheck,
     PieChart,
     ArrowRight,
     Sparkles,
@@ -17,7 +16,6 @@ import MiniSimulator from "./MiniSimulator";
 import MiniTaylor from "./MiniTaylor";
 import MiniMacro from "./MiniMacro";
 import MiniValuacion from "./MiniValuacion";
-import MiniSimulatorSeguros from "./MiniSimulatorSeguros";
 import MiniBlockchain from "./MiniBlockchain";
 import { useRouter } from "next/navigation";
 
@@ -27,7 +25,6 @@ const CATEGORIES = [
     { id: "micro", label: "Micro", icon: PieChart, color: "indigo", component: MiniSimulator, title: "Oferta y Demanda" },
     { id: "blockchain", label: "Blockchain", icon: Coins, color: "purple", component: MiniBlockchain, title: "Simulación Halving" },
     { id: "finanzas", label: "Finanzas", icon: Calculator, color: "emerald", component: MiniValuacion, title: "Valuación P/E" },
-    { id: "actuaria", label: "Actuaría", icon: ShieldCheck, color: "teal", component: MiniSimulatorSeguros, title: "Cálculo de Prima" },
 ];
 
 export default function InteractiveShowcase() {
@@ -44,7 +41,7 @@ export default function InteractiveShowcase() {
                 <div className="w-full lg:w-72 space-y-4">
                     <div className="p-6 rounded-3xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
                         <h3 className="text-xs font-black uppercase tracking-widest text-slate-500 mb-6 flex items-center gap-2">
-                            <Sparkles className="w-3 h-3" /> Elige un Demo
+                            <Sparkles className="w-3 h-3" /> Una categoría a la vez
                         </h3>
                         <div className="grid grid-cols-2 lg:grid-cols-1 gap-2">
                             {CATEGORIES.map((cat) => {
@@ -125,7 +122,7 @@ export default function InteractiveShowcase() {
                             onClick={() => router.push("/simulador")}
                             className="flex items-center gap-2 text-sm font-black text-blue-600 hover:text-blue-500 transition-colors uppercase tracking-widest group"
                         >
-                            Ver galería completa
+                            Ir al simulador (todas las áreas)
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </button>
                     </div>
@@ -133,7 +130,7 @@ export default function InteractiveShowcase() {
             </div>
 
             {/* Hidden Tailwind support for dynamic colors */}
-            <div className="hidden bg-rose-500 bg-blue-500 bg-indigo-500 bg-emerald-500 bg-teal-500 bg-purple-500 text-rose-500 text-blue-500 text-indigo-500 text-emerald-500 text-teal-500 text-purple-500" />
+            <div className="hidden bg-rose-500 bg-blue-500 bg-indigo-500 bg-emerald-500 bg-purple-500 text-rose-500 text-blue-500 text-indigo-500 text-emerald-500 text-purple-500" />
         </div>
     );
 }
